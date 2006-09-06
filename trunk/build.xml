@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<project name="Sarcommand SwingExtensions" basedir="." default="clean-dist">
+    <property file="local.build.properties"/>
+    <property file="build.properties"/>
+
+    <property name="dist.dir" location="dist" description="Output directory"/>
+    <property name="docs.dir" location="${dist.dir}/docs" description="Documentation directory"/>
+    <property name="supplements.dir" location="supplements" description="Directory containing supplemental file"/>
+
+    <property name="core.jar" location="${dist.dir}/swingExtensions-${version.id}.jar" description="The destination jar for core components"/>
+
+    <target name="clean" description="Clean output directories">
+        <echo>Cleaning dist directory</echo>
+        <delete dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
+
+    <target name="copy-supplements" description="Copy license agreement, notice file and other supplements">
+        <echo>Copying supplements</echo>
+        <copy todir="${dist.dir}">
+            <fileset dir="${supplements.dir}"/>
+        </copy>
+    </target>
+
+    <target name="clean-dist" description="Build the project from the scratch">
+        <antcall target="clean"/>
+        <ant dir="core" target="clean-dist"/>
+        <antcall target="copy-supplements"/>
+    </target>
+</project>
