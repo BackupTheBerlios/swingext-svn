@@ -11,6 +11,8 @@ import java.awt.image.BufferedImage;
  * Therefore, this icon implementation will render a short text or rather a single character and can be used anywhere
  * you would normally use an {@link ImageIcon}.
  * <p/>
+ * $Id$
+ * <p/>
  * <p/>
  * Hint: You can set an affine transform for the font instance this icon uses to make text appear packed tightly or
  * rotate characters.
