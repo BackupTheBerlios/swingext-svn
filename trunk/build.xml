@@ -5,9 +5,15 @@
 
     <property name="dist.dir" location="dist" description="Output directory"/>
     <property name="docs.dir" location="${dist.dir}/docs" description="Documentation directory"/>
+    <property name="release.dir" location="releases"/>
     <property name="supplements.dir" location="supplements" description="Directory containing supplemental file"/>
 
-    <property name="core.jar" location="${dist.dir}/swingExtensions-${version.id}.jar" description="The destination jar for core components"/>
+    <property name="core.jar" location="${dist.dir}/swingExtensions-${version.id}.jar"
+              description="The destination jar for core components"/>
+    <property name="build.zip" location="${dist.dir}/swingExtensions-${version.id}.zip"
+              description="The destination zip for a new release"/>
+
+    <property name="build.log" location="build.log"/>
 
     <target name="clean" description="Clean output directories">
         <echo>Cleaning dist directory</echo>
@@ -27,4 +33,29 @@
         <ant dir="core" target="clean-dist"/>
         <antcall target="copy-supplements"/>
     </target>
+
+    <target name="release" description="Create a new release">
+        <antcall target="clean-dist"/>
+        <tstamp/>
+        <property file="build.number"/>
+        <echo file="${build.log}" append="false">Build number: ${build.number}${line.separator}</echo>
+        <echo file="${build.log}" append="true">Created by: ${user.name}${line.separator}</echo>
+        <echo file="${build.log}" append="true">Created on: ${TODAY}${line.separator}</echo>
+        <echo file="${build.log}" append="true">Built on OS: ${os.name}${line.separator}</echo>
+        <echo file="${build.log}" append="true">$Revision$</echo>
+
+        <input message="Enter svn password:" addproperty="svn.pass"/>
+        <exec executable="${svn.command}">
+            <arg line="commit --username ${svn.user} --password ${svn.pass} --message &quot;Build#${build.number}&quot; ${build.log}"/>
+        </exec>
+        <buildnumber/>
+        <exec executable="${svn.command}">
+            <arg line="commit --username ${svn.user} --password ${svn.pass} --message &quot;Build#${build.number}&quot; build.number"/>
+        </exec>
+
+        <zip destfile="${build.zip}" basedir="${dist.dir}"/>
+        <copyfile src="${build.log}" dest="${dist.dir}/build.log"/>
+    </target>
+
+
 </project>
