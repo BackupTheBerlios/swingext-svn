@@ -6,29 +6,27 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 /**
- *
  * This class implements a simple text-based icon. For several occasions it may come in handy to use unicode
  * characters (like 0x2460) as simple icons instead of having to create images and store those as external resources.
  * Therefore, this icon implementation will render a short text or rather a single character and can be used anywhere
  * you would normally use an {@link ImageIcon}.
- *
+ * <p/>
  * Hint: You can set an affine transform for the font instance this icon uses to make text appear packed tightly or
  * rotate characters.
- *
+ * <p/>
  * Copyright 2006 Torsten Heup
-
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 public class TextIcon implements Icon {
     /**
@@ -38,14 +36,16 @@ public class TextIcon implements Icon {
 
     /**
      * Creates a new text icon using default font and color.
+     *
      * @param text Text to render. (required)
      */
-    public TextIcon(final String text){
+    public TextIcon(final String text) {
         initialize(text, null, null, 1f);
     }
 
     /**
      * Creates a new text icon using the default color.
+     *
      * @param text Text to render. (required)
      * @param font Font so use when rendering. (optional)
      */
@@ -55,20 +55,22 @@ public class TextIcon implements Icon {
 
     /**
      * Creates a new text icon using the default font.
-     * @param text Text to render. (required)
+     *
+     * @param text  Text to render. (required)
      * @param color Foreground color to use. (optional)
      */
-    public TextIcon(final String text, final Color color){
+    public TextIcon(final String text, final Color color) {
         initialize(text, null, color, 1f);
     }
 
     /**
      * Creates a new text icon using the given font and color.
-     * @param text Text to render. (required)
-     * @param font Font so use when rendering. (optional)
+     *
+     * @param text  Text to render. (required)
+     * @param font  Font so use when rendering. (optional)
      * @param color Foreground color to use. (optional)
      */
-    public TextIcon(final String text, final Font font, final Color color){
+    public TextIcon(final String text, final Font font, final Color color) {
         initialize(text, font, color, 1f);
     }
 
@@ -76,8 +78,8 @@ public class TextIcon implements Icon {
      * Creates a new text icon using the given font and color. Additionally, an alpha composite may be
      * specified to make the text icon translucent.
      *
-     * @param text Text to render.
-     * @param font Font so use when rendering. (optional)
+     * @param text  Text to render.
+     * @param font  Font so use when rendering. (optional)
      * @param color Foreground color to use. (optional)
      * @param alpha Alpha composite to set when rendering the text.
      */
@@ -88,8 +90,8 @@ public class TextIcon implements Icon {
     /**
      * Initializes the icon by filling the underlying image buffer.
      *
-     * @param text Text that should be rendered.
-     * @param font Font to use.
+     * @param text  Text that should be rendered.
+     * @param font  Font to use.
      * @param color Foreground color to use.
      * @param alpha Alpha composite which should be used when rendering.
      */

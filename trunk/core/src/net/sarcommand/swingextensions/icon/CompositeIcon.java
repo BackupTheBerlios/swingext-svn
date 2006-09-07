@@ -4,29 +4,27 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- *
  * This class implements an icon which is a composite of a number of other icons. The swing components all allow just
  * a single icon to be set (so do the default renderers). However, on some occasions, for instance when using icons to
  * visualize flags associated with a node in a JTree, you might want to have multiple icons. This class offers a simple
  * matrix which can be filled with your icons, which will then be painted as one.
- *
+ * <p/>
  * Note: This class does not use an image buffer but rather paints the icons directly. Any changes you make to one
  * of your icons after instanciating the CompositeIcon will therefore be taken into account.
- *
+ * <p/>
  * Copyright 2006 Torsten Heup
-
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 public class CompositeIcon implements Icon {
     /**
@@ -49,31 +47,31 @@ public class CompositeIcon implements Icon {
      *
      * @param icons Icons to display.
      */
-    public CompositeIcon(final Icon... icons){
+    public CompositeIcon(final Icon... icons) {
         this(1, icons.length, icons);
     }
 
     /**
      * Creates a new composite icon which displays a list of icons in a matrix.
      *
-     * @param rows Number of rows in the matrix.
+     * @param rows    Number of rows in the matrix.
      * @param columns Number of columns in the matrix.
-     * @param icons Icons to display.
+     * @param icons   Icons to display.
      */
     public CompositeIcon(final int rows, final int columns, final Icon... icons) {
         if (icons.length == 0)
             throw new IllegalArgumentException("No icons specified");
         if (icons.length > rows * columns)
-            throw new IllegalArgumentException("Too many icons specified, expected a maximum of "+rows * columns+" icons");
+            throw new IllegalArgumentException("Too many icons specified, expected a maximum of " + rows * columns + " icons");
         _icons = new Icon[rows][columns];
 
         int row = 0, col = 0, colWidth = 0, maxWidth = 0, rowHeight = 0, maxHeight = 0;
-        for (Icon i:icons){
+        for (Icon i : icons) {
             _icons[row][col++] = i;
             rowHeight = Math.max(rowHeight, i.getIconHeight());
             colWidth += i.getIconWidth();
-            if (col == columns){
-                row ++;
+            if (col == columns) {
+                row++;
                 col = 0;
                 maxHeight += rowHeight;
                 maxWidth = Math.max(colWidth, maxWidth);
@@ -110,8 +108,8 @@ public class CompositeIcon implements Icon {
         final int colWidth = _width / _icons[0].length;
         final int rowHeight = _height / _icons.length;
 
-        for (int row = 0; row < _icons.length; row++){
-            for (int col = 0; col < _icons[row].length; col ++){
+        for (int row = 0; row < _icons.length; row++) {
+            for (int col = 0; col < _icons[row].length; col++) {
                 final Icon icon = _icons[row][col];
                 if (icon == null)
                     break;
