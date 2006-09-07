@@ -1,14 +1,17 @@
 <?xml version="1.0"?>
 <project name="SwingExtensions core" basedir="." default="clean-dist">
-    <property name="dist.dir" location="dist" description="Destination directory. Only used when running as standalone script"/>
-    <property name="docs.dir" location="${dist.dir}/docs" description="Documentation directory. Only used when running as standalone script"/>
+    <property name="dist.dir" location="dist"
+              description="Destination directory. Only used when running as standalone script"/>
+    <property name="docs.dir" location="${dist.dir}/docs"
+              description="Documentation directory. Only used when running as standalone script"/>
     <property name="src.dir" location="src" description="Source path"/>
     <property name="build.dir" location="_build" description="Temporary build path"/>
 
     <property file="../local.build.properties"/>
     <property file="../build.properties"/>
 
-    <property name="core.jar" location="${dist.dir}/swingExtensions-${version.id}.jar" description="Destination jar. Only used when running as standalone script"/>
+    <property name="core.jar" location="${dist.dir}/swingExtensions-${version.id}.jar"
+              description="Destination jar. Only used when running as standalone script"/>
 
     <target name="clean" description="Clean output directories">
         <delete dir="${build.dir}"/>
@@ -26,12 +29,28 @@
     </target>
 
     <target name="package" depends="compile" description="Create jar file">
-        <jar basedir="${build.dir}" destfile="${core.jar}"/>
-    </target>                                                                     
+        <jar basedir="${build.dir}" destfile="${core.jar}" index="true" manifestencoding="UTF-8">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Created-By" value="www.sarcommand.net"/>
+                <attribute name="Implementation-Version" value="${version.id}"/>
+                <attribute name="Implementation-Vendor" value="www.sarcommand.net"/>
+                <attribute name="Implementation-URL" value="swingext.berlios.de"/>
+                <attribute name="Implementation-Title" value="Sarcommand SwingExtensions"/>
+            </manifest>
+        </jar>
+    </target>
 
     <target name="clean-dist" description="Create a new dist from the scratch">
         <antcall target="compile"/>
         <antcall target="create-docs"/>
         <antcall target="package"/>
     </target>
+
+    <target name="grep">
+        <exec command="${svn.command}" outputproperty="svn.result">
+            <arg value="info"/>
+        </exec>
+    </target>
+
 </project>
