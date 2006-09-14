@@ -1,5 +1,11 @@
 package net.sarcommand.swingextensions.applicationsupport;
 
+import net.sarcommand.swingextensions.utilities.XMLExternalizable;
+import net.sarcommand.swingextensions.utilities.XMLFormatException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
@@ -45,7 +51,17 @@ import java.util.List;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class FrameSet {
+public class FrameSet implements XMLExternalizable {
+    public static final String TAG_FRAME = "frame";
+    public static final String TAG_LOCATION = "location";
+    public static final String TAG_SIZE = "size";
+
+    public static final String ATTRIBUTE_ID = "id";
+    public static final String ATTRIBUTE_X = "x";
+    public static final String ATTRIBUTE_Y = "y";
+    public static final String ATTRIBUTE_WIDTH = "width";
+    public static final String ATTRIBUTE_HEIGHT = "height";
+
     public static FrameSet createFrameSet() {
         return new FrameSet();
     }
@@ -95,5 +111,72 @@ public class FrameSet {
             public void windowLostFocus(WindowEvent e) {
             }
         };
+    }
+
+    /**
+     * Write the current component state to xml.
+     *
+     * @param parentElement Element under which the configuration should be inserted.
+     * @throws XMLFormatException If the dom structure could not be created.
+     */
+    public void writeExternal(final Element parentElement) throws XMLFormatException {
+        try {
+            final Document doc = parentElement.getOwnerDocument();
+            for (Window w : _frameHierarchy) {
+                String id = null;
+                for (String idIter : _frames.keySet()) {
+                    if (w.equals(_frames.get(idIter))) {
+                        id = idIter;
+                        break;
+                    }
+                }
+
+                final Element frameElement = doc.createElement(TAG_FRAME);
+                final Element locationElement = doc.createElement(TAG_LOCATION);
+                final Element sizeElement = doc.createElement(TAG_SIZE);
+
+                frameElement.setAttribute(ATTRIBUTE_ID, id);
+                locationElement.setAttribute(ATTRIBUTE_X, "" + w.getX());
+                locationElement.setAttribute(ATTRIBUTE_Y, "" + w.getY());
+                sizeElement.setAttribute(ATTRIBUTE_WIDTH, "" + w.getWidth());
+                sizeElement.setAttribute(ATTRIBUTE_HEIGHT, "" + w.getHeight());
+
+                frameElement.appendChild(locationElement);
+                frameElement.appendChild(sizeElement);
+
+                parentElement.appendChild(frameElement);
+            }
+        } catch (Exception e) {
+            throw new XMLFormatException("Could not externalize frame set", e);
+        }
+    }
+
+    /**
+     * Read the component's state from xml.
+     *
+     * @param parentElement Element under which the configuration has been saved.
+     * @throws XMLFormatException If the dom structure could not be parsed.
+     */
+    public void readExternal(final Element parentElement) throws XMLFormatException {
+        final NodeList list = parentElement.getElementsByTagName(TAG_FRAME);
+        final int frameCount = list.getLength();
+        for (int i = 0; i < frameCount; i++) {
+            final Element e = (Element) list.item(i);
+            final String id = e.getAttribute(ATTRIBUTE_ID);
+            final Window w = _frames.get(id);
+            if (w == null)
+                continue;
+
+            final Element location = (Element) e.getElementsByTagName(TAG_LOCATION).item(0);
+            final Element size = (Element) e.getElementsByTagName(TAG_SIZE).item(0);
+
+            final int x = Integer.parseInt(location.getAttribute(ATTRIBUTE_X));
+            final int y = Integer.parseInt(location.getAttribute(ATTRIBUTE_Y));
+            final int width = Integer.parseInt(size.getAttribute(ATTRIBUTE_WIDTH));
+            final int height = Integer.parseInt(size.getAttribute(ATTRIBUTE_HEIGHT));
+
+            w.setLocation(x, y);
+            w.setSize(width, height);
+        }
     }
 }
