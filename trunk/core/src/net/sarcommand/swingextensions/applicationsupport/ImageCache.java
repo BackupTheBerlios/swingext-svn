@@ -3,8 +3,11 @@ package net.sarcommand.swingextensions.applicationsupport;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,6 +49,10 @@ public class ImageCache {
          */
         ON_ERROR_THROW_EXCEPTION,
         /**
+         * Tells the ImageCache to return null if an image could not be loaded.
+         */
+        ON_ERROR_RETURN_NULL,
+        /**
          * Tells the ImageCache to return an empty dummy image if an image could not be loaded.
          */
         ON_ERROR_RETURN_DUMMY
@@ -65,7 +72,7 @@ public class ImageCache {
     /**
      * Holds a collection of locations which should be searched for images.
      */
-    private static LinkedList<URL> __additionalSearchPaths = new LinkedList<URL>();
+    private static LinkedList<URI> __additionalSearchPaths = new LinkedList<URI>();
 
     /**
      * Loads the specified image and returns it as an instance of ImageIcon.
@@ -73,8 +80,23 @@ public class ImageCache {
      * @param iconName Name of the icon to load.
      * @return ImageIcon holding the specified image.
      */
-    public static ImageIcon loadIcon(final String iconName) {
+    public static synchronized ImageIcon loadIcon(final String iconName) {
         return new ImageIcon(loadImage(iconName));
+    }
+
+    /**
+     * Loads the specified image using the given error policy and returns it as an instance of ImageIcon.
+     *
+     * @param iconName Name of the icon to load.
+     * @param policy   error policy to apply when the icon could not be loaded.
+     * @return ImageIcon holding the specified image.
+     */
+    public static synchronized ImageIcon loadIcon(final String iconName, final ErrorPolicy policy) {
+        final ErrorPolicy prev = __errorPolicy;
+        setErrorPolicy(policy);
+        final ImageIcon icon = loadIcon(iconName);
+        setErrorPolicy(prev);
+        return icon;
     }
 
     /**
@@ -83,37 +105,34 @@ public class ImageCache {
      * @param imageName Name of the image which should be loaded.
      * @return BufferedImage holding the specified image.
      */
-    public static BufferedImage loadImage(final String imageName) {
+    public static synchronized BufferedImage loadImage(final String imageName) {
+        if (imageName == null)
+            return imageNotLoaded(imageName, null);
+
         if (__cache == null)
             __cache = new HashMap<String, BufferedImage>();
 
         if (__cache.containsKey(imageName))
             return __cache.get(imageName);
 
-        final LinkedList<URL> searchPath = new LinkedList<URL>();
+        final LinkedList<URI> searchPath = new LinkedList<URI>();
         final URL resource = ImageCache.class.getClassLoader().getResource(imageName);
+
+
         if (resource == null) {
-            for (URL path : __additionalSearchPaths) {
-                try {
-                    searchPath.add(new URL(path, imageName));
-                } catch (MalformedURLException e) {
-                    throw new RuntimeException("Malformed search path: " + path + " + " + imageName);
-                }
+            for (URI path : __additionalSearchPaths)
+                searchPath.add(path.resolve(imageName));
+        } else {
+            try {
+                searchPath.add(resource.toURI());
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
             }
-        } else
-            searchPath.add(resource);
+        }
 
         BufferedImage image = loadImage(searchPath);
         if (image == null) {
-            switch (__errorPolicy) {
-                case ON_ERROR_RETURN_DUMMY:
-                    return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-                case ON_ERROR_THROW_EXCEPTION:
-                    final StringBuilder searchPathBuffer = new StringBuilder(256);
-                    for (URL path : searchPath)
-                        searchPathBuffer.append(path.toString()).append(' ');
-                    throw new RuntimeException("Could not access resource, searchpath is " + searchPathBuffer);
-            }
+            return imageNotLoaded(imageName, searchPath);
         }
 
         __cache.put(imageName, image);
@@ -121,11 +140,42 @@ public class ImageCache {
     }
 
     /**
+     * Loads the specified image using the given error policy and returns it as an instance of BufferedImage.
+     *
+     * @param imageName Name of the image to load.
+     * @param policy    error policy to apply when the image could not be loaded.
+     * @return BufferedImage holding the specified image.
+     */
+    public static synchronized BufferedImage loadImage(final String imageName, final ErrorPolicy policy) {
+        final ErrorPolicy prev = __errorPolicy;
+        setErrorPolicy(policy);
+        final BufferedImage image = loadImage(imageName);
+        setErrorPolicy(prev);
+        return image;
+    }
+
+    protected static BufferedImage imageNotLoaded(final String imageName, final Collection<URI> searchPath) {
+        switch (__errorPolicy) {
+            case ON_ERROR_RETURN_NULL:
+                return null;
+            case ON_ERROR_RETURN_DUMMY:
+                return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+            case ON_ERROR_THROW_EXCEPTION:
+                final StringBuilder searchPathBuffer = new StringBuilder(256);
+                for (URI path : searchPath)
+                    searchPathBuffer.append(path.toString()).append(' ');
+                throw new RuntimeException("Could not access resource " + imageName + ", searchpath is " + searchPathBuffer);
+            default:
+                return null;
+        }
+    }
+
+    /**
      * Adds another location which should be searched for images upon lookup.
      *
      * @param searchPath URL pointing to a location which should be searched for images.
      */
-    public static void addAdditionalSearchPath(final URL searchPath) {
+    public static synchronized void addAdditionalSearchPath(final URI searchPath) {
         __additionalSearchPaths.add(searchPath);
     }
 
@@ -134,7 +184,7 @@ public class ImageCache {
      *
      * @param searchPath URL pointing to a location which should be searched for images.
      */
-    public static void removeAdditionalSearchPath(final URL searchPath) {
+    public static synchronized void removeAdditionalSearchPath(final URI searchPath) {
         __additionalSearchPaths.remove(searchPath);
     }
 
@@ -143,7 +193,7 @@ public class ImageCache {
      *
      * @return Collection<URL:searchLocations>
      */
-    public static Collection<URL> getAdditionalSearchPaths() {
+    public static synchronized Collection<URI> getAdditionalSearchPaths() {
         return Collections.unmodifiableCollection(__additionalSearchPaths);
     }
 
@@ -152,7 +202,7 @@ public class ImageCache {
      *
      * @param errorPolicy see the ErrorPolicy enum
      */
-    public static void setErrorPolicy(final ErrorPolicy errorPolicy) {
+    public static synchronized void setErrorPolicy(final ErrorPolicy errorPolicy) {
         __errorPolicy = errorPolicy;
     }
 
@@ -161,7 +211,7 @@ public class ImageCache {
      *
      * @return see the ErrorPolicy enum
      */
-    public ErrorPolicy getErrorPolicy() {
+    public static synchronized ErrorPolicy getErrorPolicy() {
         return __errorPolicy;
     }
 
@@ -172,10 +222,15 @@ public class ImageCache {
      * @param searchPaths Collection<URL:searchPath>
      * @return the image if it could be loaded, null otherwise.
      */
-    protected static BufferedImage loadImage(final Collection<URL> searchPaths) {
-        for (URL url : searchPaths) {
+    protected static BufferedImage loadImage(final Collection<URI> searchPaths) {
+        for (URI uri : searchPaths) {
             try {
-                return ImageIO.read(url);
+                if (uri.isAbsolute())
+                    return ImageIO.read(uri.toURL());
+                InputStream stream = ImageCache.class.getClassLoader().getResourceAsStream(uri.toString());
+                if (stream != null)
+                    return ImageIO.read(stream);
+                return ImageIO.read(new File(uri.toString()));
             } catch (IOException e) {
                 //ignored at this point
             }
