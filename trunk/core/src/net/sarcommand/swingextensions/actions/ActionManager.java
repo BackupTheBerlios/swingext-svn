@@ -122,6 +122,20 @@ public class ActionManager {
     }
 
     /**
+     * Invokes the specified method.
+     *
+     * @param actionID      id of the method which should be invoked
+     * @param source        source of the ActionEvent fired
+     * @param actionCommand action command to be passed to the ActionEvent
+     */
+    public void invoke(final Object actionID, final Object source, final String actionCommand) {
+        final Action action = getAction(actionID);
+        if (action == null)
+            throw new IllegalArgumentException("Illegal actionID: " + action);
+        action.actionPerformed(new ActionEvent(source, ActionEvent.ACTION_PERFORMED, actionCommand));
+    }
+
+    /**
      * Invoked by ManagedActions when they have been invoked. The ActionManager will search the responder chain for
      * a suitable action handle to process the triggered action.
      *
@@ -147,13 +161,13 @@ public class ActionManager {
 
         /* Check if this action is marked as a focus action */
         final Object focusActionProperty = a.getValue(ManagedAction.RESPONDER_CHAIN_ROOT_FOCUS);
-        boolean isFocusAction = focusActionProperty != null && focusActionProperty.equals(Boolean.TRUE);
+        boolean isFocusAction = focusActionProperty == null || focusActionProperty.equals(Boolean.TRUE);
 
         /* Try to find a proper handler for the action */
         if (source instanceof Component) {
             /* Move up the hierarchy to find a suitable responder */
-            Component runner = isFocusAction ? KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner()
-                    : (Component) source;
+            final Component focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().getPermanentFocusOwner();
+            Component runner = isFocusAction && focusOwner != null ? focusOwner : (Component) source;
             event.setSource(runner);
             while ((runner = SwingExtUtil.getParent(runner)) != null) {
                 if (runner instanceof ActionHandler) {
