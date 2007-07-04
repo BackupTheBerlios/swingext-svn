@@ -374,7 +374,8 @@ public class RecentFilesList {
             _ownUpdateFlag = false;
         }
 
-        _pcs.firePropertyChange(PROPERTY_RECENT_LIST, previousList, _recentFiles);
+        _pcs.firePropertyChange(PROPERTY_RECENT_LIST, new LinkedList<File>(previousList),
+                new LinkedList<File>(_recentFiles));
     }
 
     /**
