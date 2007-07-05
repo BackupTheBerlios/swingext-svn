@@ -5,6 +5,8 @@ import net.sarcommand.swingextensions.utilities.SwingExtUtil;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -84,6 +86,31 @@ public class ActionManager {
     private static HashMap<Object, Collection<Action>> __groups;
     private static HashMap<Object, ActionState> __actionStates;
 
+    protected static boolean __initialized;
+    protected static Component __lastFocusOwner;
+
+    /**
+     * Initializes the ActionManager. This method will automatically be triggered by getAction.
+     */
+    public static void initialize() {
+        if (__initialized)
+            return;
+
+        final PropertyChangeListener listener = new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                final Object newValue = evt.getNewValue();
+                if (evt.getPropertyName().equals("permanentFocusOwner") && newValue != null
+                        && !isActionControl(newValue)) {
+                    __lastFocusOwner = (Component) newValue;
+                }
+            }
+        };
+
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener(listener);
+
+        __initialized = true;
+    }
+
     /**
      * Returns the action for the given identifier. If the action already exists, it will simply be returned,
      * otherwise the action provider will be used to create a new singleton instance.
@@ -92,6 +119,9 @@ public class ActionManager {
      * @return action for the given identifier.
      */
     public static Action getAction(final Object identifier) {
+        if (!__initialized)
+            initialize();
+
         if (identifier == null)
             throw new IllegalArgumentException("Parameter 'identifier' must not be null!");
 
@@ -122,13 +152,23 @@ public class ActionManager {
     }
 
     /**
+     * Returns whether the specified object is an action control (e.g. a button, a menu item etc.).
+     *
+     * @param object Object to check.
+     * @return whether the specified object is an action control
+     */
+    protected static boolean isActionControl(final Object object) {
+        return object != null && SwingExtUtil.hasMethod(object, "setAction", Action.class);
+    }
+
+    /**
      * Invokes the specified method.
      *
      * @param actionID      id of the method which should be invoked
      * @param source        source of the ActionEvent fired
      * @param actionCommand action command to be passed to the ActionEvent
      */
-    public void invoke(final Object actionID, final Object source, final String actionCommand) {
+    public static void invoke(final Object actionID, final Object source, final String actionCommand) {
         final Action action = getAction(actionID);
         if (action == null)
             throw new IllegalArgumentException("Illegal actionID: " + action);
@@ -167,7 +207,9 @@ public class ActionManager {
         if (source instanceof Component) {
             /* Move up the hierarchy to find a suitable responder */
             final Component focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().getPermanentFocusOwner();
-            Component runner = isFocusAction && focusOwner != null ? focusOwner : (Component) source;
+            Component runner = isFocusAction && focusOwner != null ? __lastFocusOwner : (Component) source;
+            if (runner == null)
+                return;
             event.setSource(runner);
             while ((runner = SwingExtUtil.getParent(runner)) != null) {
                 if (runner instanceof ActionHandler) {
