@@ -25,8 +25,8 @@ import java.io.File;
  * limitations under the License.
  */
 public class ExtensionFileFilter extends FileFilter {
-    private final String[] _extensions;
-    private final String _description;
+    private String[] _extensions;
+    private String _description;
     private final boolean _acceptDirectories;
 
     /**
@@ -62,7 +62,7 @@ public class ExtensionFileFilter extends FileFilter {
         if (_acceptDirectories && f.isDirectory())
             return true;
         final String fileName = f.getName();
-        final int dotIndex = fileName.lastIndexOf('.');
+        final int dotIndex = fileName.lastIndexOf('.') + 1;
         if (dotIndex <= 0)
             return false;
 
@@ -89,6 +89,25 @@ public class ExtensionFileFilter extends FileFilter {
      */
     public String[] getExtensions() {
         return _extensions;
+    }
+
+    /**
+     * Sets description of this filter. For example: "JPG and GIF Images"
+     *
+     * @param description Description of this filter.
+     * @see javax.swing.filechooser.FileView#getName
+     */
+    public void setDescription(String description) {
+        _description = description;
+    }
+
+    /**
+     * Sets the file name extensions which will be accepted by this filter.
+     *
+     * @param extensions Extensions which will be accepted by this filter.
+     */
+    public void setExtensions(String... extensions) {
+        _extensions = extensions;
     }
 
     /**
