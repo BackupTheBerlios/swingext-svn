@@ -1,6 +1,7 @@
 package net.sarcommand.swingextensions.actions;
 
 import net.sarcommand.swingextensions.applicationsupport.ImageCache;
+import net.sarcommand.swingextensions.utilities.KeyUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -63,13 +64,11 @@ public class ResourceBundleActionProvider implements ActionProvider {
 
         resourceKey = prefix + _pathKey + Action.ACCELERATOR_KEY;
         if (_resourceBundle.containsKey(resourceKey)) {
-            final String accelerator = _resourceBundle.getString(resourceKey);
+            String accelerator = _resourceBundle.getString(resourceKey);
             if (accelerator.startsWith("menu"))
-                action.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-                        KeyStroke.getKeyStroke(accelerator.substring(4)).getKeyCode(),
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-            else
-                action.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(accelerator));
+                accelerator = accelerator.replace("menu", KeyUtilities.getModifiersAsText(
+                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()).trim());
+            action.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(accelerator));
         }
 
         if (action.getValue(Action.NAME) == null)
