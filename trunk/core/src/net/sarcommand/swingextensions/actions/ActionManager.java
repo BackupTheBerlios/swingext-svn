@@ -200,21 +200,22 @@ public class ActionManager {
         final Object source = event.getSource();
 
         /* Check if this action is marked as a focus action */
-        final Object focusActionProperty = a.getValue(ManagedAction.RESPONDER_CHAIN_ROOT_FOCUS);
-        boolean isFocusAction = focusActionProperty == null || focusActionProperty.equals(Boolean.TRUE);
+        final Object focusActionProperty = a.getValue(ManagedAction.RESPONDER_CHAIN_ROOT);
+        final boolean isComponentAction = __lastFocusOwner == null || (focusActionProperty != null &&
+                focusActionProperty.equals(ManagedAction.RESPONDER_CHAIN_ROOT_COMPONENT));
 
         /* Try to find a proper handler for the action */
         if (source instanceof Component) {
             /* Move up the hierarchy to find a suitable responder */
-            Component runner = isFocusAction && __lastFocusOwner != null ? __lastFocusOwner : (Component) source;
+            Component runner = isComponentAction ? (Component) source : __lastFocusOwner;
             event.setSource(runner);
-            while ((runner = SwingExtUtil.getParent(runner)) != null) {
+            do {
                 if (runner instanceof ActionHandler) {
                     eventWasConsumed = ((ActionHandler) runner).handleAction(actionIdentifier, event);
                     if (eventWasConsumed)
                         break;
                 }
-            }
+            } while ((runner = SwingExtUtil.getParent(runner)) != null);
         }
 
         /* Forward the action to the default action consumer */
