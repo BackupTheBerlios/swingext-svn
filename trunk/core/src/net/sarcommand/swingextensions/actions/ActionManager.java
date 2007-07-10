@@ -206,10 +206,7 @@ public class ActionManager {
         /* Try to find a proper handler for the action */
         if (source instanceof Component) {
             /* Move up the hierarchy to find a suitable responder */
-            final Component focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().getPermanentFocusOwner();
-            Component runner = isFocusAction && focusOwner != null ? __lastFocusOwner : (Component) source;
-            if (runner == null)
-                return;
+            Component runner = isFocusAction && __lastFocusOwner != null ? __lastFocusOwner : (Component) source;
             event.setSource(runner);
             while ((runner = SwingExtUtil.getParent(runner)) != null) {
                 if (runner instanceof ActionHandler) {
