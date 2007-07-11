@@ -43,44 +43,31 @@ public class ResourceBundleActionProvider implements ActionProvider {
     }
 
     private void mapAll(Object identifier, ManagedAction action) {
-        final String prefix = identifier.toString();
+        final String prefix = identifier.toString() + _pathKey;
+        final int length = prefix.length();
 
-        map(action, prefix, Action.ACTION_COMMAND_KEY);
-        map(action, prefix, Action.DISPLAYED_MNEMONIC_INDEX_KEY);
-        map(action, prefix, Action.LARGE_ICON_KEY);
-        map(action, prefix, Action.LONG_DESCRIPTION);
-        map(action, prefix, Action.MNEMONIC_KEY);
-        map(action, prefix, Action.NAME);
-        map(action, prefix, Action.SELECTED_KEY);
-        map(action, prefix, Action.SHORT_DESCRIPTION);
-        map(action, prefix, Action.SMALL_ICON);
-        map(action, prefix, ManagedAction.GROUP_KEY);
-
-        String resourceKey;
-
-        resourceKey = prefix + _pathKey + ENABLED_KEY;
-        if (_resourceBundle.containsKey(resourceKey))
-            action.setEnabled(!_resourceBundle.getString(resourceKey).equalsIgnoreCase("false"));
-
-        resourceKey = prefix + _pathKey + Action.ACCELERATOR_KEY;
-        if (_resourceBundle.containsKey(resourceKey)) {
-            String accelerator = _resourceBundle.getString(resourceKey);
-            if (accelerator.startsWith("menu"))
-                accelerator = accelerator.replace("menu", KeyUtilities.getModifiersAsText(
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()).trim());
-            action.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(accelerator));
+        for (String s : _resourceBundle.keySet()) {
+            if (s.startsWith(prefix)) {
+                final String key = s.substring(length);
+                final String value = _resourceBundle.getString(s);
+                if (key.equals(ENABLED_KEY))
+                    action.setEnabled(!value.equalsIgnoreCase("false"));
+                else if (key.equals(Action.ACCELERATOR_KEY)) {
+                    String accelerator = value;
+                    if (accelerator.startsWith("menu"))
+                        accelerator = accelerator.replace("menu", KeyUtilities.getModifiersAsText(
+                                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()).trim());
+                    action.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(accelerator));
+                } else if (key.equals(Action.SMALL_ICON) || key.equals(Action.LARGE_ICON_KEY)) {
+                    action.putValue(key, ImageCache.loadIcon(value));
+                } else {
+                    action.putValue(key, value);
+                }
+            }
         }
 
-        if (action.getValue(Action.NAME) == null)
-            action.putValue(Action.NAME, prefix);
-    }
 
-    protected void map(final Action action, final String resourceKey, final String property) {
-        final String key = resourceKey + _pathKey + property;
-        if (_resourceBundle.containsKey(key))
-            if (property.equals(Action.SMALL_ICON) || property.equals(Action.LARGE_ICON_KEY)) {
-                action.putValue(property, ImageCache.loadIcon(_resourceBundle.getString(key)));
-            } else
-                action.putValue(property, _resourceBundle.getString(key));
+        if (action.getValue(Action.NAME) == null)
+            action.putValue(Action.NAME, identifier);
     }
 }
