@@ -1,10 +1,14 @@
 <?xml version="1.0"?>
 <project name="SwingExtensions core" basedir="." default="clean-dist">
+
     <property name="dist.dir" location="dist"
               description="Destination directory. Only used when running as standalone script"/>
     <property name="docs.dir" location="${dist.dir}/docs"
               description="Documentation directory. Only used when running as standalone script"/>
+    <property name="lib.dir" location="../libraries" description="Library path"/>
     <property name="src.dir" location="src" description="Source path"/>
+    <property name="resources.dir" location="resources" description="Additional resources"/>
+    <property name="src.test.dir" location="src.test" description="Test source path"/>
     <property name="build.dir" location="_build" description="Temporary build path"/>
 
     <property file="../local.build.properties"/>
@@ -13,13 +17,35 @@
     <property name="core.jar" location="${dist.dir}/swingExtensions-${version.id}.jar"
               description="Destination jar. Only used when running as standalone script"/>
 
+    <path id="classpath.compile"/>
+    <path id="classpath.test">
+        <path refid="classpath.compile"/>
+        <!--<pathelement location="${lib.dir}/${junit.lib}"/>-->
+        <pathelement location="/Users/heup/dev/swingextensions/libraries/junit-4.1.jar"/>
+    </path>
+
     <target name="clean" description="Clean output directories">
         <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}"/>
     </target>
 
     <target name="compile" depends="clean" description="Compile source files">
         <javac srcdir="${src.dir}" destdir="${build.dir}"/>
+        <copy todir="${build.dir}">
+            <fileset dir="${resources.dir}"/>
+        </copy>
+    </target>
+
+    <target name="compile.tests" depends="clean">
+        <javac destdir="${build.dir}">
+            <classpath>
+                <pathelement location="${lib.dir}/${junit.lib}"/>
+            </classpath>
+            <src location="${src.dir}"/>
+            <src location="${src.test.dir}"/>
+        </javac>
     </target>
 
     <target name="create-docs" description="Generate javadoc">
@@ -29,11 +55,14 @@
     </target>
 
     <target name="package" depends="compile" description="Create jar file">
+        <!--Will be skipped if the commit number is already defined-->
+        <input addproperty="revision" message="Please enter the current revision"/>
+
         <jar basedir="${build.dir}" destfile="${core.jar}" index="true" manifestencoding="UTF-8">
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Created-By" value="www.sarcommand.net"/>
-                <attribute name="Implementation-Version" value="${version.id}"/>
+                <attribute name="Implementation-Version" value="${version.id}b${revision}"/>
                 <attribute name="Implementation-Vendor" value="www.sarcommand.net"/>
                 <attribute name="Implementation-URL" value="swingext.berlios.de"/>
                 <attribute name="Implementation-Title" value="Sarcommand SwingExtensions"/>
@@ -41,16 +70,26 @@
         </jar>
     </target>
 
+    <target name="test" description="Run automated test cases">
+        <!--<antcall target="clean"/>-->
+        <!--<antcall target="compile.tests"/>-->
+        <!--<junit fork="true" dir="."  showoutput="true" errorproperty="test.error" failureproperty="test.fail">-->
+        <!--<classpath refid="classpath.test"/>-->
+        <!--<batchtest>-->
+        <!--<fileset dir="${src.test.dir}"/>-->
+        <!--</batchtest>-->
+        <!--</junit>-->
+        <!--<fail if="test.error"/>-->
+        <!--<fail if="test.fail"/>-->
+    </target>
+
     <target name="clean-dist" description="Create a new dist from the scratch">
+        <antcall target="test"/>
+        <fail if="test.failed"/>
+
+        <antcall target="clean"/>
         <antcall target="compile"/>
         <antcall target="create-docs"/>
         <antcall target="package"/>
     </target>
-
-    <target name="grep">
-        <exec command="${svn.command}" outputproperty="svn.result">
-            <arg value="info"/>
-        </exec>
-    </target>
-
 </project>
