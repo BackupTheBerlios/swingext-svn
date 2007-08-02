@@ -16,7 +16,6 @@ public class ExceptionDialogPane extends JComponent {
     }
 
     public String getUIClassID() {
-        System.out.println("getUIClass");
         if (!UIManager.getDefaults().containsKey(UI_KEY))
             UIManager.getDefaults().put(UI_KEY, BasicExceptionDialogPaneUI.class.getName());
         return UI_KEY;
