@@ -13,16 +13,16 @@ import java.awt.geom.Point2D;
 
 /**
  * Implements the most common ajax-like look for a progress indicator.
- *
+ * <p/>
  * <hr/>
  * Copyright 2006 Torsten Heup
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -61,13 +61,13 @@ public class DefaultProgressIndicatorUI extends ProgressIndicatorUI {
             throw new IllegalArgumentException("Cannot create UI for class " + c.getClass().getName());
         return new DefaultProgressIndicatorUI();
     }
-    
-    public DefaultProgressIndicatorUI(){
+
+    public DefaultProgressIndicatorUI() {
         initialize();
     }
 
     public void initialize() {
-        _baseColor = new Color(180,180,180);
+        _baseColor = new Color(180, 180, 180);
         _colors = new Color[]{
                 ColorUtilities.darker(_baseColor, 180),
                 ColorUtilities.darker(_baseColor, 150),
@@ -82,13 +82,13 @@ public class DefaultProgressIndicatorUI extends ProgressIndicatorUI {
         _target = (JProgressIndicator) c;
         if (_timer != null)
             stopProgress();
-        _timer = new Timer(_target.getUpdateDelay(),new ActionListener() {
+        _timer = new Timer(_target.getUpdateDelay(), new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
                 timerIncrement();
             }
         });
-        _target.setMinimumSize(new Dimension(24,24));
-        _target.setPreferredSize(new Dimension(32,32));
+        _target.setMinimumSize(new Dimension(24, 24));
+        _target.setPreferredSize(new Dimension(32, 32));
     }
 
     public void startProgress() {
@@ -102,7 +102,7 @@ public class DefaultProgressIndicatorUI extends ProgressIndicatorUI {
         _target.repaint();
     }
 
-    protected void timerIncrement(){
+    protected void timerIncrement() {
         _timerValue++;
         if (_timerValue > 11)
             _timerValue = 0;
@@ -118,15 +118,15 @@ public class DefaultProgressIndicatorUI extends ProgressIndicatorUI {
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        final Point2D center = new Point2D.Double(bounds.width / 2.,bounds.height / 2.);
+        final Point2D center = new Point2D.Double(bounds.width / 2., bounds.height / 2.);
         final double innerInset = bounds.height * .15;
         final double outerInset = ((bounds.height - innerInset) / 2.) - 1;
 
-        g2.setStroke(new BasicStroke(Math.max(bounds.height / 30f,1.2f),BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL,0));
+        g2.setStroke(new BasicStroke(Math.max(bounds.height / 30f, 1.2f), BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL, 0));
         final Line2D line = new Line2D.Double(0, innerInset, 0, outerInset);
         g2.translate(center.getX(), center.getY());
 
-        final boolean running = _target.isRunning();
+        final boolean running = _target.isIndicatingProgress();
         if (!running)
             g2.setColor(_baseColor);
         final AffineTransform transform = new AffineTransform();
@@ -137,7 +137,7 @@ public class DefaultProgressIndicatorUI extends ProgressIndicatorUI {
             }
 
             transform.setToTranslation(center.getX(), center.getY());
-            transform.rotate(Math.toRadians(i*30));
+            transform.rotate(Math.toRadians(i * 30));
             g2.setTransform(transform);
             g2.draw(line);
         }
