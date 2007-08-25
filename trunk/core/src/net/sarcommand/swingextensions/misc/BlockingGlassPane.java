@@ -26,6 +26,8 @@ import java.awt.image.VolatileImage;
  * The progress indicator will stop automatically whenever the glass pane is hidden and will be reenabled as soon
  * as the component is shown on the screen.
  * <p/>
+ * KNOWN BUG: The java 6 dp1 for mac seems to have a rendering issue when using image buffers. The blurred version
+ * will therefore not draw properly.
  * <hr/>
  * Copyright 2006 Torsten Heup
  * <p/>
