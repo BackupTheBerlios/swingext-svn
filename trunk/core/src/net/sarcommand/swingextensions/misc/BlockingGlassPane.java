@@ -122,8 +122,6 @@ public class BlockingGlassPane extends JPanel {
             final JRootPane parent = (JRootPane) getParent();
             final Graphics2D tempGraphics = tempImage.createGraphics();
             parent.getContentPane().paint(tempGraphics);
-            tempGraphics.setColor(getBackground());
-            tempGraphics.fillRect(0, 0, getWidth(), getHeight());
             tempGraphics.dispose();
 
             _imageBuffer.createGraphics().drawImage(tempImage, _blurFilter, 0, 0);
