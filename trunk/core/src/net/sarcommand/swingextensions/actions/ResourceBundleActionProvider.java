@@ -15,6 +15,14 @@ public class ResourceBundleActionProvider implements ActionProvider {
     private String _pathKey;
     private static final String ENABLED_KEY = "Enabled";
 
+    public ResourceBundleActionProvider(final String bundleName) {
+        this(ResourceBundle.getBundle(bundleName), "");
+    }
+
+    public ResourceBundleActionProvider(final String bundleName, final String pathKey) {
+        this(ResourceBundle.getBundle(bundleName), pathKey);
+    }
+
     public ResourceBundleActionProvider(final ResourceBundle bundle) {
         this(bundle, "");
     }
@@ -68,6 +76,6 @@ public class ResourceBundleActionProvider implements ActionProvider {
 
 
         if (action.getValue(Action.NAME) == null)
-            action.putValue(Action.NAME, identifier);
+            action.putValue(Action.NAME, identifier.toString());
     }
 }
