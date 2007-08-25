@@ -3,10 +3,7 @@ package net.sarcommand.swingextensions.misc;
 import net.sarcommand.swingextensions.gimmicks.ImageOperations;
 
 import javax.swing.*;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -44,6 +41,8 @@ import java.awt.image.VolatileImage;
  * limitations under the License.
  */
 public class BlockingGlassPane extends JPanel {
+    public static final String DEFAULT_STYLE = "defaultStyle";
+
     /**
      * The progress indicator instance displayed in the center of the screen.
      */
@@ -151,6 +150,8 @@ public class BlockingGlassPane extends JPanel {
         StyleConstants.setAlignment(_attributeSetCentered, StyleConstants.ALIGN_CENTER);
 
         _blurFilter = ImageOperations.createSimpleBoxBlurFilter();
+
+        _messageSection.addStyle(DEFAULT_STYLE, null);
     }
 
     protected void initLayout() {
@@ -197,13 +198,31 @@ public class BlockingGlassPane extends JPanel {
     }
 
     /**
-     * Sets a message to be displayed at the center of the screen. By default, the message will be centered.
+     * Sets a message to be displayed below the progress indicator. By default, the message will be centered.
      *
      * @param message Message to display.
      */
     public void setMessage(final String message) {
-        _messageSection.setText(message);
+        setMessage(message, DEFAULT_STYLE);
         _messageSection.setParagraphAttributes(_attributeSetCentered, false);
+    }
+
+    /**
+     * Sets a message to be displayed below the progress indicator, using a given style. In order to refer to a named
+     * style, you have to install it first using the getMessageDocument() method.
+     *
+     * @param message   Message to display.
+     * @param styleName Name of the style to be used.
+     */
+    public void setMessage(final String message, final String styleName) {
+        final StyledDocument styledDocument = _messageSection.getStyledDocument();
+        try {
+            styledDocument.remove(0, styledDocument.getLength());
+            styledDocument.insertString(0, message, styledDocument.getStyle(styleName));
+        } catch (BadLocationException e) {
+            //really should never happen
+            e.printStackTrace();
+        }
     }
 
     /**
