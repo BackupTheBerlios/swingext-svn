@@ -1,5 +1,7 @@
 package net.sarcommand.swingextensions.misc;
 
+import net.sarcommand.swingextensions.gimmicks.ImageOperations;
+
 import javax.swing.*;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
@@ -7,12 +9,16 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.VolatileImage;
 
 /**
  * Implements a simple component which can be used as a glass pane to block windows while the application is working.
  * The BlockingGlassPane application will
  * <p/>
- * <li>Create a gray translucent overlay for the frame (background color)</li>
+ * <li>Create a gray translucent overlay for the frame (background color), blurring the content pane (this is
+ * optional)</li>
  * <li>Block all input events from mouse and keyboard</li>
  * <li>Display an animated JProgressIndicator in the center of the screen</li>
  * <li>Allow you to display a status message below the progress indicator which accepts plain and styled text</li>
@@ -53,10 +59,75 @@ public class BlockingGlassPane extends JPanel {
     protected MutableAttributeSet _attributeSetCentered;
 
     /**
+     * Determines whether the contents of the contentPane should be drawn blurred.
+     */
+    protected boolean _blurringContentPane;
+
+    /**
+     * A hardware accelerated image buffer used when blurring the content pane.
+     */
+    protected VolatileImage _imageBuffer;
+
+    /**
+     * The filter operation used to create the blur effect if _blurringContentPane has been set.
+     */
+    protected BufferedImageOp _blurFilter;
+
+    /**
      * Creates a new BlockingGlassPane instance
      */
     public BlockingGlassPane() {
         initialize();
+        setBlurringContentPane(true);
+    }
+
+    /**
+     * Returns whether the content pane will be blurred when the glasspane is visible. Defaults to true.
+     *
+     * @return whether the content pane will be blurred.
+     */
+    public boolean isBlurringContentPane() {
+        return _blurringContentPane;
+    }
+
+    /**
+     * Sets whether or not the content pane should be blurred when the glasspane is visible. Defaults to true. Note
+     * that setting this property does not guarantee that a blur effect will be used: For technical reasons, this will
+     * only work when the glasspane is used within a JRootPane (which will be the case for all swing frames and windows.
+     *
+     * @param blurringContentPane whether or not the content pane should be blurred.
+     */
+    public void setBlurringContentPane(boolean blurringContentPane) {
+        _blurringContentPane = blurringContentPane;
+        if (blurringContentPane)
+            recreateImageBuffer();
+        else
+            _imageBuffer = null;
+    }
+
+    /**
+     * Recreates the internal image buffer used to store the blurred version of the underlying content pane. This method
+     * will be invoked whenever:
+     * <p/>
+     * <li>The glasspane is resized</li>
+     * <li>The glasspane is shown after being hidden</li>
+     * <li>The contents of the hardware-accelerated buffer have been lost since the last repaint. This should never
+     * happen unless the screensaver turns on</li>
+     */
+    protected void recreateImageBuffer() {
+        if (getWidth() > 0 && getHeight() > 0 && getParent() instanceof JRootPane) {
+            final BufferedImage tempImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+            _imageBuffer = createVolatileImage(getWidth(), getHeight());
+
+            final JRootPane parent = (JRootPane) getParent();
+            final Graphics2D tempGraphics = tempImage.createGraphics();
+            parent.getContentPane().paint(tempGraphics);
+            tempGraphics.setColor(getBackground());
+            tempGraphics.fillRect(0, 0, getWidth(), getHeight());
+            tempGraphics.dispose();
+
+            _imageBuffer.createGraphics().drawImage(tempImage, _blurFilter, 0, 0);
+        }
     }
 
     protected void initialize() {
@@ -68,6 +139,7 @@ public class BlockingGlassPane extends JPanel {
     protected void initComponents() {
         setOpaque(false);
         setBackground(new Color(100, 100, 100, 50));
+
         _indicator = new JProgressIndicator();
         _indicator.setPreferredSize(new Dimension(64, 64));
 
@@ -77,6 +149,8 @@ public class BlockingGlassPane extends JPanel {
 
         _attributeSetCentered = new SimpleAttributeSet();
         StyleConstants.setAlignment(_attributeSetCentered, StyleConstants.ALIGN_CENTER);
+
+        _blurFilter = ImageOperations.createSimpleBoxBlurFilter();
     }
 
     protected void initLayout() {
@@ -113,6 +187,11 @@ public class BlockingGlassPane extends JPanel {
 
             public void componentShown(ComponentEvent e) {
                 _indicator.startProgress();
+                recreateImageBuffer();
+            }
+
+            public void componentResized(ComponentEvent e) {
+                recreateImageBuffer();
             }
         });
     }
@@ -138,13 +217,21 @@ public class BlockingGlassPane extends JPanel {
     }
 
     /**
-     * Overwritten to create a transparent gray overlay.
+     * Overwritten to create a transparent gray overlay. If the according property is set, the content pane will
+     * also be blurred.
      *
      * @param g Graphics to use when painting the component.
      */
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(getBackground());
-        g.fillRect(0, 0, getWidth(), getHeight());
+        final Graphics2D g2 = (Graphics2D) g;
+        if (_blurringContentPane && _imageBuffer != null) {
+            while (_imageBuffer.contentsLost())
+                recreateImageBuffer();
+            g2.drawImage(_imageBuffer, 0, 0, null);
+        }
+
+        g2.setColor(getBackground());
+        g2.fillRect(0, 0, getWidth(), getHeight());
     }
 }
