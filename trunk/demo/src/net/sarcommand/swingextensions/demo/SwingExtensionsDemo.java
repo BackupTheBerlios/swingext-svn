@@ -1,6 +1,7 @@
 package net.sarcommand.swingextensions.demo;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * A simple demo applications which displays some of the swing extensions along with a brief description.
@@ -20,7 +21,7 @@ import javax.swing.*;
  * limitations under the License.
  */
 public class SwingExtensionsDemo {
-    private static final String[] DEMO_CLASSES = {};
+    private static final Class[] DEMO_CLASSES = {BlockingGlassPaneDemo.class};
 
     private JTabbedPane _demoPanel;
 
@@ -38,9 +39,8 @@ public class SwingExtensionsDemo {
     protected void initComponents() {
         _demoPanel = new JTabbedPane();
 
-        for (String s : DEMO_CLASSES) {
+        for (Class demoClass : DEMO_CLASSES) {
             try {
-                final Class demoClass = Class.forName(s);
                 final DemoClass demo = (DemoClass) demoClass.newInstance();
 
                 final JTextArea descArea = new JTextArea(demo.getDemoDescription());
@@ -50,14 +50,16 @@ public class SwingExtensionsDemo {
 
                 final JSplitPane panel = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
                 panel.setTopComponent(demo);
-                panel.setBottomComponent(new JScrollPane(descArea));
+                final JScrollPane pane = new JScrollPane(descArea);
+                pane.setPreferredSize(new Dimension(Integer.MAX_VALUE, 100));
+                panel.setBottomComponent(pane);
                 panel.setResizeWeight(0.7);
 
                 _demoPanel.add(demo.getDemoName(), panel);
-            } catch (ClassNotFoundException e) {
-                System.err.println("Could not locate demo class " + s);
             } catch (Exception e) {
-                System.err.println("Could not instanciate demo " + s);
+                System.err.println("Could not instanciate demo " + demoClass.getName());
+                e.printStackTrace();
+
             }
         }
 
