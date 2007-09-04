@@ -133,6 +133,9 @@ public class ActionManager {
 
         if (!__actionMap.containsKey(identifier)) {
             final Action action = __actionProvider.createAction(identifier);
+            if (action == null)
+                throw new RuntimeException("Could not obtain action " + identifier + ", the current action " +
+                        "provider is " + __actionProvider);
             __actionMap.put(identifier, action);
 
             final Object group = action.getValue(ManagedAction.GROUP_KEY);
