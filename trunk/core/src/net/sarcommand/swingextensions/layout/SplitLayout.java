@@ -97,7 +97,6 @@ public class SplitLayout implements LayoutManager2 {
                 final Dimension cSize = sizeMap.get(c);
                 final Rectangle bounds = new Rectangle(x, 0, cSize.width, size.height);
                 c.setBounds(bounds);
-                System.out.println("\tset " + c + " to " + bounds);
 
                 x += cSize.width;
             }
