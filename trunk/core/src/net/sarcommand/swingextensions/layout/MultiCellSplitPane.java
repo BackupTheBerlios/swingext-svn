@@ -114,10 +114,6 @@ public class MultiCellSplitPane extends JComponent {
         throw new IllegalArgumentException("The layout for this class can not be adjusted.");
     }
 
-    public int getComponentCount() {
-        return _cellList.size();
-    }
-
     public void add(Component comp, Object constraints, int index) {
         add(comp, constraints);
     }
