@@ -21,7 +21,12 @@ import java.awt.*;
  * limitations under the License.
  */
 public class SwingExtensionsDemo {
-    private static final Class[] DEMO_CLASSES = {BlockingGlassPaneDemo.class};
+    private static final Class[] DEMO_CLASSES = {
+            JImagePanelDemo.class,
+            BlockingGlassPaneDemo.class,
+            AccessoryManagerDemo.class,
+            MultiSplitPaneDemo.class
+    };
 
     private JTabbedPane _demoPanel;
 
