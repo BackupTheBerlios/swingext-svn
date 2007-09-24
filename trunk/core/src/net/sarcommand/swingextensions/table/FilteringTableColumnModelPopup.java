@@ -35,6 +35,8 @@ public class FilteringTableColumnModelPopup extends JPopupMenu {
     protected FilteringTableColumnModel _model;
     protected ActionListener _actionListener;
 
+    private boolean _hidingUponSelection;
+
     public FilteringTableColumnModelPopup() {
         initialize();
     }
@@ -48,6 +50,12 @@ public class FilteringTableColumnModelPopup extends JPopupMenu {
     public FilteringTableColumnModelPopup(final FilteringTableColumnModel mdl) {
         initialize();
         setModel(mdl);
+    }
+
+    public FilteringTableColumnModelPopup(final FilteringTableColumnModel mdl, final boolean hidingUponSelection) {
+        initialize();
+        setModel(mdl);
+        setHidingUponSelection(hidingUponSelection);
     }
 
     /**
@@ -69,6 +77,7 @@ public class FilteringTableColumnModelPopup extends JPopupMenu {
     }
 
     protected void initialize() {
+        _hidingUponSelection = true;
         _actionListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final JCheckBoxMenuItem item = (JCheckBoxMenuItem) e.getSource();
@@ -76,8 +85,18 @@ public class FilteringTableColumnModelPopup extends JPopupMenu {
                     _model.setColumnVisible(item.getText(), true);
                 else if (_model.getColumnCount() > 1)
                     _model.setColumnVisible(item.getText(), false);
+                if (!_hidingUponSelection)
+                    setVisible(true);
             }
         };
+    }
+
+    public boolean isHidingUponSelection() {
+        return _hidingUponSelection;
+    }
+
+    public void setHidingUponSelection(final boolean hidingUponSelection) {
+        _hidingUponSelection = hidingUponSelection;
     }
 
     /**
