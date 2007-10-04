@@ -38,19 +38,19 @@ public class ResourceBundleActionProvider implements ActionProvider {
 
     public ReflectedAction createReflectedAction(final Object identifier, final Object target, final String methodName) {
         final ReflectedAction action = new ReflectedAction(identifier, target, methodName);
-        mapAll(identifier, action);
+        map(identifier, action);
 
         return action;
     }
 
     public ManagedAction createAction(final Object identifier) {
         final ManagedAction action = new ManagedAction(identifier);
-        mapAll(identifier, action);
+        map(identifier, action);
 
         return action;
     }
 
-    private void mapAll(Object identifier, ManagedAction action) {
+    public void map(Object identifier, Action action) {
         final String prefix = identifier.toString() + _pathKey;
         final int length = prefix.length();
 
