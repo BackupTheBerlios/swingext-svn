@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.prefs.Preferences;
 
 /**
  * A column model implementation which allows you to show and hide columns in the JTable. You can use the
@@ -18,8 +19,8 @@ import java.util.LinkedList;
  * table.getTableHeader().setComponentPopup(new FilteringTableColumnModelPopup(model));
  * </code>
  * <p/>
- * <p/>
- * <p/>
+ * If you supply a preferences instance and key, the model will keep track of the visibility state of your columns
+ * between sessions.
  * <hr/>
  * Copyright 2006 Torsten Heup
  * <p/>
@@ -41,8 +42,17 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
     private HashMap<Object, TableColumn> _hiddenColumnMapping;
     private HashMap<TableColumn, TableColumn> _predecessorMapping;
 
+    private Preferences _preferences;
+    private String _preferenceKey;
+
     public FilteringTableColumnModel() {
         initialize();
+    }
+
+    public FilteringTableColumnModel(final Preferences preferences, final String preferenceKey) {
+        initialize();
+        setPreferences(_preferences);
+        setPreferenceKey(_preferenceKey);
     }
 
     protected void initialize() {
@@ -56,11 +66,11 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
      * @param identifier Identifier of the affected column.
      * @param visible    Visibility flag.
      */
-    public void setColumnVisible(final String identifier, final boolean visible) {
+    public void setColumnVisible(final Object identifier, final boolean visible) {
         if (visible) {
             final TableColumn tableColumn = _hiddenColumnMapping.get(identifier);
-            addColumn(tableColumn);
-            moveColumn(getColumnIndex(identifier), getIndexForColumn(tableColumn));
+            super.addColumn(tableColumn);
+            moveColumn(getColumnIndex(identifier), getIndexForHiddenColumn(tableColumn));
             _hiddenColumnMapping.remove(identifier);
             _predecessorMapping.remove(tableColumn);
         } else {
@@ -70,6 +80,63 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
             if (index != 0)
                 _predecessorMapping.put(tableColumn, getColumn(index - 1));
             removeColumn(tableColumn);
+        }
+        if (_preferences != null && _preferenceKey != null) {
+            final String key = _preferenceKey + '.' + identifier;
+            _preferences.putBoolean(key, visible);
+        }
+    }
+
+    public void setPreferences(final Preferences prefs) {
+        _preferences = prefs;
+        updateFromPreferences();
+    }
+
+    public Preferences getPreferences() {
+        return _preferences;
+    }
+
+    public String getPreferenceKey() {
+        return _preferenceKey;
+    }
+
+    public void setPreferenceKey(final String preferenceKey) {
+        _preferenceKey = preferenceKey;
+        updateFromPreferences();
+    }
+
+    public void addColumn(final TableColumn aColumn) {
+        super.addColumn(aColumn);
+        if (_preferences != null && _preferenceKey != null) {
+            final Object identifier = aColumn.getIdentifier();
+            final boolean visible = _preferences.getBoolean(_preferenceKey + '.' + identifier, true);
+            if (!visible)
+                setColumnVisible(identifier, false);
+        }
+
+    }
+
+    /**
+     * Updates the visibility state for all currently installed columns from the preferences, if applicable.
+     */
+    protected void updateFromPreferences() {
+        if (_preferences != null && _preferenceKey != null) {
+            final int columnCount = getColumnCount();
+            final boolean[] visible = new boolean[columnCount];
+            int visibleCount = 0;
+            for (int i = 0; i < columnCount; i++) {
+                final TableColumn tableColumn = getColumn(i);
+                final Object identifier = tableColumn.getIdentifier();
+                visible[i] = _preferences.getBoolean(_preferenceKey + '.' + identifier, true);
+                if (visible[i])
+                    visibleCount++;
+            }
+            for (int i = 0; i < visible.length; i++) {
+                if (i == 0 && visibleCount == 0)
+                    setColumnVisible(getColumn(i).getIdentifier(), true);
+                else if (!visible[i])
+                    setColumnVisible(getColumn(i).getIdentifier(), false);
+            }
         }
     }
 
@@ -83,17 +150,30 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
         return !_hiddenColumnMapping.containsKey(identifier);
     }
 
+    /**
+     * Returns an ordered collection of the column identifiers, regardless of whether or not they are visible.
+     *
+     * @return an ordered collection of the column identifiers, regardless of whether or not they are visible.
+     */
     public Collection<Object> getAllColumnIdentfiers() {
         final Enumeration<TableColumn> enumeration = getColumns();
         final LinkedList<Object> result = new LinkedList<Object>();
 
         while (enumeration.hasMoreElements())
             result.add(enumeration.nextElement().getIdentifier());
-        result.addAll(_hiddenColumnMapping.keySet());
+
+        for (TableColumn col : _hiddenColumnMapping.values())
+            result.add(getIndexForHiddenColumn(col), col.getIdentifier());
         return result;
     }
 
-    protected int getIndexForColumn(final TableColumn tableColumn) {
+    /**
+     * Returns the index at which a hidden column will be put when made visible again.
+     *
+     * @param tableColumn TableColumn being queried.
+     * @return Index of the column if it were to be made visible.
+     */
+    protected int getIndexForHiddenColumn(final TableColumn tableColumn) {
         TableColumn runner = tableColumn;
         while (runner != null && _hiddenColumnMapping.containsKey(runner.getIdentifier()))
             runner = _predecessorMapping.get(runner);
