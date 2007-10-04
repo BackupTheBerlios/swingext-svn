@@ -161,7 +161,8 @@ public class ActionManager {
      * @return whether the specified object is an action control
      */
     protected static boolean isActionControl(final Object object) {
-        return object != null && SwingExtUtil.hasMethod(object, "setAction", Action.class);
+//        return object != null && SwingExtUtil.hasMethod(object, "setAction", Action.class);
+        return object != null && (object instanceof JMenuItem || object instanceof AbstractButton);
     }
 
     /**
@@ -212,13 +213,28 @@ public class ActionManager {
             /* Move up the hierarchy to find a suitable responder */
             Component runner = isComponentAction ? (Component) source : __lastFocusOwner;
             event.setSource(runner);
-            do {
+            while (true) {
                 if (runner instanceof ActionHandler) {
                     eventWasConsumed = ((ActionHandler) runner).handleAction(actionIdentifier, event);
                     if (eventWasConsumed)
                         break;
                 }
-            } while ((runner = SwingExtUtil.getParent(runner)) != null);
+                if (runner instanceof JComponent) {
+                    final Object nextHandler = ((JComponent) runner).getClientProperty(ActionHandler.NEXT_HANDLER);
+                    if (nextHandler != null && nextHandler instanceof ActionHandler) {
+                        if (nextHandler instanceof JComponent) {
+                            runner = (Component) nextHandler;
+                            continue;
+                        } else {
+                            ((ActionHandler) nextHandler).handleAction(actionIdentifier, event);
+                            break;
+                        }
+                    }
+                }
+                runner = SwingExtUtil.getParent(runner);
+                if (runner == null)
+                    break;
+            }
         }
 
         /* Forward the action to the default action consumer */
