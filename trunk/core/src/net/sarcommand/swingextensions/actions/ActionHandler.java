@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
  * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
  */
 public interface ActionHandler {
+    public static final String NEXT_HANDLER = ActionHandler.class.getName() + ".nextHandler";
+
     /**
      * Requests that the implementing object should handle the given action. Implementors need to return whether or
      * not the action could actually be handled. If this method returns true, the ActionManager will stop searching
