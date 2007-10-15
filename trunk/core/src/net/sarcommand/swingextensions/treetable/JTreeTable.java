@@ -2,12 +2,16 @@ package net.sarcommand.swingextensions.treetable;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.table.*;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.EventObject;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,7 +19,7 @@ import java.awt.event.MouseEvent;
  * Date: Jul 25, 2006
  * Time: 12:29:37 PM
  */
-public class JTreeTable extends JComponent implements Scrollable {
+public class JTreeTable extends TreeTableDelegate implements Scrollable {
     public static final String TREE_CELL_RENDERER_PROPERTY = "treeCellRendererProperty";
     public static final String MODEL_PROPERTY = "modelProperty";
     public static final String ROW_HEIGHT_PROPERTY = "rowHeightProperty";
@@ -24,8 +28,6 @@ public class JTreeTable extends JComponent implements Scrollable {
     protected TreeTableModelAdapter _mdlAdapter;
 //    protected TreeTableColumnModel _columnModel;
 
-    protected JTree _nestedTree;
-    protected JTable _nestedTable;
     protected TreeExpansionListener _expansionListener;
     protected MouseAdapter _mouseAdapter;
 
@@ -53,28 +55,13 @@ public class JTreeTable extends JComponent implements Scrollable {
         return _mdl;
     }
 
-    public void setRowHeight(final int rowHeight) {
-        if (rowHeight <= 0)
-            throw new IllegalArgumentException("Illegal row height: Required to be > 0");
-
-        final int oldRowHeight = _nestedTree.getRowHeight();
-        _nestedTable.setRowHeight(rowHeight);
-        _nestedTree.setRowHeight(rowHeight);
-
-        firePropertyChange(ROW_HEIGHT_PROPERTY, oldRowHeight, rowHeight);
-    }
-
-    public int getRowHeight() {
-        return _nestedTree.getRowHeight();
-    }
-
     public void setTreeCellRenderer(final TreeCellRenderer renderer) {
         if (renderer == null)
             throw new IllegalArgumentException("Parameter 'renderer' must not be null!");
         TreeCellRenderer previousRenderer = _nestedTree.getCellRenderer();
-        if (previousRenderer instanceof TreeCellRendererWrapper)
-            previousRenderer = ((TreeCellRendererWrapper) previousRenderer).getDelegate();
-        _nestedTree.setCellRenderer(new TreeCellRendererWrapper(renderer, _nestedTable));
+        if (previousRenderer instanceof TreeViewRendererWrapper)
+            previousRenderer = ((TreeViewRendererWrapper) previousRenderer).getDelegate();
+        _nestedTree.setCellRenderer(new TreeViewRendererWrapper(renderer, _nestedTable));
         firePropertyChange(TREE_CELL_RENDERER_PROPERTY, previousRenderer, renderer);
     }
 
@@ -101,7 +88,7 @@ public class JTreeTable extends JComponent implements Scrollable {
         _mdlAdapter = new TreeTableModelAdapter(_nestedTree, _mdl);
         _nestedTable = new JTable();
 
-        _nestedTable.setDefaultRenderer(JTree.class, new DefaultTreeTableCellRenderer());
+        _nestedTable.setDefaultRenderer(JTree.class, new TreeTableViewportRenderer());
 //        _nestedTable.setColumnModel(new TreeTableColumnModel(new TreeTableRootColumn(_nestedTree)));
         _nestedTable.setModel(_mdlAdapter);
 
@@ -197,27 +184,121 @@ public class JTreeTable extends JComponent implements Scrollable {
         }
     }
 
-    public JTableHeader getTableHeader() {
-        return _nestedTable.getTableHeader();
+    public void setTreeTableRenderer(final Class valueClass, final TreeTableCellRenderer renderer) {
+        _nestedTable.setDefaultRenderer(valueClass, new TreeTableCellRendererWrapper(this, renderer));
     }
 
-    private static class TreeCellRendererWrapper implements TreeCellRenderer {
+    public TreeTableCellRenderer getTreeTableRenderer(final Class valueClass) {
+        return ((TreeTableCellRendererWrapper) _nestedTable.getDefaultRenderer(valueClass)).getRenderer();
+    }
+
+    public void setTreeTableEditor(final Class valueClass, final TreeTableCellEditor editor) {
+        _nestedTable.setDefaultEditor(valueClass, new TreeTableCellEditorWrapper(this, editor));
+    }
+
+    public TreeTableCellEditor getTableEditor(final Class valueClass) {
+        final TableCellEditor cellEditor = _nestedTable.getDefaultEditor(valueClass);
+        return cellEditor != null && cellEditor instanceof TreeTableCellEditorWrapper ?
+                ((TreeTableCellEditorWrapper) cellEditor).getEditor() : null;
+    }
+
+    public TreeTableCellEditor getCellEditor() {
+        final TableCellEditor cellEditor = _nestedTable.getCellEditor();
+        return cellEditor != null && cellEditor instanceof TreeTableCellEditorWrapper ?
+                ((TreeTableCellEditorWrapper) cellEditor).getEditor() : null;
+    }
+
+    public TableCellEditor getCellEditor(final int row, final int column) {
+        return _nestedTable.getCellEditor(row, column);
+    }
+
+    public static class TreeTableCellRendererWrapper implements TableCellRenderer {
+        private JTreeTable _treeTable;
+        private TreeTableCellRenderer _renderer;
+
+        public TreeTableCellRendererWrapper(final JTreeTable treeTable, final TreeTableCellRenderer renderer) {
+            _treeTable = treeTable;
+            _renderer = renderer;
+        }
+
+        public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
+                                                       final boolean hasFocus, final int row, final int column) {
+            return _renderer.getTreeTableCellRendererComponent(_treeTable, value, isSelected, hasFocus,
+                    _treeTable.getPathForRow(row), row, column);
+        }
+
+        public TreeTableCellRenderer getRenderer() {
+            return _renderer;
+        }
+    }
+
+    public static class TreeTableCellEditorWrapper implements TableCellEditor {
+        private JTreeTable _treeTable;
+        private TreeTableCellEditor _editor;
+
+        public TreeTableCellEditorWrapper(final JTreeTable treeTable, final TreeTableCellEditor editor) {
+            _treeTable = treeTable;
+            _editor = editor;
+        }
+
+        public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected,
+                                                     final int row, final int column) {
+            return _editor.getTreeTableCellEditorComponent(_treeTable, value, isSelected, _treeTable.getPathForRow(row),
+                    row, column);
+        }
+
+        public void addCellEditorListener(final CellEditorListener l) {
+            _editor.addCellEditorListener(l);
+        }
+
+        public void cancelCellEditing() {
+            _editor.cancelCellEditing();
+        }
+
+        public Object getCellEditorValue() {
+            return _editor.getCellEditorValue();
+        }
+
+        public boolean isCellEditable(final EventObject anEvent) {
+            return _editor.isCellEditable(anEvent);
+        }
+
+        public void removeCellEditorListener(final CellEditorListener l) {
+            _editor.removeCellEditorListener(l);
+        }
+
+        public boolean shouldSelectCell(final EventObject anEvent) {
+            return _editor.shouldSelectCell(anEvent);
+        }
+
+        public boolean stopCellEditing() {
+            return _editor.stopCellEditing();
+        }
+
+        public TreeTableCellEditor getEditor() {
+            return _editor;
+        }
+    }
+
+    private static class TreeViewRendererWrapper implements TreeCellRenderer {
         private TreeCellRenderer _delegate;
         private JTable _table;
 
-        public TreeCellRendererWrapper() {
+        public TreeViewRendererWrapper() {
         }
 
-        public TreeCellRendererWrapper(TreeCellRenderer delegate, final JTable table) {
+        public TreeViewRendererWrapper(TreeCellRenderer delegate, final JTable table) {
             _delegate = delegate;
             _table = table;
         }
 
-        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
+                                                      boolean leaf, int row, boolean hasFocus) {
             if (_delegate == null)
                 return null;
 
-            final Component c = _delegate.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+            final Component c = _delegate.getTreeCellRendererComponent(tree, value, selected, expanded, leaf,
+                    row, hasFocus);
 
             if (_table.getColumnCount() > 0) {
                 final TableColumn col = _table.getColumn(_table.getColumnName(_table.convertColumnIndexToView(0)));
@@ -235,67 +316,5 @@ public class JTreeTable extends JComponent implements Scrollable {
         public void setDelegate(TreeCellRenderer delegate) {
             _delegate = delegate;
         }
-    }
-
-    /* Delegate methods */
-
-    public void setShowsRootHandles(final boolean newValue) {
-        _nestedTree.setShowsRootHandles(newValue);
-    }
-
-    public boolean getShowsRootHandles() {
-        return _nestedTree.getShowsRootHandles();
-    }
-
-    public boolean isRootVisible() {
-        return _nestedTree.isRootVisible();
-    }
-
-    public void setRootVisible(final boolean rootVisible) {
-        _nestedTree.setRootVisible(rootVisible);
-    }
-
-    public Dimension getPreferredScrollableViewportSize() {
-        return _nestedTable.getPreferredScrollableViewportSize();
-    }
-
-    public int getScrollableBlockIncrement(final Rectangle visibleRect, final int orientation, final int direction) {
-        return _nestedTable.getScrollableBlockIncrement(visibleRect, orientation, direction);
-    }
-
-    public boolean getScrollableTracksViewportHeight() {
-        return _nestedTable.getScrollableTracksViewportHeight();
-    }
-
-    public boolean getScrollableTracksViewportWidth() {
-        return _nestedTable.getScrollableTracksViewportWidth();
-    }
-
-    public int getScrollableUnitIncrement(final Rectangle visibleRect, final int orientation, final int direction) {
-        return _nestedTable.getScrollableUnitIncrement(visibleRect, orientation, direction);
-    }
-
-    public void setTableRenderer(final Class valueClass, final TableCellRenderer renderer) {
-        _nestedTable.setDefaultRenderer(valueClass, renderer);
-    }
-
-    public TableCellRenderer getTableRenderer(final Class valueClass) {
-        return _nestedTable.getDefaultRenderer(valueClass);
-    }
-
-    public void setTableEditor(final Class valueClass, final TableCellEditor editor) {
-        _nestedTable.setDefaultEditor(valueClass, editor);
-    }
-
-    public TableCellEditor getTableEditor(final Class valueClass) {
-        return _nestedTable.getDefaultEditor(valueClass);
-    }
-
-    public void setToggleClickCount(final int clickCount) {
-        _nestedTree.setToggleClickCount(clickCount);
-    }
-
-    public int getToggleClickCount() {
-        return _nestedTree.getToggleClickCount();
     }
 }
