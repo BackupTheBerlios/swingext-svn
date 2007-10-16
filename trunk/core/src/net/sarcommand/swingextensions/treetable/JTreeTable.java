@@ -26,8 +26,8 @@ public class JTreeTable extends TreeTableDelegate implements Scrollable {
 
     protected TreeTableModel _mdl;
     protected TreeTableModelAdapter _mdlAdapter;
-//    protected TreeTableColumnModel _columnModel;
 
+    protected TreeModelListener _modelListener;
     protected TreeExpansionListener _expansionListener;
     protected MouseAdapter _mouseAdapter;
 
@@ -44,9 +44,12 @@ public class JTreeTable extends TreeTableDelegate implements Scrollable {
         if (mdl == null)
             throw new IllegalArgumentException("Parameter 'mdl' must not be null!");
 
+        if (_mdl != null)
+            _mdl.removeTreeModelListener(_modelListener);
+
         final TreeTableModel oldModel = getModel();
         _mdl = mdl;
-
+        _mdl.addTreeModelListener(_modelListener);
         modelUpdated();
         firePropertyChange(MODEL_PROPERTY, oldModel, mdl);
     }
@@ -161,6 +164,30 @@ public class JTreeTable extends TreeTableDelegate implements Scrollable {
 
             }
         });
+
+        _modelListener = new TreeModelListener() {
+            public void treeNodesChanged(final TreeModelEvent e) {
+                _mdlAdapter.fireTableDataChanged();
+            }
+
+            public void treeNodesInserted(final TreeModelEvent e) {
+                _mdlAdapter.fireTableDataChanged();
+            }
+
+            public void treeNodesRemoved(final TreeModelEvent e) {
+                _mdlAdapter.fireTableDataChanged();
+            }
+
+            public void treeStructureChanged(final TreeModelEvent e) {
+                _mdlAdapter.fireTableDataChanged();
+            }
+        };
+        _nestedTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(final ListSelectionEvent e) {
+                _nestedTree.setSelectionRows(_nestedTable.getSelectedRows());
+            }
+        });
+
         _nestedTable.addMouseListener(_mouseAdapter);
         _nestedTree.addTreeExpansionListener(_expansionListener);
     }
