@@ -1,6 +1,9 @@
 package net.sarcommand.swingextensions.treetable;
 
 import javax.swing.*;
+import javax.swing.event.TreeExpansionListener;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.TreeWillExpandListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.TreePath;
@@ -78,19 +81,19 @@ public class TreeTableDelegate extends JComponent {
     }
 
     public boolean editCellAt(final int row, final int column) {
-        return _nestedTable.editCellAt(row, column);
+        return _nestedTable.editCellAt(row, column + 1);
     }
 
     public boolean editCellAt(final int row, final int column, final EventObject e) {
-        return _nestedTable.editCellAt(row, column, e);
+        return _nestedTable.editCellAt(row, column + 1, e);
     }
 
     public Rectangle getCellRect(final int row, final int column, final boolean includeSpacing) {
-        return _nestedTable.getCellRect(row, column, includeSpacing);
+        return _nestedTable.getCellRect(row, column + 1, includeSpacing);
     }
 
     public TableCellRenderer getCellRenderer(final int row, final int column) {
-        return _nestedTable.getCellRenderer(row, column);
+        return _nestedTable.getCellRenderer(row, column + 1);
     }
 
     public int getEditingColumn() {
@@ -165,7 +168,7 @@ public class TreeTableDelegate extends JComponent {
     }
 
     public boolean isCellEditable(final int row, final int column) {
-        return _nestedTable.isCellEditable(row, column);
+        return _nestedTable.isCellEditable(row, column + 1);
     }
 
     public Color getSelectionBackground() {
@@ -182,5 +185,58 @@ public class TreeTableDelegate extends JComponent {
 
     public void setSelectionBackground(final Color selectionBackground) {
         _nestedTable.setSelectionBackground(selectionBackground);
+    }
+
+    public TreePath[] getSelectionPaths() {
+        return _nestedTree.getSelectionPaths();
+    }
+
+    public ListSelectionModel getSelectionModel() {
+        return _nestedTable.getSelectionModel();
+    }
+
+    public void setSelectionMode(final int selectionMode) {
+        _nestedTable.setSelectionMode(selectionMode);
+    }
+
+    public void setSelectionModel(final ListSelectionModel newModel) {
+        _nestedTable.setSelectionModel(newModel);
+    }
+
+    public void setSelectionPath(final TreePath path) {
+        _nestedTree.setSelectionPath(path);
+    }
+
+    public void setSelectionPaths(final TreePath[] paths) {
+        _nestedTree.setSelectionPaths(paths);
+    }
+
+    public void setSelectionRow(final int row) {
+        _nestedTree.setSelectionRow(row);
+    }
+
+    public void setSelectionRows(final int[] rows) {
+        _nestedTree.setSelectionRows(rows);
+    }
+
+    public void addTreeExpansionListener(final TreeExpansionListener tel) {
+        _nestedTree.addTreeExpansionListener(tel);
+    }
+
+    public void addTreeSelectionListener(final TreeSelectionListener tsl) {
+        _nestedTree.addTreeSelectionListener(tsl);
+    }
+
+    public void addTreeWillExpandListener(final TreeWillExpandListener tel) {
+        _nestedTree.addTreeWillExpandListener(tel);
+    }
+
+    public void setSelectionInterval(final int index0, final int index1) {
+        _nestedTree.setSelectionInterval(index0, index1);
+    }
+
+    public void setComponentPopupMenu(final JPopupMenu popup) {
+        _nestedTable.setComponentPopupMenu(popup);
+        _nestedTree.setComponentPopupMenu(popup);
     }
 }
