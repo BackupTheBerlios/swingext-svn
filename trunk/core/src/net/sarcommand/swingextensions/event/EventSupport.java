@@ -20,8 +20,8 @@ public class EventSupport<T extends EventListener> {
         final InvocationHandler handler = new InvocationHandler() {
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 if (proxy == _delegate) {
-                    for (T ref : _elements)
-                        method.invoke(ref, args);
+                    for (int i = _elements.size() - 1; i >= 0; i--)
+                        method.invoke(_elements.get(i), args);
                 }
                 return null;
             }
