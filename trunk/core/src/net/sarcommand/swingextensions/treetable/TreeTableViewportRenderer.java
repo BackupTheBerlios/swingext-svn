@@ -36,11 +36,6 @@ public class TreeTableViewportRenderer extends JViewport implements TableCellRen
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         final JTree tree = (JTree) value;
 
-        if (isSelected)
-            tree.setSelectionRow(row);
-        else
-            tree.setSelectionPath(null);
-
         final Rectangle rectangle = tree.getRowBounds(row);
         if (rectangle == null)
             return null;
