@@ -2,16 +2,11 @@ package net.sarcommand.swingextensions.treetable;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreeCellRenderer;
+import javax.swing.table.*;
+import javax.swing.tree.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.EventObject;
+import java.awt.event.*;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,6 +20,7 @@ public class JTreeTable extends TreeTableDelegate implements Scrollable {
     public static final String ROW_HEIGHT_PROPERTY = "rowHeightProperty";
 
     protected TreeTableModel _mdl;
+    protected SortingTreeTableModel _sortedModel;
     protected TreeTableModelAdapter _mdlAdapter;
 
     protected TreeModelListener _modelListener;
@@ -50,6 +46,11 @@ public class JTreeTable extends TreeTableDelegate implements Scrollable {
         final TreeTableModel oldModel = getModel();
         _mdl = mdl;
         _mdl.addTreeModelListener(_modelListener);
+
+        final TreeTableSorter sorter = _sortedModel.getSorter();
+        _sortedModel = new SortingTreeTableModel(_mdl);
+        _sortedModel.setSorter(sorter);
+
         modelUpdated();
         firePropertyChange(MODEL_PROPERTY, oldModel, mdl);
     }
@@ -80,19 +81,26 @@ public class JTreeTable extends TreeTableDelegate implements Scrollable {
     }
 
     protected void modelUpdated() {
-        _nestedTree.setModel(_mdl);
-        _mdlAdapter = new TreeTableModelAdapter(_nestedTree, _mdl);
+        _nestedTree.setModel(_sortedModel);
+        _mdlAdapter = new TreeTableModelAdapter(_nestedTree, _sortedModel);
         _nestedTable.setModel(_mdlAdapter);
     }
 
     protected void initComponents() {
-        _nestedTree = new JTree(_mdl);
-
-        _mdlAdapter = new TreeTableModelAdapter(_nestedTree, _mdl);
+        _mdl = new ReflectingTreeTableModel(new DefaultMutableTreeNode("No model defined"));
+        _sortedModel = new SortingTreeTableModel(_mdl);
+        _nestedTree = new JTree(_sortedModel);
+        _mdlAdapter = new TreeTableModelAdapter(_nestedTree, _sortedModel);
         _nestedTable = new JTable();
+        final RowSorterStub stub = new RowSorterStub(_nestedTable);
+        _nestedTable.setRowSorter(stub);
+        stub.addRowSorterListener(new RowSorterListener() {
+            public void sorterChanged(RowSorterEvent e) {
+                _sortedModel.sort(stub.getSortKeys());
+            }
+        });
 
         _nestedTable.setDefaultRenderer(JTree.class, new TreeTableViewportRenderer());
-//        _nestedTable.setColumnModel(new TreeTableColumnModel(new TreeTableRootColumn(_nestedTree)));
         _nestedTable.setModel(_mdlAdapter);
 
         _nestedTable.setRowHeight(_nestedTree.getRowHeight());
@@ -257,6 +265,14 @@ public class JTreeTable extends TreeTableDelegate implements Scrollable {
         public TreeTableCellRenderer getRenderer() {
             return _renderer;
         }
+    }
+
+    public void setRowSorter(final TreeTableSorter sorter) {
+        _sortedModel.setSorter(sorter);
+    }
+
+    public TreeTableSorter getRowSorter() {
+        return _sortedModel.getSorter();
     }
 
     public static class TreeTableCellEditorWrapper implements TableCellEditor {
