@@ -63,7 +63,6 @@ public class SortingTreeTableModel implements TreeTableModel {
         } else
             _sortedElements = null;
 
-        System.err.println("Sorted: " + _sortedElements.get(_delegate.getRoot()));
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 _treeModelListeners.delegate().treeStructureChanged(new TreeModelEvent(this, new TreePath(_delegate.getRoot())));
