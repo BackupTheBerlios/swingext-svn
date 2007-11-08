@@ -2,7 +2,7 @@ package net.sarcommand.swingextensions.filechooser;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * The AccessoryManager class enables you to add custom components to a JFileChooser instance. Other than JFileChooser's
@@ -88,6 +88,7 @@ public abstract class AccessoryManager {
 
         final JScrollPane sPane = (JScrollPane)
                 find(chooser, JScrollPane.class);
+
         sPane.setBorder(null);
         sPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         sPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
@@ -95,6 +96,11 @@ public abstract class AccessoryManager {
         final JViewport newViewport = new JViewport();
 
         final JScrollPane copy = new JScrollPane();
+        copy.setRowHeader(sPane.getRowHeader());
+        copy.setColumnHeader(sPane.getRowHeader());
+        sPane.setRowHeader(null);
+        sPane.setColumnHeader(null);
+
         copy.setViewport(sPane.getViewport());
 
         _accessoryPane.setLayout(new BorderLayout());
@@ -103,6 +109,7 @@ public abstract class AccessoryManager {
 
         newViewport.setView(_accessoryPane);
         sPane.setViewport(newViewport);
+        sPane.setPreferredSize(copy.getMaximumSize());
     }
 
     /**
