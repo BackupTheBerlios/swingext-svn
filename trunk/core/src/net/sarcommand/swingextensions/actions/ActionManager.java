@@ -1,16 +1,12 @@
 package net.sarcommand.swingextensions.actions;
 
-import net.sarcommand.swingextensions.utilities.SwingExtUtil;
+import net.sarcommand.swingextensions.utilities.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.awt.event.*;
+import java.beans.*;
+import java.util.*;
 
 /**
  * The ActionManager class is a utility meant to help you handle the javax.swing.Action instances within your
@@ -207,34 +203,32 @@ public class ActionManager {
         final Object focusActionProperty = a.getValue(ManagedAction.RESPONDER_CHAIN_ROOT);
         final boolean isComponentAction = __lastFocusOwner == null || (focusActionProperty != null &&
                 focusActionProperty.equals(ManagedAction.RESPONDER_CHAIN_ROOT_COMPONENT));
+        final Object directDelegate = source instanceof JComponent ?
+                ((JComponent) source).getClientProperty(ActionHandler.NEXT_HANDLER) : null;
 
         /* Try to find a proper handler for the action */
-        if (source instanceof Component) {
-            /* Move up the hierarchy to find a suitable responder */
-            Component runner = isComponentAction ? (Component) source : __lastFocusOwner;
-            event.setSource(runner);
-            while (true) {
-                if (runner instanceof ActionHandler) {
-                    eventWasConsumed = ((ActionHandler) runner).handleAction(actionIdentifier, event);
-                    if (eventWasConsumed)
-                        break;
-                }
-                if (runner instanceof JComponent) {
-                    final Object nextHandler = ((JComponent) runner).getClientProperty(ActionHandler.NEXT_HANDLER);
-                    if (nextHandler != null && nextHandler instanceof ActionHandler) {
-                        if (nextHandler instanceof JComponent) {
-                            runner = (Component) nextHandler;
-                            continue;
-                        } else {
-                            ((ActionHandler) nextHandler).handleAction(actionIdentifier, event);
-                            break;
-                        }
-                    }
-                }
-                runner = SwingExtUtil.getParent(runner);
-                if (runner == null)
+        Object runner = directDelegate != null ? directDelegate :
+                isComponentAction ? (Component) source : __lastFocusOwner;
+
+        /* Move up the hierarchy to find a suitable responder */
+        event.setSource(runner);
+        while (true) {
+            if (runner instanceof ActionHandler) {
+                eventWasConsumed = ((ActionHandler) runner).handleAction(actionIdentifier, event);
+                if (eventWasConsumed)
                     break;
             }
+            if (runner instanceof JComponent) {
+                final Object nextHandler = ((JComponent) runner).getClientProperty(ActionHandler.NEXT_HANDLER);
+                if (nextHandler != null)
+                    runner = nextHandler;
+                else
+                    runner = SwingExtUtil.getParent((Component) runner);
+            } else
+                break;
+
+            if (runner == null)
+                break;
         }
 
         /* Forward the action to the default action consumer */
