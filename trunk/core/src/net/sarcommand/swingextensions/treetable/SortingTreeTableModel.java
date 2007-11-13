@@ -21,6 +21,27 @@ public class SortingTreeTableModel implements TreeTableModel {
     public SortingTreeTableModel(TreeTableModel delegate) {
         _delegate = delegate;
         _treeModelListeners = EventSupport.create(TreeModelListener.class);
+        delegate.addTreeModelListener(new TreeModelListener() {
+            public void treeNodesChanged(TreeModelEvent e) {
+                sort(_sortKeys);
+                _treeModelListeners.delegate().treeNodesChanged(e);
+            }
+
+            public void treeNodesInserted(TreeModelEvent e) {
+                sort(_sortKeys);
+                _treeModelListeners.delegate().treeNodesInserted(e);
+            }
+
+            public void treeNodesRemoved(TreeModelEvent e) {
+                sort(_sortKeys);
+                _treeModelListeners.delegate().treeNodesRemoved(e);
+            }
+
+            public void treeStructureChanged(TreeModelEvent e) {
+                sort(_sortKeys);
+                _treeModelListeners.delegate().treeStructureChanged(e);
+            }
+        });
     }
 
     public TreeTableSorter getSorter() {
@@ -56,6 +77,9 @@ public class SortingTreeTableModel implements TreeTableModel {
     }
 
     public void sort(final List<RowSorter.SortKey> sortKeys) {
+        if (sortKeys == null)
+            return;
+
         _sortKeys = sortKeys;
         if (_sorter != null && sortKeys.size() > 0) {
             _sortedElements = new HashMap<Object, List<Object>>(32);
