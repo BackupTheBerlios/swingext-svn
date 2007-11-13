@@ -1,14 +1,11 @@
 package net.sarcommand.swingextensions.treetable;
 
 import javax.swing.*;
-import javax.swing.event.TreeExpansionListener;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.event.TreeWillExpandListener;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.tree.TreePath;
+import javax.swing.event.*;
+import javax.swing.table.*;
+import javax.swing.tree.*;
 import java.awt.*;
-import java.util.EventObject;
+import java.util.*;
 
 /**
  */
@@ -70,14 +67,6 @@ public class TreeTableDelegate extends JComponent {
 
     public int convertColumnIndexToView(final int modelColumnIndex) {
         return _nestedTable.convertColumnIndexToView(modelColumnIndex);
-    }
-
-    public int convertRowIndexToModel(final int viewRowIndex) {
-        return _nestedTable.convertRowIndexToModel(viewRowIndex);
-    }
-
-    public int convertRowIndexToView(final int modelRowIndex) {
-        return _nestedTable.convertRowIndexToView(modelRowIndex);
     }
 
     public boolean editCellAt(final int row, final int column) {
@@ -238,5 +227,9 @@ public class TreeTableDelegate extends JComponent {
     public void setComponentPopupMenu(final JPopupMenu popup) {
         _nestedTable.setComponentPopupMenu(popup);
         _nestedTree.setComponentPopupMenu(popup);
+    }
+
+    public int getRowForPath(TreePath path) {
+        return _nestedTree.getRowForPath(path);
     }
 }
