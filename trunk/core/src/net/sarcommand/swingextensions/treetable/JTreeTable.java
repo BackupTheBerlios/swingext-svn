@@ -27,6 +27,10 @@ public class JTreeTable extends TreeTableDelegate implements Scrollable {
     protected TreeExpansionListener _expansionListener;
     protected MouseAdapter _mouseAdapter;
 
+    protected TreePath[] _selectionPaths;
+
+    protected volatile boolean _skipSelectionChanges;
+
     public JTreeTable() {
         initialize();
     }
@@ -45,11 +49,13 @@ public class JTreeTable extends TreeTableDelegate implements Scrollable {
 
         final TreeTableModel oldModel = getModel();
         _mdl = mdl;
-        _mdl.addTreeModelListener(_modelListener);
-
+//        _mdl.addTreeModelListener(_modelListener);
+//
         final TreeTableSorter sorter = _sortedModel.getSorter();
+
         _sortedModel = new SortingTreeTableModel(_mdl);
         _sortedModel.setSorter(sorter);
+        _sortedModel.addTreeModelListener(_modelListener);
 
         modelUpdated();
         firePropertyChange(MODEL_PROPERTY, oldModel, mdl);
@@ -175,29 +181,48 @@ public class JTreeTable extends TreeTableDelegate implements Scrollable {
 
         _modelListener = new TreeModelListener() {
             public void treeNodesChanged(final TreeModelEvent e) {
-                _mdlAdapter.fireTableDataChanged();
+                modelChanged();
             }
 
             public void treeNodesInserted(final TreeModelEvent e) {
-                _mdlAdapter.fireTableDataChanged();
+                modelChanged();
             }
 
             public void treeNodesRemoved(final TreeModelEvent e) {
-                _mdlAdapter.fireTableDataChanged();
+                modelChanged();
             }
 
             public void treeStructureChanged(final TreeModelEvent e) {
-                _mdlAdapter.fireTableDataChanged();
+                modelChanged();
             }
         };
         _nestedTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(final ListSelectionEvent e) {
-                _nestedTree.setSelectionRows(_nestedTable.getSelectedRows());
+                if (!_skipSelectionChanges) {
+                    _nestedTree.setSelectionRows(_nestedTable.getSelectedRows());
+                    _selectionPaths = _nestedTree.getSelectionPaths();
+                }
             }
         });
 
         _nestedTable.addMouseListener(_mouseAdapter);
         _nestedTree.addTreeExpansionListener(_expansionListener);
+    }
+
+    protected void modelChanged() {
+        _skipSelectionChanges = true;
+        _mdlAdapter.fireTableDataChanged();
+
+        final ListSelectionModel model = _nestedTable.getSelectionModel();
+        if (_selectionPaths != null) {
+            for (TreePath path : _selectionPaths) {
+                final int row = _nestedTree.getRowForPath(path);
+                if (row >= 0)
+                    model.addSelectionInterval(row, row);
+            }
+        }
+
+        _skipSelectionChanges = false;
     }
 
     protected void forwardMouseEvent(final MouseEvent e) {
