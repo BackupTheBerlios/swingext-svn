@@ -60,9 +60,10 @@ public class DefaultTreeTableSorter implements TreeTableSorter, Comparator<Objec
         if (comp != null)
             result = comp.compare(v0, v1);
         else {
-            comp = getComparator(v0.getClass());
-            if (comp != null)
-                result = comp.compare(v0, v1);
+            if (v0 == null)
+                result = v1 != null ? -1 : 0;
+            else if (getComparator(v0.getClass()) != null)
+                result = getComparator(v0.getClass()).compare(v0, v1);
             else if (v0 instanceof Comparable)
                 result = ((Comparable) v0).compareTo(v1);
             else if (_usingToString)
