@@ -9,7 +9,6 @@ import java.awt.event.*;
 import java.beans.*;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.*;
 
 /**
  * This class is meant to help you handle a set of associated windows or frames. When writing a
@@ -32,7 +31,6 @@ import java.util.concurrent.*;
  * worry about this at all, if not, you can easily serialize a WindowGroup to xml using the methods
  * defined in {@link XMLExternalizable}.
  * <p/>
- * This class is thread safe.
  * <p/>
  * todo add demo code
  * <p/>
@@ -79,16 +77,13 @@ public class WindowGroup implements XMLExternalizable {
 
     protected boolean _shouldBringAllToFront;
 
-    protected Semaphore _semaphore;
-
     /**
      * Creates a new, empty window group.
      */
     public WindowGroup() {
-        _semaphore = new Semaphore(1);
         _pcs = new PropertyChangeSupport(this);
         _shouldBringAllToFront = false;
-        _windowHierarchy = new LinkedList<Window>();
+        _windowHierarchy = Collections.synchronizedList(new LinkedList<Window>());
         _focusPopList = Collections.synchronizedList(new LinkedList<Window>());
         _idToWindowMapping = Collections.synchronizedMap(new HashMap<String, Window>(4));
         _windowToIdMapping = Collections.synchronizedMap(new HashMap<Window, String>(4));
@@ -126,24 +121,19 @@ public class WindowGroup implements XMLExternalizable {
      */
     public void addWindow(final String identifier, final Window window) {
         if (identifier == null)
-            throw new IllegalArgumentException("ApplicationParameter 'identifier' must not be null!");
+            throw new IllegalArgumentException("Parameter 'identifier' must not be null!");
         if (window == null)
-            throw new IllegalArgumentException("ApplicationParameter 'window' must not be null!");
+            throw new IllegalArgumentException("Parameter 'window' must not be null!");
 
-        try {
-            _semaphore.acquireUninterruptibly();
-            final int oldCount = _idToWindowMapping.size();
+        final int oldCount = _idToWindowMapping.size();
 
-            _idToWindowMapping.put(identifier, window);
-            _windowToIdMapping.put(window, identifier);
-            _windowHierarchy.add(window);
+        _idToWindowMapping.put(identifier, window);
+        _windowToIdMapping.put(window, identifier);
+        _windowHierarchy.add(window);
 
-            window.addWindowFocusListener(_focusListener);
+        window.addWindowFocusListener(_focusListener);
 
-            _pcs.firePropertyChange(WINDOW_COUNT_PROPERTY, oldCount, _idToWindowMapping.size());
-        } finally {
-            _semaphore.release();
-        }
+        _pcs.firePropertyChange(WINDOW_COUNT_PROPERTY, oldCount, _idToWindowMapping.size());
     }
 
     /**
@@ -152,20 +142,15 @@ public class WindowGroup implements XMLExternalizable {
      * @param identifier Identifier under which the window was registered.
      */
     public void removeWindow(final String identifier) {
-        try {
-            _semaphore.acquireUninterruptibly();
-            final int oldCount = _idToWindowMapping.size();
+        final int oldCount = _idToWindowMapping.size();
 
-            final Window window = _idToWindowMapping.get(identifier);
-            _windowHierarchy.remove(window);
-            _windowToIdMapping.remove(window);
-            _idToWindowMapping.remove(identifier);
-            window.removeWindowFocusListener(_focusListener);
+        final Window window = _idToWindowMapping.get(identifier);
+        _windowHierarchy.remove(window);
+        _windowToIdMapping.remove(window);
+        _idToWindowMapping.remove(identifier);
+        window.removeWindowFocusListener(_focusListener);
 
-            _pcs.firePropertyChange(WINDOW_COUNT_PROPERTY, oldCount, _idToWindowMapping.size());
-        } finally {
-            _semaphore.release();
-        }
+        _pcs.firePropertyChange(WINDOW_COUNT_PROPERTY, oldCount, _idToWindowMapping.size());
     }
 
     /**
@@ -195,13 +180,8 @@ public class WindowGroup implements XMLExternalizable {
     public void bringToFront() {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                try {
-                    _semaphore.acquireUninterruptibly();
-                    for (Window w : _focusPopList)
-                        w.requestFocus();
-                } finally {
-                    _semaphore.release();
-                }
+                for (Window w : _focusPopList)
+                    w.requestFocus();
             }
         });
     }
@@ -212,7 +192,7 @@ public class WindowGroup implements XMLExternalizable {
      * @return the window instances in this group.
      */
     public Collection<Window> getWindows() {
-        return new LinkedList<Window>(_idToWindowMapping.values());
+        return new ArrayList<Window>(_idToWindowMapping.values());
     }
 
     /**
@@ -221,7 +201,7 @@ public class WindowGroup implements XMLExternalizable {
      * @return the names for the windows in this group.
      */
     public Collection<String> getWindowNames() {
-        return new LinkedList<String>(_idToWindowMapping.keySet());
+        return new ArrayList<String>(_idToWindowMapping.keySet());
     }
 
     /**
@@ -240,15 +220,10 @@ public class WindowGroup implements XMLExternalizable {
      * @return Returns the window in this group currently owning the focus if applicable, or null otherwise.
      */
     public Window getCurrentFocusOwner() {
-        try {
-            _semaphore.acquireUninterruptibly();
-            for (Window w : _windowHierarchy)
-                if (w.isFocused())
-                    return w;
-            return null;
-        } finally {
-            _semaphore.release();
-        }
+        for (Window w : _windowHierarchy)
+            if (w.isFocused())
+                return w;
+        return null;
     }
 
     protected void setupEventHandlers() {
@@ -287,7 +262,6 @@ public class WindowGroup implements XMLExternalizable {
      */
     public void writeExternal(final Element parentElement) throws XMLFormatException {
         try {
-            _semaphore.acquireUninterruptibly();
             final Document doc = parentElement.getOwnerDocument();
             for (Window w : _windowHierarchy) {
                 String id = null;
@@ -315,8 +289,6 @@ public class WindowGroup implements XMLExternalizable {
             }
         } catch (Exception e) {
             throw new XMLFormatException("Could not externalize frame set", e);
-        } finally {
-            _semaphore.release();
         }
     }
 
@@ -327,30 +299,25 @@ public class WindowGroup implements XMLExternalizable {
      * @throws XMLFormatException If the dom structure could not be parsed.
      */
     public void readExternal(final Element parentElement) throws XMLFormatException {
-        try {
-            _semaphore.acquireUninterruptibly();
-            final NodeList list = parentElement.getElementsByTagName(TAG_WINDOW);
-            final int frameCount = list.getLength();
-            for (int i = 0; i < frameCount; i++) {
-                final Element e = (Element) list.item(i);
-                final String id = e.getAttribute(ATTRIBUTE_ID);
-                final Window w = _idToWindowMapping.get(id);
-                if (w == null)
-                    continue;
+        final NodeList list = parentElement.getElementsByTagName(TAG_WINDOW);
+        final int frameCount = list.getLength();
+        for (int i = 0; i < frameCount; i++) {
+            final Element e = (Element) list.item(i);
+            final String id = e.getAttribute(ATTRIBUTE_ID);
+            final Window w = _idToWindowMapping.get(id);
+            if (w == null)
+                continue;
 
-                final Element location = (Element) e.getElementsByTagName(TAG_LOCATION).item(0);
-                final Element size = (Element) e.getElementsByTagName(TAG_SIZE).item(0);
+            final Element location = (Element) e.getElementsByTagName(TAG_LOCATION).item(0);
+            final Element size = (Element) e.getElementsByTagName(TAG_SIZE).item(0);
 
-                final int x = Integer.parseInt(location.getAttribute(ATTRIBUTE_X));
-                final int y = Integer.parseInt(location.getAttribute(ATTRIBUTE_Y));
-                final int width = Integer.parseInt(size.getAttribute(ATTRIBUTE_WIDTH));
-                final int height = Integer.parseInt(size.getAttribute(ATTRIBUTE_HEIGHT));
+            final int x = Integer.parseInt(location.getAttribute(ATTRIBUTE_X));
+            final int y = Integer.parseInt(location.getAttribute(ATTRIBUTE_Y));
+            final int width = Integer.parseInt(size.getAttribute(ATTRIBUTE_WIDTH));
+            final int height = Integer.parseInt(size.getAttribute(ATTRIBUTE_HEIGHT));
 
-                w.setLocation(x, y);
-                w.setSize(width, height);
-            }
-        } finally {
-            _semaphore.release();
+            w.setLocation(x, y);
+            w.setSize(width, height);
         }
     }
 
