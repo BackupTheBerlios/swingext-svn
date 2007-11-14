@@ -109,7 +109,8 @@ public class JTreeTable extends TreeTableDelegate implements Scrollable {
         _nestedTable.setDefaultRenderer(JTree.class, new TreeTableViewportRenderer());
         _nestedTable.setModel(_mdlAdapter);
 
-        _nestedTable.setRowHeight(_nestedTree.getRowHeight());
+        final int height1 = _nestedTree.getRowHeight();
+        _nestedTable.setRowHeight(height1 < 0 ? 20 : height1);
         setTreeCellRenderer(new DefaultTreeCellRenderer());
     }
 
