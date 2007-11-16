@@ -1,14 +1,12 @@
 package net.sarcommand.swingextensions.misc;
 
-import net.sarcommand.swingextensions.gimmicks.ImageOperations;
+import net.sarcommand.swingextensions.gimmicks.*;
 
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.VolatileImage;
+import java.awt.image.*;
 
 /**
  * Implements a simple component which can be used as a glass pane to block windows while the application is working.
@@ -184,6 +182,7 @@ public class BlockingGlassPane extends JPanel {
         addComponentListener(new ComponentAdapter() {
             public void componentHidden(ComponentEvent e) {
                 _indicator.stopProgress();
+                _imageBuffer = null;
             }
 
             public void componentShown(ComponentEvent e) {
