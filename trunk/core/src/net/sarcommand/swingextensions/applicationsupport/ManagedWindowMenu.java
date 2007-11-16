@@ -2,25 +2,27 @@ package net.sarcommand.swingextensions.applicationsupport;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.awt.event.*;
+import java.beans.*;
+import java.util.*;
 
 /**
  * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
  */
 public class ManagedWindowMenu extends JMenu {
-    private final Collection<WindowGroup> _windowGroups;
-    private final LinkedList<Item> _items;
-    private final ActionListener _actionListener;
+    protected final Collection<WindowGroup> _windowGroups;
+    protected final LinkedList<Item> _items;
+    protected final ActionListener _actionListener;
+
+    protected ArrayList<Component> _itemsBeforeWindows;
+    protected ArrayList<Component> _itemsAfterWindows;
 
     public ManagedWindowMenu(final Collection<WindowGroup> windowGroups) {
         _windowGroups = windowGroups;
         _items = new LinkedList<Item>();
+        _itemsAfterWindows = new ArrayList<Component>(2);
+        _itemsBeforeWindows = new ArrayList<Component>(2);
+
         final PropertyChangeListener listener = new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 final String propertyName = evt.getPropertyName();
@@ -44,6 +46,14 @@ public class ManagedWindowMenu extends JMenu {
             g.addPropertyChangeListener(listener);
     }
 
+    public void addComponentBeforeWindowItems(final Component c) {
+        _itemsBeforeWindows.add(c);
+    }
+
+    public void addComponentAfterWindowItems(final Component c) {
+        _itemsAfterWindows.add(c);
+    }
+
     protected void focusChanged() {
         for (WindowGroup g : _windowGroups) {
             final Window window = g.getCurrentFocusOwner();
@@ -61,6 +71,8 @@ public class ManagedWindowMenu extends JMenu {
 
     protected void rebuildMenu() {
         removeAll();
+        for (Component c : _itemsBeforeWindows)
+            add(c);
         _items.clear();
         ButtonGroup buttonGroup = new ButtonGroup();
         for (Iterator<WindowGroup> it = _windowGroups.iterator(); it.hasNext();) {
@@ -75,6 +87,8 @@ public class ManagedWindowMenu extends JMenu {
             if (it.hasNext())
                 add(new JSeparator());
         }
+        for (Component c : _itemsAfterWindows)
+            add(c);
         focusChanged();
     }
 
