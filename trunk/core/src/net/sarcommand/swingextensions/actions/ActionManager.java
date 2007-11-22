@@ -274,7 +274,9 @@ public class ActionManager {
                     runner = nextHandler;
                 else
                     runner = SwingExtUtil.getParent((Component) runner);
-            } else
+            } else if (runner instanceof Component)
+                runner = SwingExtUtil.getParent((Component) runner);
+            else
                 break;
 
             if (runner == null)
