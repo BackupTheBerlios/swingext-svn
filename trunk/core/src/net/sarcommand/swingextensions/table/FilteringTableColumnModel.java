@@ -2,10 +2,7 @@ package net.sarcommand.swingextensions.table;
 
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.prefs.Preferences;
 
 /**
@@ -40,7 +37,8 @@ import java.util.prefs.Preferences;
  */
 public class FilteringTableColumnModel extends DefaultTableColumnModel {
     private HashMap<Object, TableColumn> _hiddenColumnMapping;
-    private HashMap<TableColumn, TableColumn> _predecessorMapping;
+    private LinkedList<Object> _originalColumnOrder;
+    private HashSet<Object> _nonHideables;
 
     private Preferences _preferences;
     private String _preferenceKey;
@@ -51,13 +49,25 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
 
     public FilteringTableColumnModel(final Preferences preferences, final String preferenceKey) {
         initialize();
-        setPreferences(_preferences);
-        setPreferenceKey(_preferenceKey);
+        setPreferences(preferences);
+        setPreferenceKey(preferenceKey);
     }
 
     protected void initialize() {
         _hiddenColumnMapping = new HashMap<Object, TableColumn>(4);
-        _predecessorMapping = new HashMap<TableColumn, TableColumn>(4);
+        _originalColumnOrder = new LinkedList<Object>();
+        _nonHideables = new HashSet<Object>(4);
+    }
+
+    public void setHideable(final Object identifier, final boolean hideable) {
+        if (!hideable)
+            _nonHideables.add(identifier);
+        else
+            _nonHideables.remove(identifier);
+    }
+
+    public boolean isHideable(final Object identifier) {
+        return !_nonHideables.contains(identifier);
     }
 
     /**
@@ -67,20 +77,19 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
      * @param visible    Visibility flag.
      */
     public void setColumnVisible(final Object identifier, final boolean visible) {
+        if (!visible && _nonHideables.contains(identifier))
+            return;
         if (visible) {
             final TableColumn tableColumn = _hiddenColumnMapping.get(identifier);
             super.addColumn(tableColumn);
-            moveColumn(getColumnIndex(identifier), getIndexForHiddenColumn(tableColumn));
+            super.moveColumn(getColumnIndex(identifier), getIndexForHiddenColumn(tableColumn));
             _hiddenColumnMapping.remove(identifier);
-            _predecessorMapping.remove(tableColumn);
         } else {
             final TableColumn tableColumn = getColumn(getColumnIndex(identifier));
             _hiddenColumnMapping.put(identifier, tableColumn);
-            final int index = getColumnIndex(identifier);
-            if (index != 0)
-                _predecessorMapping.put(tableColumn, getColumn(index - 1));
-            removeColumn(tableColumn);
+            super.removeColumn(tableColumn);
         }
+
         if (_preferences != null && _preferenceKey != null) {
             final String key = _preferenceKey + '.' + identifier;
             _preferences.putBoolean(key, visible);
@@ -105,15 +114,30 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
         updateFromPreferences();
     }
 
+    public void removeColumn(final TableColumn column) {
+        super.removeColumn(column);
+        _originalColumnOrder.remove(column.getIdentifier());
+        if (_hiddenColumnMapping.containsKey(column))
+            _hiddenColumnMapping.remove(column);
+    }
+
     public void addColumn(final TableColumn aColumn) {
         super.addColumn(aColumn);
+        if (_originalColumnOrder.contains(aColumn.getIdentifier()))
+            _originalColumnOrder.remove(aColumn.getIdentifier());
+        _originalColumnOrder.add(aColumn.getIdentifier());
+
         if (_preferences != null && _preferenceKey != null) {
             final Object identifier = aColumn.getIdentifier();
             final boolean visible = _preferences.getBoolean(_preferenceKey + '.' + identifier, true);
             if (!visible)
                 setColumnVisible(identifier, false);
         }
+    }
 
+    public void moveColumn(final int columnIndex, final int newIndex) {
+        super.moveColumn(columnIndex, newIndex);
+        _originalColumnOrder.add(newIndex, _originalColumnOrder.remove(columnIndex));
     }
 
     /**
@@ -156,15 +180,7 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
      * @return an ordered collection of the column identifiers, regardless of whether or not they are visible.
      */
     public Collection<Object> getAllColumnIdentfiers() {
-        final Enumeration<TableColumn> enumeration = getColumns();
-        final LinkedList<Object> result = new LinkedList<Object>();
-
-        while (enumeration.hasMoreElements())
-            result.add(enumeration.nextElement().getIdentifier());
-
-        for (TableColumn col : _hiddenColumnMapping.values())
-            result.add(getIndexForHiddenColumn(col), col.getIdentifier());
-        return result;
+        return Collections.unmodifiableList(_originalColumnOrder);
     }
 
     /**
@@ -174,9 +190,13 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
      * @return Index of the column if it were to be made visible.
      */
     protected int getIndexForHiddenColumn(final TableColumn tableColumn) {
-        TableColumn runner = tableColumn;
-        while (runner != null && _hiddenColumnMapping.containsKey(runner.getIdentifier()))
-            runner = _predecessorMapping.get(runner);
-        return runner == null ? 0 : getColumnIndex(runner.getIdentifier()) + 1;
+        Object predecessor = null;
+        for (int i = _originalColumnOrder.indexOf(tableColumn.getIdentifier()) - 1; i >= 0 && predecessor == null; i--)
+        {
+            final Object identifier = _originalColumnOrder.get(i);
+            if (!_hiddenColumnMapping.containsKey(identifier))
+                predecessor = identifier;
+        }
+        return predecessor == null ? 0 : (super.getColumnIndex(predecessor) + 1);
     }
 }
