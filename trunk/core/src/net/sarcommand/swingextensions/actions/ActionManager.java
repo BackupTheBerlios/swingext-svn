@@ -1,11 +1,13 @@
 package net.sarcommand.swingextensions.actions;
 
-import net.sarcommand.swingextensions.utilities.*;
+import net.sarcommand.swingextensions.utilities.SwingExtUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.beans.*;
+import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.lang.ref.WeakReference;
 import java.util.*;
 
 /**
@@ -85,12 +87,15 @@ public class ActionManager {
     protected static boolean __initialized;
     protected static Component __lastFocusOwner;
 
+    protected static LinkedList<WeakReference<Window>> __focusedWindows;
+
     /**
      * Initializes the ActionManager. This method will automatically be triggered by getAction.
      */
     public static void initialize() {
         if (__initialized)
             return;
+        __focusedWindows = new LinkedList<WeakReference<Window>>();
 
         final PropertyChangeListener listener = new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -98,6 +103,21 @@ public class ActionManager {
                 if (evt.getPropertyName().equals("permanentFocusOwner") && newValue != null
                         && !isActionControl(newValue)) {
                     __lastFocusOwner = (Component) newValue;
+                } else if (evt.getPropertyName().equals("focusedWindow")) {
+                    if (newValue != null) {
+                        /* Check if the window is already part of the stack */
+                        WeakReference<Window> wref;
+                        Window w;
+                        synchronized (__focusedWindows) {
+                            for (Iterator<WeakReference<Window>> it = __focusedWindows.iterator(); it.hasNext();) {
+                                wref = it.next();
+                                w = wref.get();
+                                if (w == null || w.equals(newValue))
+                                    it.remove();
+                            }
+                            __focusedWindows.add(new WeakReference<Window>((Window) newValue));
+                        }
+                    }
                 }
             }
         };
@@ -203,12 +223,42 @@ public class ActionManager {
         final Object focusActionProperty = a.getValue(ManagedAction.RESPONDER_CHAIN_ROOT);
         final boolean isComponentAction = __lastFocusOwner == null || (focusActionProperty != null &&
                 focusActionProperty.equals(ManagedAction.RESPONDER_CHAIN_ROOT_COMPONENT));
-        final Object directDelegate = source instanceof JComponent ?
+
+        /* Check if a direct delegate has been installed */
+        final Object directDelegate = (source instanceof JComponent) ?
                 ((JComponent) source).getClientProperty(ActionHandler.NEXT_HANDLER) : null;
 
         /* Try to find a proper handler for the action */
         Object runner = directDelegate != null ? directDelegate :
                 isComponentAction ? (Component) source : __lastFocusOwner;
+
+        /* If the last focused component is installed in a non-visible window, find a visible window and redispatch */
+        if (!isComponentAction && runner instanceof JComponent) {
+            final Window w = JOptionPane.getFrameForComponent((Component) runner);
+            if (!w.isVisible()) {
+                synchronized (__focusedWindows) {
+                    WeakReference<Window> wref;
+                    Window window;
+                    while (true) {
+                        wref = __focusedWindows.getLast();
+                        window = wref.get();
+                        if (window == null || !window.isVisible())
+                            __focusedWindows.removeLast();
+                        else {
+                            final Window newFocus = window;
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    newFocus.requestFocus();
+                                    event.setSource(newFocus.getFocusOwner());
+                                    actionPerformed(actionIdentifier, event);
+                                }
+                            });
+                            return;
+                        }
+                    }
+                }
+            }
+        }
 
         /* Move up the hierarchy to find a suitable responder */
         event.setSource(runner);
