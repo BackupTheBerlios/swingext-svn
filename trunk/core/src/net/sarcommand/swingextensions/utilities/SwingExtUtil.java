@@ -19,8 +19,11 @@ public class SwingExtUtil {
     /**
      * Returns the parent window for the given component. Unlike the according method in JOptionPane (who the heck
      * put it there anyway?), this method will also resolve popup menus. If you invoke getWindowForComponent on an
-     * item in a popup menu, it will return the frame from which the popup was invoked rather than some anonymous
+     * item in a popup menu, it will return the window from which the popup was invoked rather than some anonymous
      * instance.
+     * Another important difference lies in the fact that this method will resolve to a window rather than a frame.
+     * When using JOptionPane to resolve the frame for a component in a JDialog, you might get the shared root frame,
+     * which most likely is not what you will want.
      *
      * @param c Component to query.
      * @return Parent window for the given component.
