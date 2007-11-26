@@ -2,11 +2,18 @@ package net.sarcommand.swingextensions.treetable;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.table.*;
-import javax.swing.tree.*;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.EventObject;
 
 /**
  * Created by IntelliJ IDEA.
@@ -110,7 +117,7 @@ public class JTreeTable extends TreeTableDelegate implements Scrollable {
         _nestedTable.setModel(_mdlAdapter);
 
         final int height1 = _nestedTree.getRowHeight();
-        _nestedTable.setRowHeight(height1 < 0 ? 20 : height1);
+        _nestedTable.setRowHeight(height1 <= 0 ? 20 : height1);
         setTreeCellRenderer(new DefaultTreeCellRenderer());
     }
 
