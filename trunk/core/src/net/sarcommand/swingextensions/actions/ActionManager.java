@@ -234,7 +234,7 @@ public class ActionManager {
 
         /* If the last focused component is installed in a non-visible window, find a visible window and redispatch */
         if (!isComponentAction && runner instanceof JComponent) {
-            final Window w = JOptionPane.getFrameForComponent((Component) runner);
+            final Window w = SwingExtUtil.getWindowForComponent((Component) runner);
             if (!w.isVisible()) {
                 synchronized (__focusedWindows) {
                     WeakReference<Window> wref;
