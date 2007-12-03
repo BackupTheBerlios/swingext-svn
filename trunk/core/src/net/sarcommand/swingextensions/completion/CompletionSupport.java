@@ -29,21 +29,21 @@ import java.util.*;
  * specifying a suitable TokenProvider implementation. All keystrokes can be configured as well by using the
  * according setter methods.
  * <p/>
- * Example:
+ * Example:<br>
  * <code>
- * // You can use pretty much every text component
+ * // You can use pretty much every text component<br>
  * final JTextField testTF = new JTextField(20);
  * <p/>
- * // Create a new CompletionSupport instance
+ * // Create a new CompletionSupport instance<br>
  * final CompletionSupport support = new CompletionSupport();
  * <p/>
- * // Create a completion model, which will be queried for possible completions
+ * // Create a completion model, which will be queried for possible completions<br>
  * final SimpleCompletionModel model = new SimpleCompletionModel(false);
  * <p/>
- * //Add some exemplary tokens
+ * //Add some exemplary tokens<br>
  * model.addTokens(Arrays.asList("Abe", "Abel", "Abraham", "Abakus", "Baker", "Charlie", "Chipmunk", "Chukie"));
  * <p/>
- * // Set the model
+ * // Set the model<br>
  * support.setModel(model);
  * <p/>
  * // And install the completion support. After this invocation, everything should be set up and running.
