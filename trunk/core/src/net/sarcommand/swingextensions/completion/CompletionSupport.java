@@ -67,16 +67,17 @@ import java.util.*;
  */
 public class CompletionSupport {
     private static final SwingExtLogger __log = SwingExtLogging.getLogger(CompletionSupport.class);
+    private static final String INPUT_MAP_PREFIX = "swingExt.completionSupport";
 
     protected enum State {
         NO_SUGGESTIONS, MULTIPLE_SUGGESTIONS, SINGLE_SUGGESTION
     }
 
-    public static final String TRIGGER_COMPLETION_KEY = "swingExt.completionsupport.triggerCompletionKey";
-    public static final String NAV_UP_KEY = "swingExt.completionsupport.navUpKey";
-    public static final String NAV_DOWN_KEY = "swingExt.completionsupport.navDownKey";
-    public static final String CANCEL_KEY = "swingExt.completionsupport.cancelKey";
-    public static final String ACCEPT_KEY = "swingExt.completionsupport.acceptKey";
+    public static final String TRIGGER_COMPLETION_KEY = INPUT_MAP_PREFIX + ".triggerCompletionKey";
+    public static final String NAV_UP_KEY = INPUT_MAP_PREFIX + ".navUpKey";
+    public static final String NAV_DOWN_KEY = INPUT_MAP_PREFIX + ".navDownKey";
+    public static final String CANCEL_KEY = INPUT_MAP_PREFIX + ".cancelKey";
+    public static final String ACCEPT_KEY = INPUT_MAP_PREFIX + ".acceptKey";
 
     public static final String TOKEN_PROVIDER_WORD = "tokenProviderWord";
     public static final String TOKEN_PROVIDER_LINE = "tokenProviderLine";
@@ -298,7 +299,13 @@ public class CompletionSupport {
                 } catch (BadLocationException e) {
                     throw new RuntimeException(e);
                 }
+                setPopupVisible(false);
                 break;
+        }
+        if (_state != State.NO_SUGGESTIONS) {
+            uninstallKey(getAcceptKeyStroke());
+            uninstallKey(getCancelKeyStroke());
+            _state = State.NO_SUGGESTIONS;
         }
     }
 
@@ -460,7 +467,11 @@ public class CompletionSupport {
      */
     protected void installKey(final KeyStroke newKey, final String key) {
         final InputMap inputMap = _target.getInputMap();
-        _originalKeyMapping.put(newKey, inputMap.get(newKey));
+        final Object originalKey = inputMap.get(newKey);
+        if (!(originalKey != null && originalKey instanceof String &&
+                ((String) originalKey).startsWith(INPUT_MAP_PREFIX))) {
+            _originalKeyMapping.put(newKey, originalKey);
+        }
         inputMap.put(newKey, key);
     }
 
@@ -471,8 +482,12 @@ public class CompletionSupport {
      */
     protected void uninstallKey(final KeyStroke key) {
         final InputMap inputMap = _target.getInputMap();
-        if (inputMap.get(key) instanceof String && ((String) inputMap.get(key)).startsWith("swingExt.completionSupport"))
-            inputMap.put(key, _originalKeyMapping.get(key));
+        if (inputMap.get(key) instanceof String && ((String) inputMap.get(key)).startsWith(INPUT_MAP_PREFIX)) {
+            if (_originalKeyMapping.get(key) == null)
+                inputMap.remove(key);
+            else
+                inputMap.put(key, _originalKeyMapping.get(key));
+        }
     }
 
     /**
@@ -518,11 +533,10 @@ public class CompletionSupport {
     public void updateCompletions(final boolean showPopup) {
         final String word = getTokenAtPosition();
         final Collection<String> completions = _model.getPossibleCompletions(_target, word);
-        System.err.println(completions.size() + " completions for " + word);
-        if (completions.size() > 0) {
+        if (completions.size() > 0 && _state == State.NO_SUGGESTIONS) {
             installKey(_acceptKeyStroke, ACCEPT_KEY);
             installKey(_cancelKeyStroke, CANCEL_KEY);
-        } else {
+        } else if (completions.size() == 0 && _state != State.NO_SUGGESTIONS) {
             uninstallKey(_acceptKeyStroke);
             uninstallKey(_cancelKeyStroke);
         }
