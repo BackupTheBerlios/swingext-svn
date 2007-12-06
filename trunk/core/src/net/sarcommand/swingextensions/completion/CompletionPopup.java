@@ -1,5 +1,6 @@
 package net.sarcommand.swingextensions.completion;
 
+import net.sarcommand.swingextensions.event.*;
 import net.sarcommand.swingextensions.utilities.*;
 
 import javax.swing.*;
@@ -52,7 +53,7 @@ public class CompletionPopup {
      */
     private FocusListener _focusListener;
 
-    private Vector<ActionListener> _actionListeners;
+    private EventSupport<ActionListener> _actionListeners;
     protected JScrollPane _contentPane;
 
     public CompletionPopup() {
@@ -60,17 +61,16 @@ public class CompletionPopup {
     }
 
     public void addActionListener(final ActionListener listener) {
-        _actionListeners.add(listener);
+        _actionListeners.addListener(listener);
     }
 
     public void removeListener(final ActionListener listener) {
-        _actionListeners.remove(listener);
+        _actionListeners.removeListener(listener);
     }
 
     protected void fireActionEvent() {
         final ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Item selected");
-        for (ActionListener listener : _actionListeners)
-            listener.actionPerformed(event);
+        _actionListeners.delegate().actionPerformed(event);
     }
 
     protected void initialize() {
@@ -80,7 +80,7 @@ public class CompletionPopup {
     }
 
     protected void initComponents() {
-        _actionListeners = new Vector<ActionListener>(2);
+        _actionListeners = EventSupport.create(ActionListener.class);
 
         _list = new JList();
         _list.setModel(new DefaultListModel());

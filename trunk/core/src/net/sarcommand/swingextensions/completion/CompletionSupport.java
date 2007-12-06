@@ -150,6 +150,11 @@ public class CompletionSupport {
         _cancelKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
         _acceptKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         _completionPopup = new CompletionPopup();
+        _completionPopup.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                accept();
+            }
+        });
 
         _state = State.NO_SUGGESTIONS;
         _automaticallyShowingPopup = false;
