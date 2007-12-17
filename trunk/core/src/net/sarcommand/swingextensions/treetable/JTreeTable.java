@@ -2,18 +2,11 @@ package net.sarcommand.swingextensions.treetable;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreeCellRenderer;
-import javax.swing.tree.TreePath;
+import javax.swing.table.*;
+import javax.swing.tree.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.EventObject;
+import java.awt.event.*;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -204,6 +197,7 @@ public class JTreeTable extends TreeTableDelegate implements Scrollable {
                 modelChanged();
             }
         };
+
         _nestedTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(final ListSelectionEvent e) {
                 if (!_skipSelectionChanges) {
@@ -215,6 +209,21 @@ public class JTreeTable extends TreeTableDelegate implements Scrollable {
 
         _nestedTable.addMouseListener(_mouseAdapter);
         _nestedTree.addTreeExpansionListener(_expansionListener);
+    }
+
+
+    public void setSelectionRows(int[] rows) {
+        if (!_skipSelectionChanges) {
+            _nestedTree.setSelectionRows(_nestedTable.getSelectedRows());
+            _selectionPaths = _nestedTree.getSelectionPaths();
+
+            final ListSelectionModel model = _nestedTable.getSelectionModel();
+            model.setValueIsAdjusting(true);
+            model.clearSelection();
+            for (int i : rows)
+                model.addSelectionInterval(i, i);
+            model.setValueIsAdjusting(false);
+        }
     }
 
     protected void modelChanged() {

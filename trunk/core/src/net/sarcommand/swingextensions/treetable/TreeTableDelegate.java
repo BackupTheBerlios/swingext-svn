@@ -9,7 +9,7 @@ import java.util.*;
 
 /**
  */
-public class TreeTableDelegate extends JComponent {
+public abstract class TreeTableDelegate extends JComponent {
     protected JTable _nestedTable;
     protected JTree _nestedTree;
 
@@ -201,12 +201,10 @@ public class TreeTableDelegate extends JComponent {
     }
 
     public void setSelectionRow(final int row) {
-        _nestedTree.setSelectionRow(row);
+        setSelectionRows(new int[]{row});
     }
 
-    public void setSelectionRows(final int[] rows) {
-        _nestedTree.setSelectionRows(rows);
-    }
+    public abstract void setSelectionRows(final int[] rows);
 
     public void addTreeExpansionListener(final TreeExpansionListener tel) {
         _nestedTree.addTreeExpansionListener(tel);
