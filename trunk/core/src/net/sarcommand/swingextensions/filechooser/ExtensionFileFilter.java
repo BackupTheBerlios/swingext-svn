@@ -1,7 +1,7 @@
 package net.sarcommand.swingextensions.filechooser;
 
 import javax.swing.filechooser.FileFilter;
-import java.io.File;
+import java.io.*;
 
 /**
  * Provides a default implementation for FileFilter instances which will filter by looking at the file's
@@ -62,13 +62,8 @@ public class ExtensionFileFilter extends FileFilter {
         if (_acceptDirectories && f.isDirectory())
             return true;
         final String fileName = f.getName();
-        final int dotIndex = fileName.lastIndexOf('.') + 1;
-        if (dotIndex <= 0)
-            return false;
-
-        final String extension = fileName.substring(dotIndex, fileName.length());
         for (final String ext : _extensions)
-            if (extension.equalsIgnoreCase(ext))
+            if (fileName.toLowerCase().endsWith(ext.toLowerCase()))
                 return true;
         return false;
     }
@@ -117,5 +112,13 @@ public class ExtensionFileFilter extends FileFilter {
      */
     public boolean doesAcceptDirectories() {
         return _acceptDirectories;
+    }
+
+    public static void main(String[] args) {
+        final ExtensionFileFilter _codeTableFileFilter = new ExtensionFileFilter("");
+        _codeTableFileFilter.setExtensions("codetable.xml");
+        _codeTableFileFilter.setDescription("CodeTable files");
+
+        System.out.println(_codeTableFileFilter.accept(new File("/Users/heup/temp/E_Class_Demo.codetable.xml")));
     }
 }
