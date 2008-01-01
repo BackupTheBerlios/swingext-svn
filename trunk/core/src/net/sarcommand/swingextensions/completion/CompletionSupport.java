@@ -1,26 +1,30 @@
 package net.sarcommand.swingextensions.completion;
 
-import net.sarcommand.swingextensions.actions.*;
-import net.sarcommand.swingextensions.internal.*;
+import net.sarcommand.swingextensions.actions.ReflectedAction;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
-import java.awt.event.*;
-import java.util.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.JTextComponent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.Collection;
+import java.util.HashMap;
 
 /**
  * This class offers completion support for all subclasses of JTextComponent. It is designed to be non-invasive, you
  * simply attach it to the instance you want to support. The CompletionSupport will then install the required listeners
  * and update mechanisms, which will be properly removed if you detach it at any point.
  * <p/>
- * Two basic completion functions are implemented here. While the user is typing, this class will check for possible
+ * Two basic completion functions are implemented here. While the shared is typing, this class will check for possible
  * completions based on the current token (see below). If a definite completion exists, the 'missing' letters will be
- * inserted after the caret and selected. By pressing enter, the user can accept it and continue with the next word.
- * By pressing escape, the suggestion will be removed. Finally, the user can just continue typing and the suggestion
+ * inserted after the caret and selected. By pressing enter, the shared can accept it and continue with the next word.
+ * By pressing escape, the suggestion will be removed. Finally, the shared can just continue typing and the suggestion
  * will be adapted accordingly. This behavious is similar to the one implemented in OpenOffice.
  * <p/>
- * If multiple possible suggestions exists, the user can prompt a popup by pressing CTRL+SPACE. He can select an
+ * If multiple possible suggestions exists, the shared can prompt a popup by pressing CTRL+SPACE. He can select an
  * item from the popup or continue typing, incrementally narrowing the search scope. By default, the popup will only
  * show if it is requested manually. You can make it pop up by default by setting the 'automaticallyShowPopup'
  * property.
@@ -66,7 +70,6 @@ import java.util.*;
  * limitations under the License.
  */
 public class CompletionSupport {
-    private static final SwingExtLogger __log = SwingExtLogging.getLogger(CompletionSupport.class);
     private static final String INPUT_MAP_PREFIX = "swingExt.completionSupport";
 
     protected enum State {
@@ -259,7 +262,6 @@ public class CompletionSupport {
      * method will also be invoked whenever the use presses the triggerCompletionKeyStroke.
      */
     public void triggerCompletion() {
-        __log.debug("Action triggered: triggerCompletion");
         if (_model == null)
             return;
 
@@ -270,7 +272,6 @@ public class CompletionSupport {
      * Moves the cursor in the completion popup down one item.
      */
     public void moveCursorDown() {
-        __log.debug("Action triggered: 'moveCursorDown'");
         _completionPopup.moveCursorDown();
     }
 
@@ -278,7 +279,6 @@ public class CompletionSupport {
      * Moves the cursor in the completion popup up one item.
      */
     public void moveCursorUp() {
-        __log.debug("Action triggered: 'moveCursorUp'");
         _completionPopup.moveCursorUp();
     }
 
@@ -528,8 +528,8 @@ public class CompletionSupport {
 
     /**
      * This method will examine the current token at the caret position, look for completions and react accordingly.
-     * If a single completion can be found, it will be suggested to the user by adding a selected region containing
-     * the missing letters. In case of multiple selections, a popup from which the user can select the proper
+     * If a single completion can be found, it will be suggested to the shared by adding a selected region containing
+     * the missing letters. In case of multiple selections, a popup from which the shared can select the proper
      * completion will be shown.
      *
      * @param showPopup Indicates whether the popup should be shown regardless of the 'automaticallyShowPopup'
