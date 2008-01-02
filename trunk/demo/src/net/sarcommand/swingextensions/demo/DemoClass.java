@@ -1,6 +1,13 @@
 package net.sarcommand.swingextensions.demo;
 
 import javax.swing.*;
+import javax.swing.text.*;
+import javax.swing.text.rtf.RTFEditorKit;
+import java.awt.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ResourceBundle;
 
 /**
  * Base class for demo components.
@@ -22,5 +29,50 @@ import javax.swing.*;
 public abstract class DemoClass extends JComponent {
     public abstract String getDemoName();
 
-    public abstract String getDemoDescription();
+    private static ResourceBundle __res = ResourceBundle.getBundle("demoDescriptions");
+
+    public StyledDocument getDemoDescription() {
+        return getRTFResource(getClass().getSimpleName() + ".description");
+    }
+
+    protected StyledDocument getRTFResource(final String resourceID) {
+        final String key;
+        try {
+            key = __res.getString(resourceID);
+        } catch (Exception e) {
+            return createErrorDocument();
+        }
+
+        if (key == null)
+            return createErrorDocument();
+
+        final InputStream resourceStream = getClass().getClassLoader().getResourceAsStream(key);
+        if (resourceStream == null)
+            return createErrorDocument();
+
+        final BufferedInputStream inStream = new BufferedInputStream(resourceStream);
+        final RTFEditorKit kit = new RTFEditorKit();
+        final StyledDocument result = (StyledDocument) kit.createDefaultDocument();
+        try {
+            kit.read(inStream, result, 0);
+            inStream.close();
+        } catch (IOException e) {
+            return createErrorDocument();
+        } catch (BadLocationException e) {
+            return createErrorDocument();
+        }
+        return result;
+    }
+
+    protected StyledDocument createErrorDocument() {
+        final StyledDocument result = new DefaultStyledDocument();
+        final SimpleAttributeSet red = new SimpleAttributeSet();
+        StyleConstants.setForeground(red, Color.RED);
+        try {
+            result.insertString(0, "Error: Could not load demo description!", red);
+        } catch (BadLocationException e) {
+            //never happens
+        }
+        return result;
+    }
 }
