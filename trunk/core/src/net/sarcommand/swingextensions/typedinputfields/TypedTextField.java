@@ -23,7 +23,8 @@ import java.beans.PropertyEditor;
  * limitations under the License.
  */
 public class TypedTextField<E> extends AbstractTypedTextField<E> implements TypedInputField<E> {
-    public static final String PATTERN_EMAIL_RFC_2282 = "[a-zA-Z0-9!#$%&'\\*\\+\\.\\-/=\\?_\\´\\{|\\}~]+@[a-zA-Z0-9_\\.]+[\\.][a-zA-Z0-9]{2,4}";
+    public static final String PATTERN_EMAIL_RFC_2282 = "[a-zA-Z0-9!#$%&'\\*\\+\\.\\-/=\\?_\\´\\{|\\}~]+" +
+            "@[a-zA-Z0-9_\\.]+[\\.][a-zA-Z0-9]{2,4}";
 
     private String[] _patternStrings;
 
@@ -35,6 +36,7 @@ public class TypedTextField<E> extends AbstractTypedTextField<E> implements Type
      */
     public TypedTextField(final PropertyEditor editor, final String... patterns) {
         _patternStrings = patterns;
+        initialize();
         setEditor(editor);
     }
 
