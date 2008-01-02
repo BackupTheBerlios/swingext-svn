@@ -32,7 +32,6 @@ public class AccessoryManagerDemo extends DemoClass {
     private JCheckBox _simpleEastCB;
 
     private JDesktopPane _desktop;
-    private JInternalFrame _frame;
 
     private JFileChooser _simpleChooser;
     private SimpleAccessoryManager _simpleManager;
@@ -68,14 +67,14 @@ public class AccessoryManagerDemo extends DemoClass {
     protected void initInternalFrame() {
         final JPanel panel = new JPanel(new GridLayout(1, 1));
         panel.add(_simpleChooser);
-        _frame = new JInternalFrame("Simple accessory manager");
-        _frame.setContentPane(panel);
-        _frame.setClosable(false);
-        _frame.setResizable(true);
-        _frame.setSize(600, 300);
-        _frame.setLocation(100, 30);
-        _desktop.add(_frame);
-        _frame.setVisible(true);
+        final JInternalFrame frame = new JInternalFrame("Simple accessory manager");
+        frame.setContentPane(panel);
+        frame.setClosable(false);
+        frame.setResizable(true);
+        frame.setSize(600, 300);
+        frame.setLocation(100, 30);
+        _desktop.add(frame);
+        frame.setVisible(true);
     }
 
     protected void initLayout() {
