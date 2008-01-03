@@ -23,6 +23,8 @@ import java.awt.*;
 public class SwingExtensionsDemo {
     private static final Class[] DEMO_CLASSES = {
             JImagePanelDemo.class,
+            SelectionTreeDemo.class,
+            TypedInputFieldDemo.class,
             BlockingGlassPaneDemo.class,
             AccessoryManagerDemo.class,
             MultiSplitPaneDemo.class
@@ -64,10 +66,8 @@ public class SwingExtensionsDemo {
             } catch (Exception e) {
                 System.err.println("Could not instanciate demo " + demoClass.getName());
                 e.printStackTrace();
-
             }
         }
-
     }
 
     protected void initLayout() {
