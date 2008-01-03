@@ -38,6 +38,9 @@ import java.util.Vector;
  * supply instances of the SelectionTreeNode interface as nodes. For most cases, you should be fine using the
  * DefaultSelectionTreeNode implementation, which mimics the DefaultMutableTreeNode class.
  * <p/>
+ * If you interfere with the tree's selecetion management programatically, invoke updateSelections() afterwards to
+ * ensure that all nodes are in a consistent state.
+ * <p/>
  * <hr/>
  * Copyright 2006-2008 Torsten Heup
  * <p/>
@@ -111,19 +114,19 @@ public class JSelectionTree extends JTree {
         });
         _modelListener = new TreeModelListener() {
             public void treeNodesChanged(final TreeModelEvent e) {
-                updateNodeState(getModel(), getModel().getRoot());
+                updateSelections();
             }
 
             public void treeNodesInserted(final TreeModelEvent e) {
-                updateNodeState(getModel(), getModel().getRoot());
+                updateSelections();
             }
 
             public void treeNodesRemoved(final TreeModelEvent e) {
-                updateNodeState(getModel(), getModel().getRoot());
+                updateSelections();
             }
 
             public void treeStructureChanged(final TreeModelEvent e) {
-                updateNodeState(getModel(), getModel().getRoot());
+                updateSelections();
             }
         };
 
@@ -137,6 +140,23 @@ public class JSelectionTree extends JTree {
         super.setModel(newModel);
         if (getModel() != null)
             getModel().addTreeModelListener(_modelListener);
+        updateSelections();
+    }
+
+    /**
+     * If you programatically change the selection state of nodes, invoke this method to ensure that the tree is
+     * still in a consistent state.
+     */
+    public void updateSelections() {
+        updateSelections(getModel(), getModel().getRoot());
+    }
+
+    protected void updateSelections(final TreeModel model, final Object node) {
+        final int count = model.getChildCount(node);
+        for (int i = 0; i < count; i++) {
+            updateSelections(model, model.getChild(node, i));
+        }
+        updateNodeState(model, node);
     }
 
     /**
