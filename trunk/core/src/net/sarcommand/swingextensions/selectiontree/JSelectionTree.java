@@ -1,6 +1,8 @@
 package net.sarcommand.swingextensions.selectiontree;
 
 import javax.swing.*;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -55,6 +57,8 @@ import java.util.Vector;
  * @see DefaultSelectionTreeNode
  */
 public class JSelectionTree extends JTree {
+    private TreeModelListener _modelListener;
+
     public JSelectionTree() {
         initialize();
     }
@@ -105,6 +109,34 @@ public class JSelectionTree extends JTree {
                 }
             }
         });
+        _modelListener = new TreeModelListener() {
+            public void treeNodesChanged(final TreeModelEvent e) {
+                updateNodeState(getModel(), getModel().getRoot());
+            }
+
+            public void treeNodesInserted(final TreeModelEvent e) {
+                updateNodeState(getModel(), getModel().getRoot());
+            }
+
+            public void treeNodesRemoved(final TreeModelEvent e) {
+                updateNodeState(getModel(), getModel().getRoot());
+            }
+
+            public void treeStructureChanged(final TreeModelEvent e) {
+                updateNodeState(getModel(), getModel().getRoot());
+            }
+        };
+
+        if (getModel() != null)
+            getModel().addTreeModelListener(_modelListener);
+    }
+
+    public void setModel(final TreeModel newModel) {
+        if (getModel() != null)
+            getModel().removeTreeModelListener(_modelListener);
+        super.setModel(newModel);
+        if (getModel() != null)
+            getModel().addTreeModelListener(_modelListener);
     }
 
     /**
