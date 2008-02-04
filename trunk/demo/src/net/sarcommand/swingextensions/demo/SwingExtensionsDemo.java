@@ -23,11 +23,11 @@ import java.awt.*;
 public class SwingExtensionsDemo {
     private static final Class[] DEMO_CLASSES = {
             JImagePanelDemo.class,
-            SelectionTreeDemo.class,
+//            SelectionTreeDemo.class,
             TypedInputFieldDemo.class,
             BlockingGlassPaneDemo.class,
             AccessoryManagerDemo.class,
-            MultiSplitPaneDemo.class
+            MultiCellSplitPaneDemo.class
     };
 
     private JTabbedPane _demoPanel;
@@ -86,6 +86,12 @@ public class SwingExtensionsDemo {
     }
 
     public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            System.err.println("Could not set system lookandfeel");
+            e.printStackTrace();
+        }
         new SwingExtensionsDemo();
     }
 }
