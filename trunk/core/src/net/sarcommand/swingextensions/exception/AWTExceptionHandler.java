@@ -11,13 +11,13 @@ import java.util.List;
  * guaranteed to occur in every complex piece of software. If necessary, you can install multiple exception
  * handlers at the same time, for instance to notify loggers or display messages to the user.
  * <p/>
- * <code>
+ * <pre>
  * AWTExceptionHandler.addHandler(new Thread.UncaughtExceptionHandler() {
- * public void uncaughtException(final Thread t, final Throwable e) {
- * __log.fatal("Uncaught runtime exception in AWT event thread: ",e);
- * }
+ *      public void uncaughtException(final Thread t, final Throwable e) {
+ *          __log.fatal("Uncaught runtime exception in AWT event thread: ",e);
+ *      }
  * });
- * </code>
+ * </pre>
  * <hr/>
  * Copyright 2006-2008 Torsten Heup
  * <p/>
