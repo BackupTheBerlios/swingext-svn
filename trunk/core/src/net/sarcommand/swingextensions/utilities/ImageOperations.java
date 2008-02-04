@@ -1,4 +1,4 @@
-package net.sarcommand.swingextensions.gimmicks;
+package net.sarcommand.swingextensions.utilities;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
