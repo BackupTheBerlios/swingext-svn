@@ -44,6 +44,7 @@ public class TypedInputFieldDemo extends DemoClass {
     }
 
     protected void initLayout() {
+        setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         setLayout(new GridBagLayout());
 
         add(new JLabel("An input field only accepting whole numbers: "), new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
