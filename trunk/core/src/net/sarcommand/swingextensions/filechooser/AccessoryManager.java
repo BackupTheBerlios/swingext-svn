@@ -2,7 +2,7 @@ package net.sarcommand.swingextensions.filechooser;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
+import java.util.HashMap;
 
 /**
  * The AccessoryManager class enables you to add custom components to a JFileChooser instance. Other than JFileChooser's
@@ -15,7 +15,7 @@ import java.util.*;
  * refer to those subclasses for details.
  * <p/>
  * In order to use an AccessoryManager, all you have to do is tell it which JFileChooser to extend:
- * <code>
+ * <pre>
  * // create your file chooser
  * final JFileChooser myChooser = new JFileChooser();
  * // This conveniance constructor is equal to creating a manager through the default constructor and then invoking
@@ -23,7 +23,7 @@ import java.util.*;
  * final SimpleAccessoryManager manager = new SimpleAccessoryManager(myChooser);
  * // Start adding your content
  * manager.setAccessory(new JLabel("Foo"), SwingConstants.SOUTH);
- * </code>
+ * </pre>
  * <p/>
  * <hr/>
  * Copyright 2006 Torsten Heup
