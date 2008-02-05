@@ -1,6 +1,6 @@
 package net.sarcommand.swingextensions.misc;
 
-import net.sarcommand.swingextensions.gimmicks.*;
+import net.sarcommand.swingextensions.utilities.*;
 
 import javax.swing.*;
 import javax.swing.text.*;
