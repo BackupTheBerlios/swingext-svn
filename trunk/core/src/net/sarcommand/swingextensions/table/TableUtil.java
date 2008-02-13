@@ -2,6 +2,7 @@ package net.sarcommand.swingextensions.table;
 
 import javax.swing.*;
 import javax.swing.table.*;
+import java.awt.*;
 
 /**
  * This class holds utility methods which may be useful when dealing with JTables.
@@ -29,7 +30,7 @@ public class TableUtil {
      *
      * @param table The JTable to adapt, non-null.
      */
-    public static void setPreferredColumnSizes(final JTable table) {
+    public static void setPreferredColumnWidths(final JTable table) {
         if (table == null)
             throw new IllegalArgumentException("Parameter 'table' must not be null!");
 
@@ -47,6 +48,36 @@ public class TableUtil {
                     max = width;
             }
             columnModel.getColumn(col).setPreferredWidth(max);
+        }
+    }
+
+    /**
+     * This method will iterate over the given table's rows and attempt to find the optimal height for each. You
+     * might want to invoke this method whenever the table's model has been updated or the column margin's change.
+     * You can obtain a utility class which does just that for you using the RowHeightAdapter class.
+     *
+     * @param table Table to adapt, non-null.
+     */
+    public static void setPreferredRowHeights(final JTable table) {
+        if (table == null)
+            throw new IllegalArgumentException("Parameter 'table' must not be null!");
+
+        final int rowCount = table.getRowCount();
+        final int columnCount = table.getColumnCount();
+
+        for (int row = 0; row < rowCount; row++) {
+            int max = 0;
+            for (int col = 0; col < columnCount; col++) {
+                final Component renderer = table.getCellRenderer(row, col).getTableCellRendererComponent(table,
+                        table.getValueAt(row, col), table.isCellSelected(row, col), table.hasFocus(),
+                        row, col);
+                final Rectangle rect = table.getCellRect(row, col, true);
+                renderer.setSize(rect.width, rect.height);
+                final int height = renderer.getPreferredSize().height;
+                if (height > max)
+                    max = height;
+            }
+            table.setRowHeight(row, max <= 0 ? table.getRowHeight() : max);
         }
     }
 
