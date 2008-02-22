@@ -9,7 +9,31 @@ import java.lang.reflect.Method;
 import java.util.prefs.Preferences;
 
 /**
- * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
+ * Abstract super class for BeanEditor implementations. Subclasses have to provide two type paramters: The value class
+ * handled by the editor and the type of JComponent doing the rendering. Furthermore, implementations have to:
+ * <li>Make sure initialize() is invoked before the editor is being used - this method will set up the getter and
+ * setter methods and, if required, take care of the preference handling</li>
+ * <li>implement the convertToString(Object) and convertToValue(String) methods if the value class is neither a String
+ * nor a java primitive. Those conversion methods will be used for storing the value in a preference instance</li>
+ * <li>Implement the abstract methods beanValueUpdated(), getEditor() and getValueClass()</li>
+ * <p/>
+ * Note that in 99% of the cases, you should not have to implement a subclass but will rather be ok using the
+ * GenericBeanEditor class.
+ * <p/>
+ * <hr/>
+ * Copyright 2006-2008 Torsten Heup
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 public abstract class BeanEditor<T, V extends JComponent> extends JComponent {
     private Preferences _preferences;
@@ -30,8 +54,6 @@ public abstract class BeanEditor<T, V extends JComponent> extends JComponent {
         _preferencesKey = prefKey;
         _targetBean = targetBean;
         _property = property;
-
-        initialize();
     }
 
     protected BeanEditor(final Object targetBean, final String property, final String prefKey) {
@@ -139,11 +161,11 @@ public abstract class BeanEditor<T, V extends JComponent> extends JComponent {
     }
 
     protected String convertToString(final Object value) {
-        return null;
+        return value.toString();
     }
 
     protected Object convertToValue(final String string) {
-        return null;
+        return string;
     }
 
     protected abstract void beanValueUpdated();
