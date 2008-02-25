@@ -29,14 +29,17 @@ public class TextFieldEditor extends BeanEditor<String, JTextField> {
 
     public TextFieldEditor(final Object targetBean, final String propertyName) {
         super(targetBean, propertyName);
+        initialize();
     }
 
     public TextFieldEditor(final Object targetBean, final String property, final String prefKey) {
         super(targetBean, property, prefKey);
+        initialize();
     }
 
     public TextFieldEditor(final Object targetBean, final String property, final String prefKey, final Preferences prefs) {
         super(targetBean, property, prefKey, prefs);
+        initialize();
     }
 
     protected void initialize() {
