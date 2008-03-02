@@ -2,8 +2,7 @@ package net.sarcommand.swingextensions.layout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * This class realizes the layout manager for a MultiCellSplitPane. It is only used internally and you should not have
@@ -84,51 +83,51 @@ public class SplitLayout implements LayoutManager2 {
 
         final Dimension d = preferredLayoutSize(parent);
 
-        final HashMap<SplitLayoutCell, Dimension> sizeMap = new HashMap<SplitLayoutCell, Dimension>();
+        final HashMap<SplitLayoutCell, Size> sizeMap = new HashMap<SplitLayoutCell, Size>();
         for (SplitLayoutCell c : _arrangedComponents)
             sizeMap.put(c, c.getLayoutSize());
 
         if (_horizontal) {
             int x = 0;
-            if (d.width != size.width)
+            if (Math.abs(d.width - size.width) >= 1)
                 adjustSizes(sizeMap, size.width - d.width);
 
-            for (Component c : _arrangedComponents) {
-                final Dimension cSize = sizeMap.get(c);
-                final Rectangle bounds = new Rectangle(x, 0, cSize.width, size.height);
+            for (SplitLayoutCell c : _arrangedComponents) {
+                final Size cSize = sizeMap.get(c);
+                final Rectangle bounds = new Rectangle(x, 0, (int) Math.ceil(size.width), (int) Math.ceil(size.height));
                 c.setBounds(bounds);
 
-                x += cSize.width;
+                x += Math.ceil(cSize.width);
             }
         } else {
             int y = 0;
-            if (d.height != size.height)
+            if (Math.abs(d.height - size.height) >= 1)
                 adjustSizes(sizeMap, size.height - d.height);
 
-            for (Component c : _arrangedComponents) {
-                final Dimension cSize = sizeMap.get(c);
-                final Rectangle bounds = new Rectangle(0, y, size.width, cSize.height);
+            for (SplitLayoutCell c : _arrangedComponents) {
+                final Size cSize = sizeMap.get(c);
+                final Rectangle bounds = new Rectangle(0, y, (int) Math.ceil(size.width), (int) Math.ceil(cSize.height));
                 c.setBounds(bounds);
 
-                y += cSize.height;
+                y += Math.ceil(cSize.height);
             }
         }
     }
 
-    protected void adjustSizes(final HashMap<SplitLayoutCell, Dimension> sizes, final int delta) {
+    protected void adjustSizes(final HashMap<SplitLayoutCell, Size> sizes, final int delta) {
         double totalWeight = 0;
         for (SplitLayoutCell c : sizes.keySet())
             totalWeight = totalWeight + _weights.get(c);
 
         if (delta > 0) {
             for (SplitLayoutCell c : sizes.keySet()) {
-                final Dimension layoutSize = c.getLayoutSize();
-                final int modificator = (int) Math.round(((_weights.get(c) / totalWeight) * delta));
-                final Dimension newSize;
+                final Size layoutSize = c.getLayoutSize();
+                final double modificator = (_weights.get(c) / totalWeight) * delta;
+                final Size newSize;
                 if (_horizontal)
-                    newSize = new Dimension(layoutSize.width + modificator, layoutSize.height);
+                    newSize = new Size(layoutSize.width + modificator, layoutSize.height);
                 else
-                    newSize = new Dimension(layoutSize.width, layoutSize.height + modificator);
+                    newSize = new Size(layoutSize.width, layoutSize.height + modificator);
 
                 sizes.put(c, newSize);
                 c.setLayoutSize(newSize);
@@ -143,13 +142,13 @@ public class SplitLayout implements LayoutManager2 {
                 flag = false;
                 int index = 0;
                 for (SplitLayoutCell c : sizes.keySet()) {
-                    final Dimension layoutSize = c.getLayoutSize();
+                    final Size layoutSize = c.getLayoutSize();
                     final double shrinkAmount;
                     if (_horizontal)
-                        shrinkAmount = shrinks[index] + Math.min(Math.round(((_weights.get(c) / totalWeight) * delta2)),
+                        shrinkAmount = shrinks[index] + Math.min(((_weights.get(c) / totalWeight) * delta2),
                                 Math.max(layoutSize.width - c.getMinimumSize().width, 0));
                     else
-                        shrinkAmount = shrinks[index] + Math.min(Math.round(((_weights.get(c) / totalWeight) * delta2)),
+                        shrinkAmount = shrinks[index] + Math.min(((_weights.get(c) / totalWeight) * delta2),
                                 Math.max(layoutSize.height - c.getMinimumSize().height, 0));
                     if (shrinkAmount != shrinks[index])
                         flag = true;
@@ -161,13 +160,13 @@ public class SplitLayout implements LayoutManager2 {
             }
             int index = 0;
             for (SplitLayoutCell c : sizes.keySet()) {
-                final Dimension layoutSize = c.getLayoutSize();
+                final Size layoutSize = c.getLayoutSize();
 
-                final Dimension newSize;
+                final Size newSize;
                 if (_horizontal)
-                    newSize = new Dimension((int) Math.round(layoutSize.width - shrinks[index]), layoutSize.height);
+                    newSize = new Size(layoutSize.width - shrinks[index], layoutSize.height);
                 else
-                    newSize = new Dimension(layoutSize.width, (int) Math.round(layoutSize.height - shrinks[index]));
+                    newSize = new Size(layoutSize.width, layoutSize.height - shrinks[index]);
                 index++;
                 sizes.put(c, newSize);
                 c.setLayoutSize(newSize);
@@ -188,13 +187,13 @@ public class SplitLayout implements LayoutManager2 {
     }
 
     public Dimension preferredLayoutSize(Container parent) {
-        final Dimension d = new Dimension();
+        final Size d = new Size();
         for (SplitLayoutCell c : _arrangedComponents) {
             if (_horizontal)
                 d.width += c.getLayoutSize().width;
             else
                 d.height += c.getLayoutSize().height;
         }
-        return d;
+        return new Dimension((int) Math.ceil(d.width), (int) Math.ceil(d.height));
     }
 }
