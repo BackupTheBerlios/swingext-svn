@@ -118,8 +118,25 @@ public class BlockingGlassPane extends JPanel {
             final BufferedImage tempImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_BYTE_GRAY);
             _imageBuffer = createVolatileImage(getWidth(), getHeight());
 
-            final JRootPane parent = (JRootPane) getParent();
+            final JMenuBar bar;
+            final Window w = SwingExtUtil.getWindowForComponent(this);
+
+            if (w == null)
+                bar = null;
+            else if (w instanceof JFrame)
+                bar = ((JFrame) w).getJMenuBar();
+            else if (w instanceof JDialog)
+                bar = ((JDialog) w).getJMenuBar();
+            else
+                bar = null;
+
             final Graphics2D tempGraphics = tempImage.createGraphics();
+            if (bar != null) {
+                bar.paint(tempGraphics);
+                tempGraphics.translate(0, bar.getHeight());
+            }
+
+            final JRootPane parent = (JRootPane) getParent();
             parent.getContentPane().paint(tempGraphics);
             tempGraphics.dispose();
 
