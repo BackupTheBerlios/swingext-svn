@@ -2,9 +2,7 @@ package net.sarcommand.swingextensions.layout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
 
 /**
  * This class realizes one cell inside a MultiCellSplitPane. It is only used internally and you should not have
@@ -30,7 +28,7 @@ public class SplitLayoutCell extends JComponent {
 
     private SplitLayoutCell _nextCell;
 
-    private Dimension _layoutSize;
+    private Size _layoutSize;
     private int _lastDrag;
 
     private boolean _horizontal;
@@ -41,7 +39,8 @@ public class SplitLayoutCell extends JComponent {
 
         _horizontal = orientation == SwingConstants.HORIZONTAL;
         _component = comp;
-        _layoutSize = _component.getPreferredSize();
+        final Dimension preferredSize = _component.getPreferredSize();
+        _layoutSize = new Size(preferredSize.width, preferredSize.height);
 
         setLayout(new BorderLayout());
         add(_component, BorderLayout.CENTER);
@@ -103,11 +102,11 @@ public class SplitLayoutCell extends JComponent {
         add(divider, _horizontal ? BorderLayout.EAST : BorderLayout.SOUTH);
     }
 
-    public Dimension getLayoutSize() {
+    public Size getLayoutSize() {
         return _layoutSize;
     }
 
-    public void setLayoutSize(final Dimension d) {
+    public void setLayoutSize(final Size d) {
         _layoutSize = d;
     }
 
