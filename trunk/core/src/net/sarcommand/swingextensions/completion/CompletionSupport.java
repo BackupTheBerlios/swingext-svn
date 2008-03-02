@@ -1,17 +1,12 @@
 package net.sarcommand.swingextensions.completion;
 
-import net.sarcommand.swingextensions.actions.ReflectedAction;
+import net.sarcommand.swingextensions.actions.*;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.JTextComponent;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.Collection;
-import java.util.HashMap;
+import javax.swing.event.*;
+import javax.swing.text.*;
+import java.awt.event.*;
+import java.util.*;
 
 /**
  * This class offers completion support for all subclasses of JTextComponent. It is designed to be non-invasive, you
@@ -536,6 +531,8 @@ public class CompletionSupport {
      *                  property.
      */
     public void updateCompletions(final boolean showPopup) {
+        if (!_completionPopup.isVisible() && !showPopup)
+            return;
         final String word = getTokenAtPosition();
         final Collection<String> completions = _model.getPossibleCompletions(_target, word);
         if (completions.size() > 0 && _state == State.NO_SUGGESTIONS) {
@@ -563,8 +560,12 @@ public class CompletionSupport {
 
                     final String suggestionText = token.substring(word.length());
                     _target.getDocument().insertString(caretPosition, suggestionText, null);
-                    _target.setCaretPosition(caretPosition + suggestionText.length());
-                    _target.moveCaretPosition(caretPosition);
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            _target.setCaretPosition(caretPosition + suggestionText.length());
+                            _target.moveCaretPosition(caretPosition);
+                        }
+                    });
 
                 } catch (BadLocationException e) {
                     throw new RuntimeException("Could not insert token at position " + caretPosition, e);
