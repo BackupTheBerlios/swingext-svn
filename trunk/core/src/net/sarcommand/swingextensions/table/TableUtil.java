@@ -38,8 +38,19 @@ public class TableUtil {
         final int columnCount = table.getColumnCount();
 
         final TableColumnModel columnModel = table.getColumnModel();
+
         for (int col = 0; col < columnCount; col++) {
             int max = 0;
+            if (table.getTableHeader() != null) {
+                final TableColumn column = columnModel.getColumn(col);
+                final TableCellRenderer columnRenderer = column.getCellRenderer();
+                final TableCellRenderer renderer = columnRenderer != null ? columnRenderer :
+                        table.getTableHeader().getDefaultRenderer();
+                final int width = renderer.getTableCellRendererComponent(table,
+                        column.getHeaderValue(), false, table.hasFocus(), -1, col).getPreferredSize().width;
+                if (width > max)
+                    max = width;
+            }
             for (int row = 0; row < rowCount; row++) {
                 final int width = table.getCellRenderer(row, col).getTableCellRendererComponent(table,
                         table.getValueAt(row, col), table.isCellSelected(row, col), table.hasFocus(),
