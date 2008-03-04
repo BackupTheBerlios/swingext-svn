@@ -219,7 +219,7 @@ public class CompletionSupport {
      *
      * @param target the text component to support with auto completion.
      */
-    public void install(final JTextComponent target) {
+    public void attachTo(final JTextComponent target) {
         _target = target;
         installKey(_triggerCompletionKeyStroke, TRIGGER_COMPLETION_KEY);
 
@@ -259,8 +259,10 @@ public class CompletionSupport {
     public void triggerCompletion() {
         if (_model == null)
             return;
-
-        updateCompletions(true);
+        if (_state == State.SINGLE_SUGGESTION)
+            accept();
+        else
+            updateCompletions(true);
     }
 
     /**
@@ -531,8 +533,6 @@ public class CompletionSupport {
      *                  property.
      */
     public void updateCompletions(final boolean showPopup) {
-        if (!_completionPopup.isVisible() && !showPopup)
-            return;
         final String word = getTokenAtPosition();
         final Collection<String> completions = _model.getPossibleCompletions(_target, word);
         if (completions.size() > 0 && _state == State.NO_SUGGESTIONS) {
@@ -560,13 +560,8 @@ public class CompletionSupport {
 
                     final String suggestionText = token.substring(word.length());
                     _target.getDocument().insertString(caretPosition, suggestionText, null);
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            _target.setCaretPosition(caretPosition + suggestionText.length());
-                            _target.moveCaretPosition(caretPosition);
-                        }
-                    });
-
+                    _target.setCaretPosition(caretPosition + suggestionText.length());
+                    _target.moveCaretPosition(caretPosition);
                 } catch (BadLocationException e) {
                     throw new RuntimeException("Could not insert token at position " + caretPosition, e);
                 } finally {
