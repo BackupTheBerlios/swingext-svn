@@ -2,7 +2,8 @@ package net.sarcommand.swingextensions.layout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * This class realizes the layout manager for a MultiCellSplitPane. It is only used internally and you should not have
@@ -94,7 +95,7 @@ public class SplitLayout implements LayoutManager2 {
 
             for (SplitLayoutCell c : _arrangedComponents) {
                 final Size cSize = sizeMap.get(c);
-                final Rectangle bounds = new Rectangle(x, 0, (int) Math.ceil(size.width), (int) Math.ceil(size.height));
+                final Rectangle bounds = new Rectangle(x, 0, (int) Math.ceil(cSize.width), (int) Math.ceil(size.height));
                 c.setBounds(bounds);
 
                 x += Math.ceil(cSize.width);
