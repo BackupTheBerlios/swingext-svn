@@ -89,6 +89,7 @@ public class DefaultProgressIndicatorUI extends ProgressIndicatorUI {
         });
         _target.setMinimumSize(new Dimension(24, 24));
         _target.setPreferredSize(new Dimension(32, 32));
+        _target.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
     }
 
     public void startProgress() {
@@ -110,26 +111,26 @@ public class DefaultProgressIndicatorUI extends ProgressIndicatorUI {
     }
 
     public void paint(final Graphics g, final JComponent c) {
-        super.paint(g, c);
         final Graphics2D g2 = (Graphics2D) g.create();
-
         final Rectangle bounds = _target.getBounds();
-        g2.clearRect(bounds.x, bounds.y, bounds.width, bounds.height);
-
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        final Point2D center = new Point2D.Double(bounds.width / 2., bounds.height / 2.);
-        final double innerInset = bounds.height * .15;
-        final double outerInset = ((bounds.height - innerInset) / 2.) - 1;
 
-        g2.setStroke(new BasicStroke(Math.max(bounds.height / 30f, 1.2f), BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL, 0));
+        final Point2D center = new Point2D.Double(bounds.width / 2., bounds.height / 2.);
+        final int lowerDim = Math.min(bounds.width, bounds.height);
+        final double innerInset = lowerDim * .15;
+        final double outerInset = ((lowerDim - innerInset) / 2.) - 1;
+        final AffineTransform originalTransform = g2.getTransform();
+
+        g2.setStroke(new BasicStroke(Math.max(lowerDim / 30f, 1.2f), BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL, 0));
         final Line2D line = new Line2D.Double(0, innerInset, 0, outerInset);
         g2.translate(center.getX(), center.getY());
 
         final boolean running = _target.isIndicatingProgress();
         if (!running)
             g2.setColor(_baseColor);
-        final AffineTransform transform = new AffineTransform();
+
+        final AffineTransform transform = new AffineTransform(g2.getTransform());
         for (int i = 0; i < 12; i++) {
             if (running) {
                 final int diff = (_timerValue < i ? _timerValue + 12 : _timerValue) - i;
@@ -137,9 +138,27 @@ public class DefaultProgressIndicatorUI extends ProgressIndicatorUI {
             }
 
             transform.setToTranslation(center.getX(), center.getY());
+            transform.concatenate(originalTransform);
             transform.rotate(Math.toRadians(i * 30));
             g2.setTransform(transform);
             g2.draw(line);
         }
+        g2.dispose();
+    }
+
+    public Dimension getMaximumSize(JComponent c) {
+        return c.getMaximumSize();
+    }
+
+    public Dimension getMinimumSize(JComponent c) {
+        return c.getMaximumSize();
+    }
+
+    public Dimension getPreferredSize(JComponent c) {
+        return c.getMaximumSize();
+    }
+
+    public void update(Graphics g, JComponent c) {
+        paint(g, c);
     }
 }
