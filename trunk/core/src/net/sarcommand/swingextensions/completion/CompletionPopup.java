@@ -39,7 +39,7 @@ public class CompletionPopup {
     private JDialog _dialog;
 
     /**
-     * The owner component for this popup. The popup will vanish as soon as this owner loses the user focus.
+     * The owner component for this popup. The popup will vanish as soon as this owner loses the shared focus.
      */
     private JComponent _owner;
 
@@ -49,7 +49,7 @@ public class CompletionPopup {
     private WindowListener _windowListener;
 
     /**
-     * Window listener used to track events which indicate that the owner component has lost user focus.
+     * Window listener used to track events which indicate that the owner component has lost shared focus.
      */
     private FocusListener _focusListener;
 
@@ -151,25 +151,30 @@ public class CompletionPopup {
      * @param owner Owner component for this popup.
      */
     public void show(final JComponent owner) {
-        if (_owner != null) {
-            _owner.removeFocusListener(_focusListener);
-            SwingExtUtil.getWindowForComponent(_owner).removeWindowListener(_windowListener);
+        if (_owner != owner) {
+            if (_owner != null) {
+                _owner.removeFocusListener(_focusListener);
+                SwingExtUtil.getWindowForComponent(_owner).removeWindowListener(_windowListener);
+            }
+
+            if (!owner.isShowing())
+                return;
+            _owner = owner;
+
+            final int height = 120;
+            final int maxY = Toolkit.getDefaultToolkit().getScreenSize().height;
+            final Point location = owner.getLocationOnScreen();
+            final int y = location.y + owner.getHeight() + 120 > maxY ? location.y - 120
+                    : location.y + owner.getHeight();
+            _dialog.setSize(owner.getWidth(), height);
+            _dialog.setLocation(location.x, y);
+            _dialog.setVisible(true);
+
+            _owner.addFocusListener(_focusListener);
+            JOptionPane.getFrameForComponent(_owner).addWindowListener(_windowListener);
         }
 
-        _owner = owner;
-
-        final int height = 120;
-        final int maxY = Toolkit.getDefaultToolkit().getScreenSize().height;
-        final Point location = owner.getLocationOnScreen();
-        final int y = location.y + owner.getHeight() + 120 > maxY ? location.y - 120
-                : location.y + owner.getHeight();
-        _dialog.setSize(owner.getWidth(), height);
-        _dialog.setLocation(location.x, y);
-        _dialog.setVisible(true);
         owner.requestFocus();
-
-        _owner.addFocusListener(_focusListener);
-        JOptionPane.getFrameForComponent(_owner).addWindowListener(_windowListener);
     }
 
     /**
