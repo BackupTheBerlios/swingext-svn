@@ -1,8 +1,6 @@
 package net.sarcommand.swingextensions.misc;
 
 import javax.swing.*;
-import javax.swing.plaf.ComponentUI;
-import java.awt.*;
 
 /**
  * This class implements a simple, ajax-like progress indicator. Other than the JProgressBar, this widget will not
@@ -30,12 +28,7 @@ import java.awt.*;
  * limitations under the License.
  */
 public class JProgressIndicator extends JComponent {
-    public static final String UI_KEY = "ProgressIndicator.UI";
-
-    /**
-     * UI currently being used.
-     */
-    protected ProgressIndicatorUI _ui;
+    public static final String UI_KEY = "ProgressIndicatorUI";
 
     /**
      * Delay after which the indicator should be updated while indicating that progress is being made.
@@ -50,34 +43,35 @@ public class JProgressIndicator extends JComponent {
     public JProgressIndicator() {
         _updateDelay = 50;
         _indicatingProgress = false;
-        _ui = (ProgressIndicatorUI) UIManager.getUI(this);
-        _ui.installUI(this);
+        updateUI();
     }
 
-    public void startProgress() {
-        _indicatingProgress = true;
-        _ui.startProgress();
-    }
-
-    public void stopProgress() {
-        _indicatingProgress = false;
-        _ui.stopProgress();
-    }
-
-    protected void setUI(final ComponentUI newUI) {
+    protected void setUI(final ProgressIndicatorUI newUI) {
         if (newUI == null)
             throw new IllegalArgumentException("Parameter 'newUI' must not be null!");
-
-        if (!(newUI instanceof ProgressIndicatorUI))
-            throw new IllegalArgumentException("Attempting to install a wrong ui class, instance of ProgressIndicatorUI" +
-                    "is required, found " + newUI.getClass().getName());
-
-        _ui = (ProgressIndicatorUI) newUI;
         super.setUI(newUI);
     }
 
-    public ProgressIndicatorUI getUI() {
-        return _ui;
+    public String getUIClassID() {
+        return UI_KEY;
+    }
+
+    public void updateUI() {
+        if (UIManager.get(getUIClassID()) == null)
+            setUI(new DefaultProgressIndicatorUI());
+        else
+            setUI(UIManager.getUI(this));
+    }
+
+    public void setIndicatingProgress(final boolean indicatingProgress) {
+        _indicatingProgress = indicatingProgress;
+        if (indicatingProgress) {
+            _indicatingProgress = true;
+            getUI().startProgress();
+        } else {
+            _indicatingProgress = false;
+            getUI().stopProgress();
+        }
     }
 
     public boolean isIndicatingProgress() {
@@ -92,18 +86,7 @@ public class JProgressIndicator extends JComponent {
         _updateDelay = updateDelay;
     }
 
-    public String getUIClassID() {
-        if (!UIManager.getDefaults().containsKey(UI_KEY))
-            UIManager.getDefaults().put(UI_KEY, DefaultProgressIndicatorUI.class.getName());
-        return UI_KEY;
-    }
-
-    /**
-     * Delegates the paint call to the installed UI class.
-     *
-     * @param g Graphics instance to use.
-     */
-    public void paint(final Graphics g) {
-        getUI().paint(g, this);
+    protected ProgressIndicatorUI getUI() {
+        return (ProgressIndicatorUI) ui;
     }
 }
