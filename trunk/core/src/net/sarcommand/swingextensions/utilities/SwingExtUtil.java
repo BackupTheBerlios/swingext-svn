@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
  * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
  */
 public class SwingExtUtil {
-    private static ExecutorService _executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private static ExecutorService _executor = Executors.newCachedThreadPool();
 
     /**
      * Returns the parent window for the given component. Unlike the according method in JOptionPane (who the heck
@@ -77,9 +77,14 @@ public class SwingExtUtil {
      */
     public static synchronized Method getMethod(final Object target, final String methodName,
                                                 final Class... argumentTypes) {
+        return getMethod(target.getClass(), methodName, argumentTypes);
+    }
+
+    public static synchronized Method getMethod(final Class clazz, final String methodName,
+                                                final Class... argumentTypes) {
         final Method method;
         try {
-            method = target.getClass().getMethod(methodName, argumentTypes);
+            method = clazz.getMethod(methodName, argumentTypes);
         } catch (NoSuchMethodException e) {
             return null;
         }
@@ -93,15 +98,28 @@ public class SwingExtUtil {
      * @param propertyName The getter's property.
      * @return a getter method for the given property, or null if there is none.
      */
-    public static synchronized Method getGetter(final Object target, final String propertyName) {
+    public static Method getGetter(final Object target, final String propertyName) {
+        if (target == null)
+            throw new IllegalArgumentException("Parameter 'target' must not be null!");
+        if (propertyName == null)
+            throw new IllegalArgumentException("Parameter 'propertyName' must not be null!");
+        return getGetter(target.getClass(), propertyName);
+    }
+
+    public static Method getGetter(final Class clazz, final String propertyName) {
+        if (clazz == null)
+            throw new IllegalArgumentException("Parameter 'clazz' must not be null!");
+        if (propertyName == null)
+            throw new IllegalArgumentException("Parameter 'propertyName' must not be null!");
+
         Method m;
-        m = getGetterWithPrefix(target, propertyName, "get");
+        m = getGetterWithPrefix(clazz, propertyName, "get");
         if (m != null)
             return m;
-        m = getGetterWithPrefix(target, propertyName, "is");
+        m = getGetterWithPrefix(clazz, propertyName, "is");
         if (m != null)
             return m;
-        m = getGetterWithPrefix(target, propertyName, "has");
+        m = getGetterWithPrefix(clazz, propertyName, "has");
         return m;
     }
 
@@ -135,7 +153,7 @@ public class SwingExtUtil {
      * @param prefix   Prefix for the supposed getter.
      * @return The getter method if it exists, null otherwise.
      */
-    protected static Method getGetterWithPrefix(final Object target, final String property, final String prefix) {
+    protected static Method getGetterWithPrefix(final Class target, final String property, final String prefix) {
         String name = prefix + Character.toUpperCase(property.charAt(0));
         if (property.length() > 1)
             name = name + property.substring(1);
