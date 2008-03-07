@@ -2,6 +2,9 @@ package net.sarcommand.swingextensions.beaneditors;
 
 import net.sarcommand.swingextensions.typedinputfields.DoubleInputField;
 
+import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -12,6 +15,7 @@ import java.util.prefs.Preferences;
  */
 public class DoubleFieldEditor extends BeanEditor<Double, DoubleInputField> {
     private DoubleInputField _inputField;
+    private volatile boolean _internalUpdate;
 
     public DoubleFieldEditor(final Object targetBean, final String property) {
         super(targetBean, property);
@@ -35,13 +39,37 @@ public class DoubleFieldEditor extends BeanEditor<Double, DoubleInputField> {
 
         _inputField.addFocusListener(new FocusAdapter() {
             public void focusLost(final FocusEvent e) {
+                if (_internalUpdate)
+                    return;
+                _internalUpdate = true;
                 setValue(_inputField.getValue());
+                _internalUpdate = false;
+            }
+        });
+
+        _inputField.addCaretListener(new CaretListener() {
+            public void caretUpdate(final CaretEvent e) {
+                if (_internalUpdate)
+                    return;
+                final Double newValue = _inputField.getValue();
+
+                if (newValue != null && !newValue.equals(getValue())) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            _internalUpdate = true;
+                            setValue(newValue);
+                            _internalUpdate = false;
+                        }
+                    });
+                }
             }
         });
         super.initialize();
     }
 
     protected void beanValueUpdated() {
+        if (_internalUpdate)
+            return;
         _inputField.setValue(getValue());
     }
 
