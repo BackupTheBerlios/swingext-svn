@@ -5,8 +5,10 @@ import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * A collection of small utilities for component management and reflection handling.
@@ -165,9 +167,20 @@ public class SwingExtUtil {
      * Invokes the given runnable in an asychronous worker thread.
      *
      * @param r Runnable to invoke.
+     * @return A future instance representing the task.
      */
-    public static void invokeAsWorker(final Runnable r) {
-        _executor.execute(r);
+    public static Future invokeAsWorker(final Runnable r) {
+        return _executor.submit(r);
+    }
+
+    /**
+     * Invokes the given runnable in an asychronous worker thread.
+     *
+     * @param c Callable to invoke.
+     * @return A future instance representing the task.
+     */
+    public static Future invokeAsWorker(final Callable c) {
+        return _executor.submit(c);
     }
 
     /**
@@ -176,8 +189,9 @@ public class SwingExtUtil {
      * @param target     Target object exposing the specified method.
      * @param methodName Method to invoke.
      * @param args       Arguments to pass to the method.
+     * @return A future instance representing the task.
      */
-    public static void invokeAsWorker(final Object target, final String methodName, final Object... args) {
+    public static Future invokeAsWorker(final Object target, final String methodName, final Object... args) {
         final Class[] types = new Class[args.length];
         for (int i = 0; i < types.length; i++)
             types[i] = args[i].getClass();
@@ -185,10 +199,10 @@ public class SwingExtUtil {
         if (m == null)
             throw new RuntimeException("No such method: " + methodName + '(' + Arrays.toString(types) + ") found for target" +
                     "class " + target.getClass().getName());
-        invokeAsWorker(new Runnable() {
-            public void run() {
+        return invokeAsWorker(new Callable() {
+            public Object call() throws Exception {
                 try {
-                    m.invoke(target, args);
+                    return m.invoke(target, args);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
