@@ -16,7 +16,7 @@ import java.util.concurrent.Future;
  * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
  */
 public class SwingExtUtil {
-    private static ExecutorService _executor = Executors.newCachedThreadPool();
+    private static ExecutorService __executor = Executors.newCachedThreadPool();
 
     /**
      * Returns the parent window for the given component. Unlike the according method in JOptionPane (who the heck
@@ -167,24 +167,31 @@ public class SwingExtUtil {
      * Invokes the given runnable in an asychronous worker thread.
      *
      * @param r Runnable to invoke.
-     * @return A future instance representing the task.
      */
-    public static Future invokeAsWorker(final Runnable r) {
-        return _executor.submit(r);
+    public static void invokeAsWorker(final Runnable r) {
+        __executor.execute(r);
     }
 
     /**
      * Invokes the given runnable in an asychronous worker thread.
+     * <p/>
+     * IMPORTANT: Since this method will return a Future, exceptions will not be thrown as usual. Instead, the Future's
+     * get() method will return an ExcecutionException. This behaviour is determined by the ExecutorService. If you want
+     * to preserve normal exception handling, you will have to wrap your code in try/catch.
      *
      * @param c Callable to invoke.
      * @return A future instance representing the task.
      */
     public static Future invokeAsWorker(final Callable c) {
-        return _executor.submit(c);
+        return __executor.submit(c);
     }
 
     /**
      * Invokes the given method on an asynchronous worker thread.
+     * <p/>
+     * IMPORTANT: Since this method will return a Future, exceptions will not be thrown as usual. Instead, the Future's
+     * get() method will return an ExcecutionException. This behaviour is determined by the ExecutorService. If you want
+     * to preserve normal exception handling, you will have to wrap your code in try/catch.
      *
      * @param target     Target object exposing the specified method.
      * @param methodName Method to invoke.
