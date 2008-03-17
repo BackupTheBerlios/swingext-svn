@@ -1,12 +1,11 @@
 package net.sarcommand.swingextensions.typedinputfields;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 
 /**
- * Default implementation for the TypedInputFieldEditCallback interface. This implementation will set a red border on
- * the input field if the current input data is incomplete, and perform Toolkit.getToolkit().beep if illegal input
+ * Default implementation for the TypedInputFieldEditCallback interface. This implementation will set a red foreground
+ * on the input field if the current input data is incomplete, and perform Toolkit.getToolkit().beep if illegal input
  * has been made.
  * <p/>
  * <hr/>
@@ -26,13 +25,13 @@ import java.awt.*;
  */
 public class DefaultInputFieldEditCallback implements TypedInputFieldEditCallback {
     protected JComponent _component;
-    protected Border _defaultBorder;
-    protected Border _errorBorder;
+    protected Color _defaultForeground;
+    protected Color _errorColor;
 
     public DefaultInputFieldEditCallback(final JComponent target) {
         _component = target;
-        _defaultBorder = _component.getBorder();
-        _errorBorder = BorderFactory.createLineBorder(Color.RED);
+        _defaultForeground = _component.getForeground();
+        _errorColor = Color.RED;
     }
 
     public void inputIllegal(final TypedInputField source) {
@@ -42,12 +41,12 @@ public class DefaultInputFieldEditCallback implements TypedInputFieldEditCallbac
 
     public void inputIncomplete(final TypedInputField source) {
         if (source == _component)
-            _component.setBorder(_errorBorder);
+            _component.setForeground(_errorColor);
 
     }
 
     public void inputLegal(final TypedInputField source) {
         if (source == _component)
-            _component.setBorder(_defaultBorder);
+            _component.setForeground(_defaultForeground);
     }
 }
