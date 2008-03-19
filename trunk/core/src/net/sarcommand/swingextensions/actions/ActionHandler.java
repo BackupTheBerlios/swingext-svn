@@ -10,6 +10,12 @@ import java.awt.event.ActionEvent;
  * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
  */
 public interface ActionHandler {
+    /**
+     * When the ActionManager is trying to find a suitable responder for an action, it will usually follow the component
+     * hierarchy. However, in some cases you may want to provide a custom ActionHandler at some point which is not a
+     * component in the hierarchy. You can do so using Swing's client property system. Invoke putClientProperty on a
+     * component in the chain, using this constant as the key and the new action handler as value.
+     */
     public static final String NEXT_HANDLER = ActionHandler.class.getName() + ".nextHandler";
 
     /**
