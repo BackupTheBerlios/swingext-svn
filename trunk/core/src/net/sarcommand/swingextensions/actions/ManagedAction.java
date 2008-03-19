@@ -4,10 +4,11 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 /**
- * A ManagedAction is a utility class used by the ActionManager to handle responder chain actions. Basically,
- * ManagedAction extends a normal AbstractAction by adding an identifier to each action and by supplying an
- * implementation for actionPerformed(ActionEvent). This default implementation will simply notify the ActionManager
- * that the action has been triggered and leave the actual execution to it.
+ * ManagedActions are subclasses of swing's Action interface which by themselves carry means to resolve the
+ * actionPerformend method.  Basically, a ManagedAction extends a normal AbstractAction by adding an identifier
+ * to each action and by supplying an implementation for actionPerformed(ActionEvent). This class' default
+ * implementation will simply notify the ActionManager that the action has been triggered and leave the actual
+ * execution to it.
  * <p/>
  * <hr>
  * Copyright 2006 Torsten Heup
