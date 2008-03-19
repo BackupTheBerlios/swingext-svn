@@ -77,16 +77,49 @@ import java.util.*;
  * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
  */
 public class ActionManager {
+    /**
+     * The ActionProvider being used to create new Action instances.
+     */
     private static ActionProvider __actionProvider;
+
+    /**
+     * The default handler to which all actions will be passed if no suitable ActionHandler could be found
+     * in the ResponderChain.
+     */
     private static ActionHandler __defaultActionHandler;
 
+    /**
+     * This map is being used to cache loaded actions, making sure that each action identifier resolves to a singleton
+     * action.
+     */
     private static HashMap<Object, Action> __actionMap;
+
+    /**
+     * This map will be used to keep track of action groups.
+     */
     private static HashMap<Object, Collection<Action>> __groups;
+
+    /**
+     * In this map, state information on collections of actions will be cached.
+     */
     private static HashMap<Object, ActionState> __actionStates;
 
+    /**
+     * Flag determining whether the ActionManager has been properly initialized.
+     */
     protected static boolean __initialized;
+
+    /**
+     * This field will be used to track the last permanent focus owner for actions which should origin in the focued
+     * component.
+     */
     protected static Component __lastFocusOwner;
 
+    /**
+     * This field implements a weak references stack of the last focused windows. If an action is declared to origin in
+     * the currently focued component, the ActionManager will use this list to make sure that the enclosing window of
+     * the focused component is still visible.
+     */
     protected static LinkedList<WeakReference<Window>> __focusedWindows;
 
     /**
@@ -108,7 +141,7 @@ public class ActionManager {
                         /* Check if the window is already part of the stack */
                         WeakReference<Window> wref;
                         Window w;
-                        synchronized (__focusedWindows) {
+                        synchronized (ActionManager.class) {
                             for (Iterator<WeakReference<Window>> it = __focusedWindows.iterator(); it.hasNext();) {
                                 wref = it.next();
                                 w = wref.get();
@@ -177,7 +210,6 @@ public class ActionManager {
      * @return whether the specified object is an action control
      */
     protected static boolean isActionControl(final Object object) {
-//        return object != null && SwingExtUtil.hasMethod(object, "setAction", Action.class);
         return object != null && (object instanceof JMenuItem || object instanceof AbstractButton);
     }
 
@@ -236,7 +268,7 @@ public class ActionManager {
         if (!isComponentAction && runner instanceof JComponent) {
             final Window w = SwingExtUtil.getWindowForComponent((Component) runner);
             if (w == null || !w.isVisible()) {
-                synchronized (__focusedWindows) {
+                synchronized (ActionManager.class) {
                     WeakReference<Window> wref;
                     Window window;
                     while (true) {
