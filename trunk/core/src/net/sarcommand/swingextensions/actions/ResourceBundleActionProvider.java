@@ -8,25 +8,72 @@ import java.awt.*;
 import java.util.ResourceBundle;
 
 /**
- * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
+ * An ActionProvider instance using a resource bundle to create Action instances. It will use the toString() method on
+ * the Action's identifier and use it to locate the according properties. By default, it will look for the pattern
+ * <code><actionIdentifier.toString()><pathKey><actionProperty></code>. The 'pathKey' element is a merely cosmetic token
+ * you can define to make the bundle files more readable. The 'actionProperty' element is the property of the Action
+ * instance you want to set. <code>myAction.Name</code> would set the 'name' property for an Action identified by the
+ * string 'myAction', where '.' is the path key. Apart from the obvious string properties (Name, ShortDescription etc)
+ * you can also set image properties (SmallIcon, SwingLargeIconKey). If you do, the property value will be referred to
+ * the ImageCache, which attempts to load an icon with the given name. Futhermore, you can set acclerator keys which
+ * will automatically be converted to an appropriate KeyStroke instance.
+ * <p/>
+ * Side note: There is one special thing about accelerator keys: Since actions should behave consistently with the
+ * platform, which rises the issue of the right menu key. On windows, you usually trigger the copy action with ctrl+c,
+ * while you use command+c on the mac. To circumvent this issue, you can use the token 'menu' in your property files to
+ * define the correct accelerator. The action provider will replace it with the correct platform-specific key for you.
  */
 public class ResourceBundleActionProvider implements ActionProvider {
-    private ResourceBundle _resourceBundle;
-    private String _pathKey;
-    private static final String ENABLED_KEY = "Enabled";
+    /**
+     * The constant string being used as a key in the resource bundles for the Action's enabled state (Action does not
+     * provide a proper key, but a boolean method).
+     */
+    public static final String ENABLED_KEY = "Enabled";
 
+    /**
+     * The resource bundle being used to obtain actions.
+     */
+    protected ResourceBundle _resourceBundle;
+
+    /**
+     * The path key being used, if any.
+     */
+    protected String _pathKey;
+
+    /**
+     * Creates a new action provider using the given bundle, without a path key.
+     *
+     * @param bundleName The name of the ResourceBundle to use (will be passed to ResourceBundle.getBundle(String)
+     */
     public ResourceBundleActionProvider(final String bundleName) {
         this(ResourceBundle.getBundle(bundleName), "");
     }
 
+    /**
+     * Creates a new action provider using the given bundle and path key.
+     *
+     * @param bundleName The name of the ResourceBundle to use (will be passed to ResourceBundle.getBundle(String)
+     * @param pathKey    The token to use as path key
+     */
     public ResourceBundleActionProvider(final String bundleName, final String pathKey) {
         this(ResourceBundle.getBundle(bundleName), pathKey);
     }
 
+    /**
+     * Creates a new action provider using the given bundle, without a path key.
+     *
+     * @param bundle The resource bundle to use.
+     */
     public ResourceBundleActionProvider(final ResourceBundle bundle) {
         this(bundle, "");
     }
 
+    /**
+     * Creates a new action provider using the given bundle and path key.
+     *
+     * @param bundle  The resource bundle to use.
+     * @param pathKey The token to use as path key
+     */
     public ResourceBundleActionProvider(final ResourceBundle bundle, final String pathKey) {
         if (bundle == null)
             throw new IllegalArgumentException("Parameter 'bundle' must not be null!");
@@ -36,6 +83,15 @@ public class ResourceBundleActionProvider implements ActionProvider {
         _resourceBundle = bundle;
     }
 
+    /**
+     * Used to obtain a ReflectedAction from the resource bundle, using the given target object and method name.
+     *
+     * @param identifier The unique action identifier to use
+     * @param target     The target object on which the specified method will be invoked
+     * @param methodName The name of the method to invoke when the action is perfomed
+     * @return a ReflectedAction from the resource bundle, using the given target object and method name.
+     * @see ReflectedAction
+     */
     public ReflectedAction createReflectedAction(final Object identifier, final Object target, final String methodName) {
         final ReflectedAction action = new ReflectedAction(identifier, target, methodName);
         map(identifier, action);
@@ -43,6 +99,12 @@ public class ResourceBundleActionProvider implements ActionProvider {
         return action;
     }
 
+    /**
+     * Creates a ManagedAction from the ResourceBundle.
+     *
+     * @param identifier The unique action identifier to use
+     * @return a ManagedAction from the resource bundle
+     */
     public ManagedAction createAction(final Object identifier) {
         final ManagedAction action = new ManagedAction(identifier);
         map(identifier, action);
@@ -50,6 +112,13 @@ public class ResourceBundleActionProvider implements ActionProvider {
         return action;
     }
 
+    /**
+     * This method will map all properties found in the resource bundle for the action identifier to the given
+     * action instance. Subclasses which provide their own action implementation may want to reuse this method.
+     *
+     * @param identifier Unique action identifier used to look up properties in the resource bundle.
+     * @param action     The action to which the looked up properties will be mapped.
+     */
     public void map(Object identifier, Action action) {
         final String prefix = identifier.toString() + _pathKey;
         final int length = prefix.length();
