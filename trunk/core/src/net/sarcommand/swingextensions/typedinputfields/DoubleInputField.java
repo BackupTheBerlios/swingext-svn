@@ -39,7 +39,7 @@ public class DoubleInputField extends AbstractTypedTextField<Double> implements 
     }
 
     public void setValue(final Double value) {
-        setText("" + value);
+        setText(_format == null ? "" + value : _format.format(value));
     }
 
     public Format getFormat() {
@@ -48,5 +48,6 @@ public class DoubleInputField extends AbstractTypedTextField<Double> implements 
 
     public void setFormatter(final Format format) {
         _format = format;
+        setValue(getValue());
     }
 }
