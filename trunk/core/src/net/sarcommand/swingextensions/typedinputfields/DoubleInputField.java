@@ -35,7 +35,11 @@ public class DoubleInputField extends AbstractTypedTextField<Double> implements 
         final String text = getText();
         if (text.length() == 0)
             return null;
-        return Double.parseDouble(text);
+        try {
+            return Double.parseDouble(text);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     public void setValue(final Double value) {
