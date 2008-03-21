@@ -113,7 +113,7 @@ public abstract class BeanEditor<T, V extends JComponent> extends JComponent {
         try {
             _setter.invoke(_targetBean, value);
         } catch (Exception e) {
-            throw new RuntimeException("Could not access getter " + _getter.getName() + " with value " + value +
+            throw new RuntimeException("Could not access setter " + _setter.getName() + " with value " + value +
                     " on bean " + _targetBean);
         }
     }
