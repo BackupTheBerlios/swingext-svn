@@ -1,9 +1,9 @@
 package net.sarcommand.swingextensions.beaneditors;
 
 import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.util.Arrays;
 import java.util.prefs.Preferences;
 
@@ -29,16 +29,21 @@ import java.util.prefs.Preferences;
 public class PasswordEditor extends BeanEditor<char[], JPasswordField> {
     private JPasswordField _editor;
 
+    private boolean _internalUpdate;
+
     public PasswordEditor(final Object targetBean, final String property) {
         super(targetBean, property);
+        initialize();
     }
 
     public PasswordEditor(final Object targetBean, final String property, final String prefKey) {
         super(targetBean, property, prefKey);
+        initialize();
     }
 
     public PasswordEditor(final Object targetBean, final String property, final String prefKey, final Preferences prefs) {
         super(targetBean, property, prefKey, prefs);
+        initialize();
     }
 
     protected void initialize() {
@@ -52,6 +57,8 @@ public class PasswordEditor extends BeanEditor<char[], JPasswordField> {
     }
 
     protected void beanValueUpdated() {
+        if (_internalUpdate)
+            return;
         final char[] pw = getValue();
         if (pw == null)
             _editor.setText("");
@@ -71,10 +78,20 @@ public class PasswordEditor extends BeanEditor<char[], JPasswordField> {
     }
 
     protected void setupEventHandlers() {
-        _editor.addFocusListener(new FocusAdapter() {
-            public void focusLost(final FocusEvent e) {
-                setValue(_editor.getPassword());
+        _editor.addCaretListener(new CaretListener() {
+            public void caretUpdate(final CaretEvent e) {
+                if (!_internalUpdate) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            _internalUpdate = true;
+                            setValue(_editor.getPassword());
+                            _internalUpdate = false;
+                        }
+                    });
+                }
             }
         });
     }
+
+
 }
