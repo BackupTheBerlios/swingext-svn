@@ -30,14 +30,17 @@ public class IntegerFieldEditor extends BeanEditor<Integer, IntegerInputField> {
 
     public IntegerFieldEditor(final Object targetBean, final String property) {
         super(targetBean, property);
+        initialize();
     }
 
     public IntegerFieldEditor(final Object targetBean, final String property, final String prefKey) {
         super(targetBean, property, prefKey);
+        initialize();
     }
 
     public IntegerFieldEditor(final Object targetBean, final String property, final String prefKey, final Preferences prefs) {
         super(targetBean, property, prefKey, prefs);
+        initialize();
     }
 
     protected void initialize() {
