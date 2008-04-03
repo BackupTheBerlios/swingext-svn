@@ -1,4 +1,4 @@
-package net.sarcommand.swingextensions.resources;
+package net.sarcommand.swingextensions.internal;
 
 import net.sarcommand.swingextensions.actions.ResourceBundleActionProvider;
 import net.sarcommand.swingextensions.applicationsupport.ImageCache;
