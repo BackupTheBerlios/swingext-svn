@@ -8,7 +8,9 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * This is a purely internal class used to load test and image resources.
+ * This class is used by the swingext library to load icons and text resources.
+ * <p/>
+ * <b>This is a purely internal class. You not never have to deal with it directly</b>
  * <p/>
  * <hr/>
  * Copyright 2006-2008 Torsten Heup
