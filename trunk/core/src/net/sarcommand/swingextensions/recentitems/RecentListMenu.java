@@ -4,6 +4,7 @@ import net.sarcommand.swingextensions.event.EventSupport;
 import net.sarcommand.swingextensions.formatters.Formatter;
 import net.sarcommand.swingextensions.internal.SwingExtLogger;
 import net.sarcommand.swingextensions.internal.SwingExtLogging;
+import net.sarcommand.swingextensions.menuitemfactory.FileMenuItemFactory;
 import net.sarcommand.swingextensions.menuitemfactory.MenuItemFactory;
 
 import javax.swing.*;
@@ -247,6 +248,18 @@ public class RecentListMenu extends JMenu {
         };
 
         setRecentItems(recentItems);
-        setMenuItemFactory(factory);
+        setMenuItemFactory(factory != null ? factory : getDefaultMenuItemFactory(_recentItems));
+    }
+
+    /**
+     * Returns the default MenuItemFactory instance for the given recent list type.
+     *
+     * @param list the recent items list displayed by the menu.
+     * @return the default MenuItemFactory instance for the given recent list type.
+     */
+    protected MenuItemFactory getDefaultMenuItemFactory(final RecentItemsList list) {
+        if (list instanceof RecentFilesList)
+            return new FileMenuItemFactory();
+        return null;
     }
 }
