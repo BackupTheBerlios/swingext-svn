@@ -3,7 +3,7 @@ package net.sarcommand.swingextensions.exception;
 /**
  * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
  */
-public class DefaultAWTExceptionHandler extends AWTExceptionHandler {
+public class DefaultAWTExceptionHandler implements Thread.UncaughtExceptionHandler {
     private static ExceptionDialog __dialog;
     private static String __message;
 
@@ -21,9 +21,8 @@ public class DefaultAWTExceptionHandler extends AWTExceptionHandler {
         return __dialog;
     }
 
-    public boolean handle(Throwable t) {
-        getDialog().display(null, __message, t);
-        return true;
+    public void uncaughtException(final Thread t, final Throwable e) {
+        getDialog().display(null, __message, e);
     }
 
     public void install() {
