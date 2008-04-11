@@ -23,5 +23,5 @@ import net.sarcommand.swingextensions.formatters.*;
 public interface FormatterSupporter<T> {
     public void setFormatter(final Formatter format);
 
-    public Formatter getFormat();
+    public Formatter getFormatter();
 }
