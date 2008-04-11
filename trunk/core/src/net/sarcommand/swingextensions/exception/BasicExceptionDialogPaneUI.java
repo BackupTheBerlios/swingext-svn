@@ -1,16 +1,13 @@
 package net.sarcommand.swingextensions.exception;
 
-import static net.sarcommand.swingextensions.resources.SwingExtResources.getIconResource;
+import static net.sarcommand.swingextensions.internal.SwingExtResources.*;
 
 import javax.swing.*;
-import javax.swing.plaf.ComponentUI;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
+import javax.swing.plaf.*;
+import javax.swing.text.*;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.beans.*;
+import java.io.*;
 
 /**
  * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
