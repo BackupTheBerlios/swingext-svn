@@ -1,11 +1,11 @@
 package net.sarcommand.swingextensions.exception;
 
-import static net.sarcommand.swingextensions.resources.SwingExtResources.getActionResource;
+
+import static net.sarcommand.swingextensions.internal.SwingExtResources.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
+import java.beans.*;
 
 /**
  * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
