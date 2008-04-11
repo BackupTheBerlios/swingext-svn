@@ -2,13 +2,9 @@ package net.sarcommand.swingextensions.utilities;
 
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * A collection of small utilities for component management and reflection handling.
@@ -206,6 +202,8 @@ public class SwingExtUtil {
         if (m == null)
             throw new RuntimeException("No such method: " + methodName + '(' + Arrays.toString(types) + ") found for target" +
                     "class " + target.getClass().getName());
+        if (!m.isAccessible())
+            m.setAccessible(true);
         return invokeAsWorker(new Callable() {
             public Object call() throws Exception {
                 try {
@@ -242,6 +240,8 @@ public class SwingExtUtil {
         if (m == null)
             throw new RuntimeException("No such method: " + methodName + '(' + Arrays.toString(types) + ") found for target" +
                     "class " + target.getClass().getName());
+        if (!m.isAccessible())
+            m.setAccessible(true);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
