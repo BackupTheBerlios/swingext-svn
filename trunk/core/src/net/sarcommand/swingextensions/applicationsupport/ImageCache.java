@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.SoftReference;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -62,7 +63,7 @@ public class ImageCache {
      * Caches images which have been loaded before.
      * HashMap<String:filename, BufferedImage:actualImage>
      */
-    private static HashMap<String, BufferedImage> __cache;
+    private static HashMap<String, SoftReference<BufferedImage>> __cache;
 
     /**
      * Holds the currently set error policy which should be followed if an image could not be accessed.
@@ -110,10 +111,13 @@ public class ImageCache {
             return imageNotLoaded(imageName, null);
 
         if (__cache == null)
-            __cache = new HashMap<String, BufferedImage>();
+            __cache = new HashMap<String, SoftReference<BufferedImage>>();
 
-        if (__cache.containsKey(imageName))
-            return __cache.get(imageName);
+        if (__cache.containsKey(imageName)) {
+            final BufferedImage cachedImage = __cache.get(imageName).get();
+            if (cachedImage != null)
+                return cachedImage;
+        }
 
         final LinkedList<URI> searchPath = new LinkedList<URI>();
         final URL resource = ImageCache.class.getClassLoader().getResource(imageName);
@@ -135,7 +139,7 @@ public class ImageCache {
             return imageNotLoaded(imageName, searchPath);
         }
 
-        __cache.put(imageName, image);
+        __cache.put(imageName, new SoftReference(image));
         return image;
     }
 
