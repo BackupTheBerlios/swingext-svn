@@ -36,11 +36,11 @@ public class SysInfo {
             final String sysName = System.getProperty("os.name").toLowerCase();
             if (sysName.contains("windows"))
                 __platform = Platform.WINDOWS;
-            if (sysName.contains("mac"))
+            else if (sysName.contains("mac"))
                 __platform = Platform.MACOS;
-            if (sysName.contains("linux"))
+            else if (sysName.contains("linux"))
                 __platform = Platform.LINUX;
-            if (sysName.contains("solaris"))
+            else if (sysName.contains("solaris"))
                 __platform = Platform.SOLARIS;
             else
                 __platform = Platform.UKNOWN;
@@ -55,6 +55,23 @@ public class SysInfo {
      */
     public static String getVersion() {
         return System.getProperty("os.version","unknown");
+    }
+
+    public static String getHeapSizeAsString() {
+        final long mem = Runtime.getRuntime().maxMemory();
+        final double exponent = Math.log(mem) / Math.log(2);
+        if (exponent < 10)
+            return mem+"B";
+        if (exponent < 20)
+            return (mem / 1024)+"KB";
+        if (exponent < 30)
+            return (mem / 1024 / 1024)+"MB";
+
+        return (mem / 1024 / 1024 / 1024)+"GB";
+    }
+
+    public static int getCPUCount() {
+        return Runtime.getRuntime().availableProcessors(); 
     }
 
     private SysInfo() {
