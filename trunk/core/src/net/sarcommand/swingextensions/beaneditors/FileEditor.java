@@ -1,15 +1,12 @@
 package net.sarcommand.swingextensions.beaneditors;
 
-import net.sarcommand.swingextensions.resources.SwingExtResources;
+import net.sarcommand.swingextensions.internal.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.io.File;
-import java.util.prefs.Preferences;
+import java.awt.event.*;
+import java.io.*;
+import java.util.prefs.*;
 
 /**
  * A simple BeanEditor implementation handling file properties. It consists of a text field holding the file name and a
