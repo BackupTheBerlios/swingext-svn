@@ -1,20 +1,12 @@
 package net.sarcommand.swingextensions.recentitems;
 
 import net.sarcommand.swingextensions.formatters.Formatter;
-import net.sarcommand.swingextensions.internal.SwingExtLogger;
-import net.sarcommand.swingextensions.internal.SwingExtLogging;
+import net.sarcommand.swingextensions.internal.*;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.text.ParseException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
-import java.util.prefs.Preferences;
+import java.beans.*;
+import java.text.*;
+import java.util.*;
+import java.util.prefs.*;
 
 /**
  * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
@@ -147,7 +139,9 @@ public class RecentItemsList<T> {
      * @return the list of recent items on this list (unmodifiable).
      */
     public List<T> getRecentItems() {
-        return Collections.unmodifiableList(_recentItems);
+        synchronized (_recentItems) {
+            return Collections.unmodifiableList(new ArrayList<T>(_recentItems));
+        }
     }
 
     /**
@@ -160,8 +154,11 @@ public class RecentItemsList<T> {
             throw new IllegalArgumentException("Parameter 'item' must not be null!");
 
         __log.debug(this + "removing item " + item);
-        final LinkedList<T> copy = new LinkedList<T>(_recentItems);
-        _recentItems.remove(item);
+        final LinkedList<T> copy;
+        synchronized (_recentItems) {
+            copy = new LinkedList<T>(_recentItems);
+            _recentItems.remove(item);
+        }
         recentListUpdated(copy);
     }
 
@@ -170,18 +167,21 @@ public class RecentItemsList<T> {
      * Otherwise, it will be added at position 0 and the list will be truncated if its new length exceeds the
      * length property.
      *
-     * @param file File to add to the recent list.
+     * @param item item to add to the recent list.
      */
-    public void addToRecentList(final T file) {
-        final LinkedList<T> copy = new LinkedList<T>(_recentItems);
+    public void addToRecentList(final T item) {
+        final LinkedList<T> copy;
+        synchronized (_recentItems) {
+            copy = new LinkedList<T>(_recentItems);
 
-        if (_recentItems.contains(file)) {
-            _recentItems.remove(file);
-            _recentItems.add(0, file);
-        } else {
-            _recentItems.add(0, file);
-            if (_recentItems.size() > _maximumLength)
-                _recentItems.removeLast();
+            if (_recentItems.contains(item)) {
+                _recentItems.remove(item);
+                _recentItems.add(0, item);
+            } else {
+                _recentItems.add(0, item);
+                if (_recentItems.size() > _maximumLength)
+                    _recentItems.removeLast();
+            }
         }
 
         recentListUpdated(copy);
@@ -194,25 +194,29 @@ public class RecentItemsList<T> {
      * @param previousList The previous list of recent items.
      */
     protected void recentListUpdated(final LinkedList<T> previousList) {
-        final Preferences node = getPreferenceNode();
-        if (node != null) {
-            _internalUpdateFlag = true;
-            try {
-                clearNode(node);
-                int index = 0;
-                for (T item : _recentItems)
-                    node.put("" + index++, _formatter.convertToString(item));
+        if (_internalUpdateFlag)
+            return;
+        synchronized (_recentItems) {
+            final Preferences node = getPreferenceNode();
+            if (node != null) {
+                _internalUpdateFlag = true;
                 try {
-                    node.flush();
-                } catch (BackingStoreException e) {
-                    throw new RuntimeException("Exception while committing changes to node " + node.absolutePath(), e);
+                    clearNode(node);
+                    int index = 0;
+                    for (T item : _recentItems)
+                        node.put("" + index++, _formatter.convertToString(item));
+                    try {
+                        node.flush();
+                    } catch (BackingStoreException e) {
+                        throw new RuntimeException("Exception while committing changes to node " + node.absolutePath(), e);
+                    }
+                } finally {
+                    _internalUpdateFlag = false;
                 }
-            } finally {
-                _internalUpdateFlag = false;
             }
+            _changeSupport.firePropertyChange(PROPERTY_RECENT_LIST, new LinkedList<T>(previousList),
+                    new LinkedList<T>(_recentItems));
         }
-        _changeSupport.firePropertyChange(PROPERTY_RECENT_LIST, new LinkedList<T>(previousList),
-                new LinkedList<T>(_recentItems));
     }
 
     /**
@@ -235,74 +239,83 @@ public class RecentItemsList<T> {
         if (_internalUpdateFlag)
             return;
         __log.debug("Preferences have been updated, will adapt recent list");
-        final LinkedList<T> copy = new LinkedList<T>(_recentItems);
-        _recentItems.clear();
+        final LinkedList<T> copy;
+        synchronized (_recentItems) {
+            copy = new LinkedList<T>(_recentItems);
+            _recentItems.clear();
 
-        final Preferences node = getPreferenceNode();
-        if (node != null) {
-            final String[] keys;
+            final Preferences node = getPreferenceNode();
+            if (node != null) {
+                final String[] keys;
 
-            /* Get the keys stored in the preferences */
-            try {
-                keys = node.keys();
-            } catch (BackingStoreException e) {
-                throw new RuntimeException("Could not access the defined preferences @" + node.absolutePath(), e);
-            }
-
-            final HashMap<Integer, T> items = new HashMap<Integer, T>(getMaximumLength());
-            for (String key : keys) {
-                final int index;
+                /* Get the keys stored in the preferences */
                 try {
-                    index = Integer.parseInt(key);
-                } catch (NumberFormatException e) {
-                    __log.warn("Found a broken entry in preference node " + node.absolutePath() + " for key " + key);
-                    node.remove(key);
-                    continue;
+                    keys = node.keys();
+                } catch (BackingStoreException e) {
+                    throw new RuntimeException("Could not access the defined preferences @" + node.absolutePath(), e);
                 }
 
-                final String valueRepresentation = node.get(key, null);
+                final HashMap<Integer, T> items = new HashMap<Integer, T>(getMaximumLength());
+                for (String key : keys) {
+                    final int index;
+                    try {
+                        index = Integer.parseInt(key);
+                    } catch (NumberFormatException e) {
+                        __log.warn("Found a broken entry in preference node " + node.absolutePath() + " for key " + key);
+                        node.remove(key);
+                        continue;
+                    }
 
-                if (valueRepresentation == null) {
-                    __log.warn("Found a broken entry in preference node " + node.absolutePath() + " for key " + key);
-                    node.remove(key);
-                    continue;
+                    final String valueRepresentation = node.get(key, null);
+
+                    if (valueRepresentation == null) {
+                        __log.warn("Found a broken entry in preference node " + node.absolutePath() + " for key " + key);
+                        node.remove(key);
+                        continue;
+                    }
+
+                    final T value;
+                    try {
+                        value = _formatter.convertToValue(valueRepresentation);
+                    } catch (ParseException e) {
+                        throw new RuntimeException("The given formatter " + _formatter + " could not decipher the" +
+                                " string representation " + valueRepresentation);
+                    }
+
+                    if (value == null) {
+                        __log.warn("Found a broken entry in preference node " + node.absolutePath() + " for key " + key);
+                        continue;
+                    }
+
+                    if (!items.containsValue(value))
+                        items.put(index, value);
                 }
 
-                final T value;
+                final LinkedList<Integer> keyList = new LinkedList<Integer>(items.keySet());
+                Collections.sort(keyList);
+                for (Integer i : keyList) {
+                    _recentItems.add(items.get(i));
+                    if (_recentItems.size() >= getMaximumLength())
+                        break;
+                }
+
                 try {
-                    value = _formatter.convertToValue(valueRepresentation);
-                } catch (ParseException e) {
-                    throw new RuntimeException("The given formatter " + _formatter + " could not decipher the" +
-                            " string representation " + valueRepresentation);
+                    node.flush();
+                } catch (BackingStoreException e) {
+                    throw new RuntimeException("Could not store the changes " +
+                            "made to preference node " + node.absolutePath(), e);
                 }
+            } else
+                __log.error("Could not obtain the preferences node, most likely the preferences have not been" +
+                        " configured correctly");
+        }
 
-                if (value == null) {
-                    __log.warn("Found a broken entry in preference node " + node.absolutePath() + " for key " + key);
-                    continue;
-                }
-
-                items.put(index, value);
-            }
-
-            final LinkedList<Integer> keyList = new LinkedList<Integer>(items.keySet());
-            Collections.sort(keyList);
-            for (Integer i : keyList) {
-                _recentItems.add(items.get(i));
-                if (_recentItems.size() >= getMaximumLength())
-                    break;
-            }
-
-            try {
-                node.flush();
-            } catch (BackingStoreException e) {
-                throw new RuntimeException("Could not store the changes " +
-                        "made to preference node " + node.absolutePath(), e);
-            }
-        } else
-            __log.error("Could not obtain the preferences node, most likely the preferences have not been" +
-                    " configured correctly");
-
-        _changeSupport.firePropertyChange(PROPERTY_RECENT_LIST, copy, _recentItems);
+        _internalUpdateFlag = true;
+        try {
+            _changeSupport.firePropertyChange(PROPERTY_RECENT_LIST, copy, _recentItems);
+        } finally {
+            _internalUpdateFlag = false;
+        }
     }
 
     /**

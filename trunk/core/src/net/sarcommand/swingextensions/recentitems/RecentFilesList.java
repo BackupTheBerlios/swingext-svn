@@ -1,11 +1,10 @@
 package net.sarcommand.swingextensions.recentitems;
 
-import net.sarcommand.swingextensions.formatters.FileFormatter;
+import net.sarcommand.swingextensions.formatters.*;
 
-import java.io.File;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.prefs.Preferences;
+import java.io.*;
+import java.util.*;
+import java.util.prefs.*;
 
 /**
  * This class implements a list of recent files. Whenever you open or save a file, invoke addToRecentList(File). The
@@ -35,10 +34,15 @@ public class RecentFilesList extends RecentItemsList<File> {
         super.preferencesUpdated();
         if (_internalUpdateFlag)
             return;
-        final LinkedList<File> copy = new LinkedList<File>(_recentItems);
-        for (Iterator<File> iter = _recentItems.iterator(); iter.hasNext();)
-            if (!iter.next().exists())
-                iter.remove();
+        final LinkedList<File> copy;
+        synchronized (_recentItems) {
+            copy = new LinkedList<File>(_recentItems);
+
+            for (Iterator<File> iter = _recentItems.iterator(); iter.hasNext();)
+                if (!iter.next().exists())
+                    iter.remove();
+        }
+
         recentListUpdated(copy);
     }
 }
