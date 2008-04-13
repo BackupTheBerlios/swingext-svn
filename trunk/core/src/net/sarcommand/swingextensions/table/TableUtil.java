@@ -23,6 +23,7 @@ import java.awt.*;
  * limitations under the License.
  */
 public class TableUtil {
+
     /**
      * This method will iterate over the given table's columns and attempt to find the optimal width for each. You
      * might want to do so after displaying a table for the first time or after updating the underlying model to
@@ -31,6 +32,18 @@ public class TableUtil {
      * @param table The JTable to adapt, non-null.
      */
     public static void setPreferredColumnWidths(final JTable table) {
+        setPreferredColumnWidths(table, true);
+    }
+
+    /**
+     * This method will iterate over the given table's columns and attempt to find the optimal width for each. You
+     * might want to do so after displaying a table for the first time or after updating the underlying model to
+     * ensure that as much information as possible is shown.
+     *
+     * @param table         The JTable to adapt, non-null.
+     * @param includeHeader whether or not the header should be included.
+     */
+    public static void setPreferredColumnWidths(final JTable table, final boolean includeHeader) {
         if (table == null)
             throw new IllegalArgumentException("Parameter 'table' must not be null!");
 
@@ -41,7 +54,7 @@ public class TableUtil {
 
         for (int col = 0; col < columnCount; col++) {
             int max = 0;
-            if (table.getTableHeader() != null) {
+            if (includeHeader && table.getTableHeader() != null) {
                 final TableColumn column = columnModel.getColumn(col);
                 final TableCellRenderer columnRenderer = column.getCellRenderer();
                 final TableCellRenderer renderer = columnRenderer != null ? columnRenderer :
