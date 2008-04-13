@@ -1,9 +1,9 @@
 package net.sarcommand.swingextensions.selectiontree;
 
-import net.sarcommand.swingextensions.resources.SwingExtResources;
+import net.sarcommand.swingextensions.internal.*;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.*;
 import java.awt.*;
 
 /**
