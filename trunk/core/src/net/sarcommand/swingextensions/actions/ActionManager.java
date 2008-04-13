@@ -1,13 +1,12 @@
 package net.sarcommand.swingextensions.actions;
 
-import net.sarcommand.swingextensions.utilities.SwingExtUtil;
+import net.sarcommand.swingextensions.utilities.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.lang.ref.WeakReference;
+import java.awt.event.*;
+import java.beans.*;
+import java.lang.ref.*;
 import java.util.*;
 
 /**
@@ -210,7 +209,13 @@ public class ActionManager {
      * @return whether the specified object is an action control
      */
     protected static boolean isActionControl(final Object object) {
-        return object != null && (object instanceof JMenuItem || object instanceof AbstractButton);
+        if (object == null)
+            return false;
+        if (object instanceof JMenuItem)
+            return true;
+        if (object instanceof Component)
+            return ((Component) object).getParent() instanceof JToolBar;
+        return false;
     }
 
     /**
