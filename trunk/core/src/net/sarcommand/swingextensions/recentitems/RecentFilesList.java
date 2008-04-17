@@ -23,11 +23,11 @@ public class RecentFilesList extends RecentItemsList<File> {
     }
 
     public RecentFilesList(final int maximumLength, final Preferences preferences) {
-        super(maximumLength, preferences, new FileFormatter());
+        super(maximumLength, preferences, new FileFormat());
     }
 
     public RecentFilesList(final Preferences preferences) {
-        super(preferences, new FileFormatter());
+        super(preferences, new FileFormat());
     }
 
     protected void preferencesUpdated() {
