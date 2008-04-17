@@ -1,7 +1,6 @@
 package net.sarcommand.swingextensions.recentitems;
 
 import net.sarcommand.swingextensions.event.EventSupport;
-import net.sarcommand.swingextensions.formatters.Formatter;
 import net.sarcommand.swingextensions.internal.SwingExtLogger;
 import net.sarcommand.swingextensions.internal.SwingExtLogging;
 import net.sarcommand.swingextensions.menuitemfactory.FileMenuItemFactory;
@@ -12,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.Format;
 import java.util.List;
 
 /**
@@ -199,14 +199,14 @@ public class RecentListMenu extends JMenu {
     protected void rebuildMenu() {
         removeAll();
         final List list = _recentItems.getRecentItems();
-        final Formatter formatter = _recentItems.getFormatter();
+        final Format formatter = _recentItems.getFormat();
         final MenuItemFactory factory = getMenuItemFactory();
         for (Object o : list) {
             final JMenuItem item;
             if (factory != null)
                 item = factory.createItem(o);
             else if (formatter != null)
-                item = new JMenuItem(formatter.convertToString(o));
+                item = new JMenuItem(formatter.format(o));
             else
                 item = new JMenuItem(o.toString());
             item.putClientProperty(ITEM_PROPERTY, o);
@@ -235,9 +235,9 @@ public class RecentListMenu extends JMenu {
                 __log.debug("Recent item selected: " + e);
                 final JMenuItem item = (JMenuItem) e.getSource();
                 final Object value = item.getClientProperty(ITEM_PROPERTY);
-                final Formatter formatter = _recentItems.getFormatter();
+                final Format formatter = _recentItems.getFormat();
                 final String stringRepresentation = formatter == null ? value.toString() :
-                        formatter.convertToString(value);
+                        formatter.format(value);
                 final ActionEvent event = new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED,
                         stringRepresentation);
 
