@@ -1,19 +1,12 @@
 package net.sarcommand.swingextensions.applicationsupport;
 
-import javax.imageio.ImageIO;
+import javax.imageio.*;
 import javax.swing.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.ref.SoftReference;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.awt.image.*;
+import java.io.*;
+import java.lang.ref.*;
+import java.net.*;
+import java.util.*;
 
 /**
  * Creates a static cache for images and icons which should help to reduce an application's loading time.
@@ -158,6 +151,14 @@ public class ImageCache {
         return image;
     }
 
+    /**
+     * This method is called when an image or icon could not be retrieved. Based on the current error policy, this
+     * method might return null, throw an Exception or return a dummy image containing no pixels.
+     *
+     * @param imageName  Name of the image which could not be obtained - will only be used if an exception is raised.
+     * @param searchPath The current search path - will only be used if an exception is raised.
+     * @return Depending on the current error policy.
+     */
     protected static BufferedImage imageNotLoaded(final String imageName, final Collection<URI> searchPath) {
         switch (__errorPolicy) {
             case ON_ERROR_RETURN_NULL:
