@@ -1,12 +1,17 @@
 package net.sarcommand.swingextensions.recentitems;
 
-import net.sarcommand.swingextensions.formatters.Formatter;
-import net.sarcommand.swingextensions.internal.*;
+import net.sarcommand.swingextensions.internal.SwingExtLogger;
+import net.sarcommand.swingextensions.internal.SwingExtLogging;
 
-import java.beans.*;
-import java.text.*;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.text.Format;
+import java.text.ParseException;
 import java.util.*;
-import java.util.prefs.*;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
+import java.util.prefs.Preferences;
 
 /**
  * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
@@ -47,7 +52,7 @@ public class RecentItemsList<T> {
      * The formatter instance being used to convert the values in this list to string representations. Those are
      * required to store those values in the preferences.
      */
-    protected Formatter<T> _formatter;
+    protected Format _format;
 
     /**
      * The preferences instance being used to store the items on this list between sessions.
@@ -89,10 +94,10 @@ public class RecentItemsList<T> {
      * Creates a new RecentItemsList with the default maximum length, using the given preferences.
      *
      * @param preferences Preferences instance to store the values on this list on.
-     * @param formatter   Formatter instance used to store values in the preferences.
+     * @param format      Formatter instance used to store values in the preferences.
      */
-    public RecentItemsList(final Preferences preferences, final Formatter formatter) {
-        initialize(DEFAULT_LENGTH, preferences, formatter);
+    public RecentItemsList(final Preferences preferences, final Format format) {
+        initialize(DEFAULT_LENGTH, preferences, format);
     }
 
     /**
@@ -100,10 +105,10 @@ public class RecentItemsList<T> {
      *
      * @param maximumLength Maximum number of items on this list.
      * @param preferences   Preferences instance to store the values on this list on.
-     * @param formatter     Formatter instance used to store values in the preferences.
+     * @param format        Formatter instance used to store values in the preferences.
      */
-    public RecentItemsList(final int maximumLength, final Preferences preferences, final Formatter formatter) {
-        initialize(maximumLength, preferences, formatter);
+    public RecentItemsList(final int maximumLength, final Preferences preferences, final Format format) {
+        initialize(maximumLength, preferences, format);
     }
 
     /**
@@ -111,14 +116,14 @@ public class RecentItemsList<T> {
      *
      * @param length      maximumLenth of the list.
      * @param preferences Preferences instance in which the values in this list are stored.
-     * @param formatter   Formatter instance to use for storing values in the preferences.
+     * @param format      Formatter instance to use for storing values in the preferences.
      */
-    protected void initialize(final int length, final Preferences preferences, final Formatter formatter) {
+    protected void initialize(final int length, final Preferences preferences, final Format format) {
         if (length <= 0)
             throw new IllegalArgumentException("Illegal maximum list length: Has to be > 0, was " + length);
-        if ((preferences == null) != (formatter == null))
+        if ((preferences == null) != (format == null))
             throw new IllegalArgumentException("If you set a preference node, you have to set a formatter instance" +
-                    " as well. Preferences: " + preferences + " Formatter: " + formatter);
+                    " as well. Preferences: " + preferences + " Formatter: " + format);
 
         _preferenceListener = new PreferenceChangeListener() {
             public void preferenceChange(final PreferenceChangeEvent evt) {
@@ -130,7 +135,7 @@ public class RecentItemsList<T> {
         _recentItems = new LinkedList<T>();
         setMaximumLength(length);
         setPreferences(preferences);
-        setFormatter(formatter);
+        setFormat(format);
     }
 
     /**
@@ -204,7 +209,7 @@ public class RecentItemsList<T> {
                     clearNode(node);
                     int index = 0;
                     for (T item : _recentItems)
-                        node.put("" + index++, _formatter.convertToString(item));
+                        node.put("" + index++, _format.format(item));
                     try {
                         node.flush();
                     } catch (BackingStoreException e) {
@@ -276,9 +281,9 @@ public class RecentItemsList<T> {
 
                     final T value;
                     try {
-                        value = _formatter.convertToValue(valueRepresentation);
+                        value = (T) _format.parseObject(valueRepresentation);
                     } catch (ParseException e) {
-                        throw new RuntimeException("The given formatter " + _formatter + " could not decipher the" +
+                        throw new RuntimeException("The given formatter " + _format + " could not decipher the" +
                                 " string representation " + valueRepresentation);
                     }
 
@@ -325,7 +330,7 @@ public class RecentItemsList<T> {
      * @return returns the configured preference node, or null if there is none.
      */
     protected Preferences getPreferenceNode() {
-        if ((_preferences == null) != (_formatter == null)) {
+        if ((_preferences == null) != (_format == null)) {
             __log.warn("A preference node has been specified, but no formatter was given. Preferences can" +
                     " not be used.");
             return null;
@@ -380,27 +385,27 @@ public class RecentItemsList<T> {
         _preferences = preferences;
         if (_preferences != null)
             _preferences.addPreferenceChangeListener(_preferenceListener);
-        if (_formatter != null && _preferences != null)
+        if (_format != null && _preferences != null)
             preferencesUpdated();
     }
 
     /**
-     * Returns the Formatter instance used to store the items on this list on the preferences.
+     * Returns the Format instance used to store the items on this list on the preferences.
      *
-     * @return the Formatter instance used to store the items on this list on the preferences.
+     * @return the Format instance used to store the items on this list on the preferences.
      */
-    public Formatter<T> getFormatter() {
-        return _formatter;
+    public Format getFormat() {
+        return _format;
     }
 
     /**
-     * Sets the Formatter instance used to store the items on this list on the preferences.
+     * Sets the Format instance used to store the items on this list on the preferences.
      *
-     * @param formatter the Formatter instance used to store the items on this list on the preferences.
+     * @param format the Format instance used to store the items on this list on the preferences.
      */
-    public void setFormatter(final Formatter<T> formatter) {
-        _formatter = formatter;
-        if (_formatter != null && _preferences != null)
+    public void setFormat(final Format format) {
+        _format = format;
+        if (_format != null && _preferences != null)
             preferencesUpdated();
     }
 
