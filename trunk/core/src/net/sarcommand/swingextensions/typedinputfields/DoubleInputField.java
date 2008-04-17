@@ -1,8 +1,9 @@
 package net.sarcommand.swingextensions.typedinputfields;
 
 
-import net.sarcommand.swingextensions.formatters.*;
-import net.sarcommand.swingextensions.misc.*;
+import net.sarcommand.swingextensions.formatters.FormatSupporter;
+
+import java.text.Format;
 
 
 /**
@@ -23,9 +24,9 @@ import net.sarcommand.swingextensions.misc.*;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class DoubleInputField extends AbstractTypedTextField<Double> implements FormatterSupporter {
+public class DoubleInputField extends AbstractTypedTextField<Double> implements FormatSupporter {
     public static final String PATTERN_DOUBLE = "-?[0-9]+(\\.[0-9]*)?([eE]-?[0-9]+)?";
-    private Formatter _format;
+    private Format _format;
 
     public DoubleInputField() {
         super();
@@ -44,14 +45,14 @@ public class DoubleInputField extends AbstractTypedTextField<Double> implements 
     }
 
     public void setValue(final Double value) {
-        setText(_format == null ? "" + value : _format.convertToString(value));
+        setText(_format == null ? "" + value : _format.format(value));
     }
 
-    public Formatter getFormatter() {
+    public Format getFormat() {
         return _format;
     }
 
-    public void setFormatter(final Formatter format) {
+    public void setFormat(final Format format) {
         _format = format;
         setValue(getValue());
     }
