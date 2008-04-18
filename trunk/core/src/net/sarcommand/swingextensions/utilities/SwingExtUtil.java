@@ -1,10 +1,17 @@
 package net.sarcommand.swingextensions.utilities;
 
+import net.sarcommand.swingextensions.internal.SwingExtLogger;
+import net.sarcommand.swingextensions.internal.SwingExtLogging;
+
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * A collection of small utilities for component management and reflection handling.
@@ -12,7 +19,28 @@ import java.util.concurrent.*;
  * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
  */
 public class SwingExtUtil {
+    private static final SwingExtLogger __log = SwingExtLogging.getLogger(SwingExtUtil.class);
     private static ExecutorService __executor = Executors.newCachedThreadPool();
+    private static Thread.UncaughtExceptionHandler __uncaughtExceptionHandler;
+
+    /**
+     * Returns the uncaught exception handler which will be called if an error occurs within one of the worker threads.
+     *
+     * @return uncaught exception handler which will be called if an error occurs within one of the worker threads.
+     */
+    public static Thread.UncaughtExceptionHandler getUncaughtExceptionHandler() {
+        return __uncaughtExceptionHandler;
+    }
+
+    /**
+     * Sets an uncaught exception handler which will be called if an error occurs within one of the worker threads.
+     *
+     * @param uncaughtExceptionHandler an uncaught exception handler which will be called if an error occurs
+     *                                 within one of the worker threads.
+     */
+    public static void setUncaughtExceptionHandler(final Thread.UncaughtExceptionHandler uncaughtExceptionHandler) {
+        __uncaughtExceptionHandler = uncaughtExceptionHandler;
+    }
 
     /**
      * Returns the parent window for the given component. Unlike the according method in JOptionPane (who the heck
@@ -209,7 +237,12 @@ public class SwingExtUtil {
                 try {
                     return m.invoke(target, args);
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    __log.error("Error invoking method " + m.getName(), e);
+                    if (__uncaughtExceptionHandler != null)
+                        __uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e);
+                    else
+                        throw new RuntimeException(e);
+                    return e;
                 }
             }
         });
