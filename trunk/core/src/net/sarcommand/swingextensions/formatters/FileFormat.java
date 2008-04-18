@@ -20,6 +20,8 @@ public class FileFormat extends Format {
     }
 
     public Object parseObject(final String source, final ParsePosition pos) {
-        return new File(source);
+        final File file = new File(source);
+        pos.setIndex(source.length());
+        return file;
     }
 }
