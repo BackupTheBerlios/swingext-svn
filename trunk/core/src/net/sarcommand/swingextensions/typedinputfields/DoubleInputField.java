@@ -2,6 +2,8 @@ package net.sarcommand.swingextensions.typedinputfields;
 
 
 import net.sarcommand.swingextensions.formatters.FormatSupporter;
+import net.sarcommand.swingextensions.internal.SwingExtLogger;
+import net.sarcommand.swingextensions.internal.SwingExtLogging;
 
 import java.text.Format;
 
@@ -25,6 +27,8 @@ import java.text.Format;
  * limitations under the License.
  */
 public class DoubleInputField extends AbstractTypedTextField<Double> implements FormatSupporter {
+    private static final SwingExtLogger __log = SwingExtLogging.getLogger(DoubleInputField.class);
+
     public static final String PATTERN_DOUBLE = "-?[0-9]+(\\.[0-9]*)?([eE]-?[0-9]+)?";
     private Format _format;
 
@@ -40,6 +44,7 @@ public class DoubleInputField extends AbstractTypedTextField<Double> implements 
         try {
             return Double.parseDouble(text);
         } catch (NumberFormatException e) {
+            __log.warn("Could not parse user input " + text, e);
             return null;
         }
     }
