@@ -283,8 +283,9 @@ public class RecentItemsList<T> {
                     try {
                         value = (T) _format.parseObject(valueRepresentation);
                     } catch (ParseException e) {
-                        throw new RuntimeException("The given formatter " + _format + " could not decipher the" +
-                                " string representation " + valueRepresentation);
+                        __log.error("The given formatter " + _format + " could not decipher the" +
+                                " string representation " + valueRepresentation, e);
+                        continue;
                     }
 
                     if (value == null) {
