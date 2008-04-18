@@ -45,7 +45,16 @@ public class DoubleInputField extends AbstractTypedTextField<Double> implements 
     }
 
     public void setValue(final Double value) {
-        setText(_format == null ? "" + value : _format.format(value));
+        final String s;
+        if (_format != null && value != null) {
+            try {
+                s = _format.format(value);
+            } catch (Exception e) {
+                throw new RuntimeException("Could not format value '" + value + "'", e);
+            }
+        } else
+            s = "";
+        setText(s);
     }
 
     public Format getFormat() {
