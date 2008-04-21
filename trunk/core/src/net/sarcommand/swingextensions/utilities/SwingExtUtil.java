@@ -5,6 +5,7 @@ import net.sarcommand.swingextensions.internal.SwingExtLogging;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -35,21 +36,20 @@ public class SwingExtUtil {
     /**
      * Sets an uncaught exception handler which will be called if an error occurs within one of the worker threads.
      *
-     * @param uncaughtExceptionHandler an uncaught exception handler which will be called if an error occurs
-     *                                 within one of the worker threads.
+     * @param uncaughtExceptionHandler an uncaught exception handler which will be called if an error occurs within one
+     *                                 of the worker threads.
      */
     public static void setUncaughtExceptionHandler(final Thread.UncaughtExceptionHandler uncaughtExceptionHandler) {
         __uncaughtExceptionHandler = uncaughtExceptionHandler;
     }
 
     /**
-     * Returns the parent window for the given component. Unlike the according method in JOptionPane (who the heck
-     * put it there anyway?), this method will also resolve popup menus. If you invoke getWindowForComponent on an
-     * item in a popup menu, it will return the window from which the popup was invoked rather than some anonymous
-     * instance.
-     * Another important difference lies in the fact that this method will resolve to a window rather than a frame.
-     * When using JOptionPane to resolve the frame for a component in a JDialog, you might get the shared root frame,
-     * which most likely is not what you will want.
+     * Returns the parent window for the given component. Unlike the according method in JOptionPane (who the heck put
+     * it there anyway?), this method will also resolve popup menus. If you invoke getWindowForComponent on an item in a
+     * popup menu, it will return the window from which the popup was invoked rather than some anonymous instance.
+     * Another important difference lies in the fact that this method will resolve to a window rather than a frame. When
+     * using JOptionPane to resolve the frame for a component in a JDialog, you might get the shared root frame, which
+     * most likely is not what you will want.
      *
      * @param c Component to query.
      * @return Parent window for the given component.
@@ -65,8 +65,8 @@ public class SwingExtUtil {
     }
 
     /**
-     * Returns the parent for the given component. Other than Component#getParent(), this method will work for
-     * popup menus as well, returning the menu's invoker rather than its own window instance.
+     * Returns the parent for the given component. Other than Component#getParent(), this method will work for popup
+     * menus as well, returning the menu's invoker rather than its own window instance.
      *
      * @param c Component to query
      * @return Parent element of the given component.
@@ -108,13 +108,24 @@ public class SwingExtUtil {
 
     public static synchronized Method getMethod(final Class clazz, final String methodName,
                                                 final Class... argumentTypes) {
-        final Method method;
         try {
-            method = clazz.getMethod(methodName, argumentTypes);
+            return clazz.getMethod(methodName, argumentTypes);
         } catch (NoSuchMethodException e) {
-            return null;
+            /* Ok, so there's no public method... */
         }
-        return method;
+
+        Class runner = clazz;
+        while (runner != null) {
+            try {
+                return runner.getDeclaredMethod(methodName, argumentTypes);
+            } catch (NoSuchMethodException e) {
+                /* No luck here either */
+            }
+            runner = runner.getSuperclass();
+        }
+
+        /* Still no luck, means there is no suitable method */
+        return null;
     }
 
     /**
@@ -132,6 +143,42 @@ public class SwingExtUtil {
         return getGetter(target.getClass(), propertyName);
     }
 
+    /**
+     * Retrieves the a field with the specified name from the given class. Other than Class's getField(String) method,
+     * this method will also return protected and private fields.
+     *
+     * @param clazz     Class from which the field should be obtained.
+     * @param fieldName Name of the field.
+     * @return field with the specified name.
+     */
+    public static Field getField(final Class clazz, final String fieldName) {
+        try {
+            return clazz.getField(fieldName);
+        } catch (NoSuchFieldException e) {
+            /* Means there's no public field, let's keep looking */
+        }
+
+        Class runner = clazz;
+        while (runner != null) {
+            try {
+                return runner.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e) {
+                /* No luck here either */
+            }
+            runner = runner.getSuperclass();
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns a suitable getter for the given property from the specified class. This method will try the different
+     * bean naming conventions getProperty, isProperty and hasProperty, and will return the first method it finds.
+     *
+     * @param clazz        Class to obtain getter from.
+     * @param propertyName Name of the property returned by the getter.
+     * @return a suitable getter for the given property from the specified class
+     */
     public static Method getGetter(final Class clazz, final String propertyName) {
         if (clazz == null)
             throw new IllegalArgumentException("Parameter 'clazz' must not be null!");
@@ -288,10 +335,10 @@ public class SwingExtUtil {
 
     /**
      * This method converts a given number into a target class. This method does not change the value (except when
-     * explicitly casting to a more general type, e.g. from double to int), just the internal type representation.
-     * While this is unnecessary while using normal java code, reflection based access to method parameters is a
-     * bit more difficult. As far as possible, this method will prevent the ArgumentMismatch error when passing
-     * numbers as parameters.
+     * explicitly casting to a more general type, e.g. from double to int), just the internal type representation. While
+     * this is unnecessary while using normal java code, reflection based access to method parameters is a bit more
+     * difficult. As far as possible, this method will prevent the ArgumentMismatch error when passing numbers as
+     * parameters.
      * <p/>
      * If the value can not be converted to the given target class, it will be returned unchanged.
      *
@@ -318,8 +365,8 @@ public class SwingExtUtil {
     }
 
     /**
-     * Conveniance method used to invoke a JavaBeans-compatible setter method. As far as possible, this method
-     * will take care of parameter conversions necessary for reflection access.
+     * Conveniance method used to invoke a JavaBeans-compatible setter method. As far as possible, this method will take
+     * care of parameter conversions necessary for reflection access.
      *
      * @param setter Method to invoke.
      * @param target Target object on which 'setter' should be invoked.
