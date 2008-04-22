@@ -1,6 +1,7 @@
 package net.sarcommand.swingextensions.table;
 
 import net.sarcommand.swingextensions.binding.Keypath;
+import net.sarcommand.swingextensions.misc.CellRendererUtility;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
