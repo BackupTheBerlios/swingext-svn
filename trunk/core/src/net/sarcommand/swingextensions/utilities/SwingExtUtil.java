@@ -106,6 +106,15 @@ public class SwingExtUtil {
         return getMethod(target.getClass(), methodName, argumentTypes);
     }
 
+    /**
+     * Attempts to find a method with the given name and argument types on the specified class. Other than Class's
+     * getMethod(String, Class...) method, this method will also return protected and private methods.
+     *
+     * @param clazz         Class supposed to offer the method being searched.
+     * @param methodName    Name of the method.
+     * @param argumentTypes The arguments found in the method signature, if any.
+     * @return a method with the given name and argument types on the specified class, if any.
+     */
     public static synchronized Method getMethod(final Class clazz, final String methodName,
                                                 final Class... argumentTypes) {
         try {
