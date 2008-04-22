@@ -1,5 +1,8 @@
 package net.sarcommand.swingextensions.menuitemfactory;
 
+import net.sarcommand.swingextensions.internal.SwingExtLogger;
+import net.sarcommand.swingextensions.internal.SwingExtLogging;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
@@ -24,6 +27,8 @@ import java.io.File;
  * limitations under the License.
  */
 public class FileMenuItemFactory implements MenuItemFactory<File> {
+    private static final SwingExtLogger __log = SwingExtLogging.getLogger(FileMenuItemFactory.class);
+
     public FileMenuItemFactory() {
     }
 
@@ -38,8 +43,16 @@ public class FileMenuItemFactory implements MenuItemFactory<File> {
             throw new IllegalArgumentException("Parameter 'value' must not be null!");
 
         final JMenuItem item = new JMenuItem(value.getName());
-        final FileSystemView fileSystemView = FileSystemView.getFileSystemView();
-        item.setIcon(fileSystemView.getSystemIcon(value));
+        Icon icon;
+        try {
+            final FileSystemView fileSystemView = FileSystemView.getFileSystemView();
+            icon = fileSystemView.getSystemIcon(value);
+        } catch (Exception e) {
+            /* Workaround for yet another swing bug */
+            __log.warn("Could not obtain icon for file " + value, e);
+            icon = null;
+        }
+        item.setIcon(icon);
         item.setToolTipText(value.getAbsolutePath());
 
         return item;
