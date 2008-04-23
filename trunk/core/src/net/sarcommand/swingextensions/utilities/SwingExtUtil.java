@@ -213,11 +213,14 @@ public class SwingExtUtil {
      * @return a setter method for the given property, or null if there is none.
      */
     public static synchronized Method getSetter(final Object target, final String propertyName) {
+        return getSetter(target.getClass(), propertyName);
+    }
+
+    public static synchronized Method getSetter(final Class targetClass, final String propertyName) {
         String setterName = "set" + Character.toUpperCase(propertyName.charAt(0));
         if (setterName.length() > 1)
             setterName += propertyName.substring(1);
 
-        final Class targetClass = target.getClass();
         final Method[] methods = targetClass.getMethods();
 
         for (Method m : methods) {
