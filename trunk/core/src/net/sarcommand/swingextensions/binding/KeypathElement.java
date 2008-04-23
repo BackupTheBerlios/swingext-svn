@@ -53,10 +53,10 @@ public class KeypathElement {
         _property = property;
 
         lookUpGetter();
-        lookUpsetter();
+        lookUpSetter();
     }
 
-    protected void lookUpsetter() {
+    protected void lookUpSetter() {
         final Method setMethod = SwingExtUtil.getSetter(_entryClass, _property);
         final Field setField = SwingExtUtil.getField(_entryClass, _property);
         if (setMethod != null && setField != null) {
