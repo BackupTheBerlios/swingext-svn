@@ -1,9 +1,15 @@
 package net.sarcommand.swingextensions.table;
 
+import net.sarcommand.swingextensions.misc.CellRendererUtility;
+
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
-import javax.swing.text.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.text.Document;
 import java.awt.*;
 
 /**

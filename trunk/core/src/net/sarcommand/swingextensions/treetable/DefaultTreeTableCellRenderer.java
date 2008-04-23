@@ -1,6 +1,7 @@
 package net.sarcommand.swingextensions.treetable;
 
-import net.sarcommand.swingextensions.table.CellRendererUtility;
+
+import net.sarcommand.swingextensions.misc.CellRendererUtility;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;

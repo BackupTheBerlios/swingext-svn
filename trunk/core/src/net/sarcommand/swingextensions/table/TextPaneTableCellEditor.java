@@ -1,11 +1,14 @@
 package net.sarcommand.swingextensions.table;
 
+import net.sarcommand.swingextensions.misc.CellRendererUtility;
+
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.text.Document;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.event.MouseEvent;
+import java.util.EventObject;
 
 /**
  * A TableCellEditor implementation backed by a JTextPane. The editor will support two types of values, Strings and
