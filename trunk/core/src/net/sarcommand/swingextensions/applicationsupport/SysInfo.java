@@ -1,8 +1,11 @@
 package net.sarcommand.swingextensions.applicationsupport;
 
+import java.awt.*;
+
 /**
  * A small utility class used to retrieve information on the operating system without having to deal with
- * System.getProperty. This class really doesn't do a lot, but situationally I've found it to be quite handy nontheless.
+ * System.getProperty. This class really doesn't do a lot, but situationally I've found it to be quite handy
+ * nontheless.
  */
 public class SysInfo {
     public static enum Platform {
@@ -13,22 +16,25 @@ public class SysInfo {
 
     /**
      * Returns the underlying bit architecture (e.g. i386).
+     *
      * @return the underlying bit architecture (e.g. i386).
      */
     public static String getArchitecture() {
-        return System.getProperty("os.arch","unknown");
+        return System.getProperty("os.arch", "unknown");
     }
 
     /**
      * Returns the operating system's name.
+     *
      * @return the operating system's name.
      */
     public static String getDisplayName() {
-        return System.getProperty("os.name","unknown");
+        return System.getProperty("os.name", "unknown");
     }
 
     /**
      * Returns a Platform enum token representing the underlying operating system.
+     *
      * @return a Platform enum token representing the underlying operating system.
      */
     public static Platform getPlatform() {
@@ -54,24 +60,36 @@ public class SysInfo {
      * @return the operating system's version.
      */
     public static String getVersion() {
-        return System.getProperty("os.version","unknown");
+        return System.getProperty("os.version", "unknown");
     }
 
     public static String getHeapSizeAsString() {
         final long mem = Runtime.getRuntime().maxMemory();
         final double exponent = Math.log(mem) / Math.log(2);
         if (exponent < 10)
-            return mem+"B";
+            return mem + "B";
         if (exponent < 20)
-            return (mem / 1024)+"KB";
+            return (mem / 1024) + "KB";
         if (exponent < 30)
-            return (mem / 1024 / 1024)+"MB";
+            return (mem / 1024 / 1024) + "MB";
 
-        return (mem / 1024 / 1024 / 1024)+"GB";
+        return (mem / 1024 / 1024 / 1024) + "GB";
     }
 
     public static int getCPUCount() {
-        return Runtime.getRuntime().availableProcessors(); 
+        return Runtime.getRuntime().availableProcessors();
+    }
+
+    /**
+     * Returns whether or not the platform provides accelerated drawing for images. This is merely a conveniance method
+     * which uses the GraphicsEnvironment to check whether acceleration is available. The result of this method will be
+     * correct for the primary screen, if multiple screens are attached you will have to check them separately.
+     *
+     * @return whether or not the platform provides accelerated drawing for images.
+     */
+    public static boolean isImageAccelerationAvailable() {
+        return GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+                .getDefaultConfiguration().getImageCapabilities().isAccelerated();
     }
 
     private SysInfo() {
