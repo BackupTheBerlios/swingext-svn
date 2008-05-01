@@ -1,77 +1,73 @@
 package net.sarcommand.swingextensions.actions;
 
-import net.sarcommand.swingextensions.utilities.*;
+import net.sarcommand.swingextensions.utilities.SwingExtUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.beans.*;
-import java.lang.ref.*;
+import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.lang.ref.WeakReference;
 import java.util.*;
 
 /**
  * The ActionManager class is a utility meant to help you handle the javax.swing.Action instances within your
  * application. It combines the following three major functions:
  * <p/>
- * <li> Creation and management of singleton instances for each Action, organized by identifiers.</li>
- * <li> Handling action execution by implementing a responder chain mechanism</li>
- * <li> Management of action states (which actions are available and which aren't at a certain point</li>
+ * <li> Creation and management of singleton instances for each Action, organized by identifiers.</li> <li> Handling
+ * action execution by implementing a responder chain mechanism</li> <li> Management of action states (which actions are
+ * available and which aren't at a certain point</li>
  * <p/>
  * <p/>
  * <h3> Creating and managing actions</h3>
  * <p/>
  * Actions are managed using a unique identifier. Any object can be used as an identifier, but it is strongly
- * recommended that you create an enumeration for the actions within your application since is makes development a
- * lot easier. You can request a singleton instance of the Action for an identifier by using the getAction method.
- * The ActionManager keeps track of the Actions which already have been created, so no two instances will exist for
- * the same identifier.
+ * recommended that you create an enumeration for the actions within your application since is makes development a lot
+ * easier. You can request a singleton instance of the Action for an identifier by using the getAction method. The
+ * ActionManager keeps track of the Actions which already have been created, so no two instances will exist for the same
+ * identifier.
  * <p/>
- * If the requested action does not exist yet, the ActionProvider will be invoked to create it.
- * An ActionProvider is basically a pluggable factory which can be set using the setActionProvider method.
- * Setting an appropriate ActionProvider when initializing your application is pretty much the only thing you have to
- * do in order to get the ActionManager up and running. Several ActionProvider instances exist which should cover
- * most of the required functions.
+ * If the requested action does not exist yet, the ActionProvider will be invoked to create it. An ActionProvider is
+ * basically a pluggable factory which can be set using the setActionProvider method. Setting an appropriate
+ * ActionProvider when initializing your application is pretty much the only thing you have to do in order to get the
+ * ActionManager up and running. Several ActionProvider instances exist which should cover most of the required
+ * functions.
  * <p/>
  * <h3>Handling action execution</h3>
  * <p/>
  * The ActionManager will (in most cases) handle execution of actions using a responder chain pattern. A responder chain
- * is basically a hierarchical list of entities which might be able to handle a given action. Triggered actions
- * will move along this list until a suitable handler has been found. In order to do so, Responder candidates have to
+ * is basically a hierarchical list of entities which might be able to handle a given action. Triggered actions will
+ * move along this list until a suitable handler has been found. In order to do so, Responder candidates have to
  * implement the ActionHandler interface.
  * <p/>
- * The root of the responder chain will be determined by distinguishing between
- * component actions (like those installed in generic control buttons) and focus actions, which may originate in a
- * control but really target the currently focused one. A component action's responder chain will be identical to the
- * trigger control's component hierarchy, while a focus action's responder chain originates in the element which
- * currently posesses the keyboard focus. A simple example for a focus action is the copy command.
- * If you installed the copy action to the menu bar and attached an accelerator key, you will want to copy the current
- * selection when pressing ctrl+c (unless of course if you're using a mac). The ActionManager will identify this
- * action as a focus action (see below) and start looking for responders with the currently focused element. For
- * instance, you might have been typing in a text field. The first possible responder will therefore be the text field
- * itself. If the text field can't handle the action, its parent component will be asked to do so, then the parent's
- * parent, and so on until a responder has been found.
+ * The root of the responder chain will be determined by distinguishing between component actions (like those installed
+ * in generic control buttons) and focus actions, which may originate in a control but really target the currently
+ * focused one. A component action's responder chain will be identical to the trigger control's component hierarchy,
+ * while a focus action's responder chain originates in the element which currently posesses the keyboard focus. A
+ * simple example for a focus action is the copy command. If you installed the copy action to the menu bar and attached
+ * an accelerator key, you will want to copy the current selection when pressing ctrl+c (unless of course if you're
+ * using a mac). The ActionManager will identify this action as a focus action (see below) and start looking for
+ * responders with the currently focused element. For instance, you might have been typing in a text field. The first
+ * possible responder will therefore be the text field itself. If the text field can't handle the action, its parent
+ * component will be asked to do so, then the parent's parent, and so on until a responder has been found.
  * <p/>
  * The ActionHandler will distinguish between normal actions and focus actions by looking at the action's
  * RESPONDER_CHAIN_ROOT property. This property can take two values, 'component' or 'focus'. If the property has not
- * been set, the ActionManager will assume that the action is a focus action since this should apply in the majority
- * of cases.
+ * been set, the ActionManager will assume that the action is a focus action since this should apply in the majority of
+ * cases.
  * <p/>
  * todo [heup] pending completion
  * <p/>
- * <hr/>
- * Copyright 2006 Torsten Heup
+ * <hr/> Copyright 2006 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
  */
@@ -82,8 +78,8 @@ public class ActionManager {
     private static ActionProvider __actionProvider;
 
     /**
-     * The default handler to which all actions will be passed if no suitable ActionHandler could be found
-     * in the ResponderChain.
+     * The default handler to which all actions will be passed if no suitable ActionHandler could be found in the
+     * ResponderChain.
      */
     private static ActionHandler __defaultActionHandler;
 
@@ -160,8 +156,8 @@ public class ActionManager {
     }
 
     /**
-     * Returns the action for the given identifier. If the action already exists, it will simply be returned,
-     * otherwise the action provider will be used to create a new singleton instance.
+     * Returns the action for the given identifier. If the action already exists, it will simply be returned, otherwise
+     * the action provider will be used to create a new singleton instance.
      *
      * @param identifier Identifier of the action being requested, non-null.
      * @return action for the given identifier.
@@ -180,7 +176,7 @@ public class ActionManager {
             __actionProvider = new DefaultActionProvider();
 
         if (!__actionMap.containsKey(identifier)) {
-            final Action action = __actionProvider.createAction(identifier);
+            final Action action = __actionProvider.createManagedAction(identifier);
             if (action == null)
                 throw new RuntimeException("Could not obtain action " + identifier + ", the current action " +
                         "provider is " + __actionProvider);
@@ -233,8 +229,8 @@ public class ActionManager {
     }
 
     /**
-     * Invoked by ManagedActions when they have been invoked. The ActionManager will search the responder chain for
-     * a suitable action handle to process the triggered action.
+     * Invoked by ManagedActions when they have been invoked. The ActionManager will search the responder chain for a
+     * suitable action handle to process the triggered action.
      *
      * @param actionIdentifier Identifier of the action that has been fired.
      * @param event            The generated action event.
@@ -338,9 +334,9 @@ public class ActionManager {
     }
 
     /**
-     * Returns the current action state. This method is useful if you need to 'remember' the state of your
-     * application, for instance if you want to temporarily disable all actions while loading a file and then
-     * restore the previous state.
+     * Returns the current action state. This method is useful if you need to 'remember' the state of your application,
+     * for instance if you want to temporarily disable all actions while loading a file and then restore the previous
+     * state.
      *
      * @return the current action state.
      */
@@ -355,8 +351,8 @@ public class ActionManager {
     }
 
     /**
-     * Sets the current action state. This will cause the actions' enabled states to be adjusted accoring to the
-     * given state.
+     * Sets the current action state. This will cause the actions' enabled states to be adjusted accoring to the given
+     * state.
      *
      * @param state The action state to set.
      */
@@ -388,9 +384,9 @@ public class ActionManager {
     }
 
     /**
-     * Returns the action state which was previously stored under the given identifier using putActionState. Note
-     * that this is not necessarily the current action state, this is just a conveniance method which allows you
-     * to store action states.
+     * Returns the action state which was previously stored under the given identifier using putActionState. Note that
+     * this is not necessarily the current action state, this is just a conveniance method which allows you to store
+     * action states.
      *
      * @param identifier Identifier under which the action state has been stored.
      * @return the action state which was previously stored under the given identifier using putActionState.
@@ -434,11 +430,11 @@ public class ActionManager {
     }
 
     /**
-     * Returns the default action handler instance which will be used when no suitable responder for an action could
-     * be found.
+     * Returns the default action handler instance which will be used when no suitable responder for an action could be
+     * found.
      *
-     * @return action handler instance which will be used when no suitable responder for an action could
-     *         be found, may be null.
+     * @return action handler instance which will be used when no suitable responder for an action could be found, may
+     *         be null.
      */
     public static ActionHandler getDefaultActionHandler() {
         return __defaultActionHandler;
@@ -447,8 +443,8 @@ public class ActionManager {
     /**
      * Sets the default action handler, which is being used when no suitable responder for an action can be found.
      *
-     * @param defaultActionHandler action handler which is being used when no suitable responder for an action
-     *                             can be found, may be null.
+     * @param defaultActionHandler action handler which is being used when no suitable responder for an action can be
+     *                             found, may be null.
      */
     public static void setDefaultActionHandler(ActionHandler defaultActionHandler) {
         __defaultActionHandler = defaultActionHandler;
