@@ -1,11 +1,10 @@
 package net.sarcommand.swingextensions.internal;
 
-import net.sarcommand.swingextensions.actions.ResourceBundleActionProvider;
-import net.sarcommand.swingextensions.applicationsupport.ImageCache;
+import net.sarcommand.swingextensions.actions.*;
+import net.sarcommand.swingextensions.applicationsupport.*;
 
 import javax.swing.*;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * This class is used by the swingext library to load icons and text resources.
@@ -65,7 +64,7 @@ public class SwingExtResources {
 
     private static void loadBundles() {
         __internalBundle = ResourceBundle.getBundle("localization/swingExtInternalResources");
-        __actionProvider = new ResourceBundleActionProvider(__internalBundle, ".");
+        __actionProvider = new ResourceBundleActionProvider(__internalBundle);
         try {
             __userBundle = ResourceBundle.getBundle("swingExtResources");
         } catch (MissingResourceException e) {
