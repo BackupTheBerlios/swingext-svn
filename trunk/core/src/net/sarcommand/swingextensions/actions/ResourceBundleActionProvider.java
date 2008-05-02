@@ -1,11 +1,11 @@
 package net.sarcommand.swingextensions.actions;
 
-import net.sarcommand.swingextensions.applicationsupport.ImageCache;
-import net.sarcommand.swingextensions.utilities.KeyUtilities;
+import net.sarcommand.swingextensions.applicationsupport.*;
+import net.sarcommand.swingextensions.utilities.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * An ActionProvider instance using a resource bundle to create Action instances. It will use the toString() method on
@@ -102,7 +102,7 @@ public class ResourceBundleActionProvider implements ActionProvider {
      * @param action     The action to which the looked up properties will be mapped.
      */
     public void map(Object identifier, Action action) {
-        final String prefix = identifier.toString();
+        final String prefix = identifier.toString() + '.';
         final int length = prefix.length();
 
         for (String s : _resourceBundle.keySet()) {
