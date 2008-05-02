@@ -1,20 +1,30 @@
 package net.sarcommand.swingextensions.recentitems;
 
-import net.sarcommand.swingextensions.internal.SwingExtLogger;
-import net.sarcommand.swingextensions.internal.SwingExtLogging;
+import net.sarcommand.swingextensions.internal.*;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.text.Format;
-import java.text.ParseException;
+import java.beans.*;
+import java.text.*;
 import java.util.*;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
-import java.util.prefs.Preferences;
+import java.util.prefs.*;
 
 /**
- * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
+ * <b>This class used to observe the preferences for changes. Because of some random bug where the preferences would
+ * keep firing events, this has been removed.</b>
+ * <p/>
+ * <hr/>
+ * Copyright 2006-2008 Torsten Heup
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 public class RecentItemsList<T> {
     private static final SwingExtLogger __log = SwingExtLogging.getLogger(RecentItemsList.class);
@@ -70,11 +80,6 @@ public class RecentItemsList<T> {
     protected PropertyChangeSupport _changeSupport;
 
     /**
-     * Listener instance used to monitor the preferences for changes.
-     */
-    protected PreferenceChangeListener _preferenceListener;
-
-    /**
      * Creates a new RecentItemsList with the default maximum length and no preferences.
      */
     public RecentItemsList() {
@@ -124,12 +129,6 @@ public class RecentItemsList<T> {
         if ((preferences == null) != (format == null))
             throw new IllegalArgumentException("If you set a preference node, you have to set a formatter instance" +
                     " as well. Preferences: " + preferences + " Formatter: " + format);
-
-        _preferenceListener = new PreferenceChangeListener() {
-            public void preferenceChange(final PreferenceChangeEvent evt) {
-                preferencesUpdated();
-            }
-        };
 
         _changeSupport = new PropertyChangeSupport(this);
         _recentItems = new LinkedList<T>();
@@ -381,11 +380,7 @@ public class RecentItemsList<T> {
      * @param preferences the preferences instance used to store the items on this list.
      */
     public void setPreferences(final Preferences preferences) {
-        if (_preferences != null)
-            _preferences.removePreferenceChangeListener(_preferenceListener);
         _preferences = preferences;
-        if (_preferences != null)
-            _preferences.addPreferenceChangeListener(_preferenceListener);
         if (_format != null && _preferences != null)
             preferencesUpdated();
     }
