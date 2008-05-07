@@ -113,7 +113,7 @@ public class ResourceBundleActionProvider implements ActionProvider {
                     action.setEnabled(!value.equalsIgnoreCase("false"));
                 else if (key.equals(Action.ACCELERATOR_KEY)) {
                     String accelerator = value;
-                    if (accelerator.startsWith("menu"))
+                    if (accelerator.contains("menu"))
                         accelerator = accelerator.replace("menu", KeyUtilities.getModifiersAsText(
                                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()).trim());
                     action.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(accelerator));
