@@ -1,10 +1,10 @@
 package net.sarcommand.swingextensions.treetable;
 
 
-import net.sarcommand.swingextensions.misc.CellRendererUtility;
+import net.sarcommand.swingextensions.misc.*;
 
 import javax.swing.*;
-import javax.swing.tree.TreePath;
+import javax.swing.tree.*;
 import java.awt.*;
 
 /**
@@ -17,6 +17,7 @@ public class DefaultTreeTableCellRenderer implements TreeTableCellRenderer {
     public DefaultTreeTableCellRenderer() {
         _cellRendererUtility = new CellRendererUtility();
         _renderer = new JLabel();
+        _renderer.setOpaque(true);
     }
 
     public Component getTreeTableCellRendererComponent(final JTreeTable table, final Object value,
