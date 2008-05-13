@@ -44,7 +44,7 @@ public class ReflectedTableCellEditor extends AbstractCellEditor implements Tabl
 
         _cellEditor = cellEditor;
         _keypath = new Keypath(keypath);
-
+        _clickCountToStart = 2;
         _stopEditingCallback = null;
         if (stopEditingMethod != null) {
             _stopEditingCallback = SwingExtUtil.getMethod(cellEditor, stopEditingMethod);
