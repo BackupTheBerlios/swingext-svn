@@ -81,8 +81,6 @@ public class Keypath<T> {
     public void set(final Object entryPoint, final T value) {
         if (entryPoint == null)
             throw new IllegalArgumentException("Parameter 'entryPoint' must not be null!");
-        if (value == null)
-            throw new IllegalArgumentException("Parameter 'value' must not be null!");
 
         final Object lastElement = resolve(entryPoint);
         if (lastElement == null)
