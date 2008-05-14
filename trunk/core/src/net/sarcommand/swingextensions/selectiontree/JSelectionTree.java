@@ -29,32 +29,27 @@ import java.util.Vector;
  * The (de-)selection of an item in the hierarchy will automatically cause all child items to switch to the same state.
  * When selecting to install package A, the subpackages AA and AB will be selected as well.
  * <p/>
- * For each item in the tree, a three-state checkbox will be displayed, indicating whether
- * <li>The item and all child items are selected</li>
- * <li>Some of the child items are selected and some are not</li>
- * <li>Neither the item nor any child items are selected</li>
+ * For each item in the tree, a three-state checkbox will be displayed, indicating whether <li>The item and all child
+ * items are selected</li> <li>Some of the child items are selected and some are not</li> <li>Neither the item nor any
+ * child items are selected</li>
  * <p/>
- * You can use a JSelectionTree just as you would use a JTree. The only difference lies in the fact that you
- * supply instances of the SelectionTreeNode interface as nodes. For most cases, you should be fine using the
+ * You can use a JSelectionTree just as you would use a JTree. The only difference lies in the fact that you supply
+ * instances of the SelectionTreeNode interface as nodes. For most cases, you should be fine using the
  * DefaultSelectionTreeNode implementation, which mimics the DefaultMutableTreeNode class.
  * <p/>
  * If you interfere with the tree's selecetion management programatically, invoke updateSelections() afterwards to
  * ensure that all nodes are in a consistent state.
  * <p/>
- * <hr/>
- * Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2008 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  * @see SelectionTreeNode
  * @see DefaultSelectionTreeNode
@@ -134,6 +129,12 @@ public class JSelectionTree extends JTree {
             getModel().addTreeModelListener(_modelListener);
     }
 
+    /**
+     * Sets the tree model used by this instance. This implementation will simply pass the model to the super class and
+     * update required listener references.
+     *
+     * @param newModel The new model used by this instance.
+     */
     public void setModel(final TreeModel newModel) {
         if (getModel() != null)
             getModel().removeTreeModelListener(_modelListener);
@@ -144,117 +145,29 @@ public class JSelectionTree extends JTree {
     }
 
     /**
-     * If you programatically change the selection state of nodes, invoke this method to ensure that the tree is
-     * still in a consistent state.
+     * If you programatically change the selection state of nodes, invoke this method to ensure that the tree is still
+     * in a consistent state. It will be invoked automatically whenever the TreeModel signals a change. Making
+     * unncessesary calls to this method will not be harmful in any way, except that it wastes performance.
      */
     public void updateSelections() {
-        updateSelections(getModel(), getModel().getRoot());
-    }
-
-    protected void updateSelections(final TreeModel model, final Object node) {
-        final int count = model.getChildCount(node);
-        for (int i = 0; i < count; i++) {
-            updateSelections(model, model.getChild(node, i));
-        }
-        updateNodeState(model, node);
+        final Object root = getModel().getRoot();
+        if (root instanceof SelectionTreeNode)
+            ((SelectionTreeNode) root).updateState();
     }
 
     /**
-     * Invoked whenever the user clicks a node in order to adapt the selection state.
+     * Invoked whenever the user clicks a node in order to adapt the selection state. This method will calculate the new
+     * state for the selected node and invoke the according setState method. Propagating the change to parent and child
+     * nodes is left to the node implementation.
      *
      * @param path TreePath leading to the node being clicked.
      */
     protected void nodeSelected(final TreePath path) {
         final SelectionTreeNode node = (SelectionTreeNode) path.getLastPathComponent();
-        final SelectionTreeNode.State state = node.getState() == null ? SelectionTreeNode.State.NONE_SELECTED :
-                node.getState();
+        final SelectionTreeNode.State state = node.getState();
         final SelectionTreeNode.State newState = state == SelectionTreeNode.State.ALL_SELECTED ?
                 SelectionTreeNode.State.NONE_SELECTED : SelectionTreeNode.State.ALL_SELECTED;
-        final TreeModel mdl = getModel();
-
-        /* Update the children */
-        setChildrenRecursively(node, mdl, newState);
-
-        final TreePath parentPath = path.getParentPath();
-        if (parentPath != null) {
-            final Object[] components = parentPath.getPath();
-            for (int i = components.length - 1; i >= 0; i--)
-                updateNodeState(mdl, components[i]);
-        }
+        node.setState(newState);
         repaint();
-    }
-
-    /**
-     * Updates the state of the specified node by looking at the child nodes.
-     * <li>If all child nodes are selected, the given node's state will change to ALL_SELECTED</li>
-     * <li>If only some child nodes are selected, the given node's state will change to SOME_SELECTED</li>
-     * <li>If none child nodes are selected, the given node's state will change to NONE_SELECTED</li>
-     *
-     * @param model TreeModel used to look up the child nodes.
-     * @param node  Node being updated.
-     */
-    protected void updateNodeState(final TreeModel model, final Object node) {
-        if (!(node instanceof SelectionTreeNode))
-            return;
-
-        SelectionTreeNode.State state = null;
-        boolean stateForAll = true;
-
-        final int count = model.getChildCount(node);
-        for (int i = 0; i < count; i++) {
-            SelectionTreeNode.State childState = getState(model, model.getChild(node, i));
-            if (state == null)
-                state = childState;
-            else if (childState != null && childState != state) {
-                stateForAll = false;
-                break;
-            }
-        }
-        if (state == null)
-            throw new RuntimeException("Could not determine the state for node " + node);
-
-        ((SelectionTreeNode) node).setState(stateForAll ? state : SelectionTreeNode.State.SOME_SELECTED);
-    }
-
-    /**
-     * Returns the current state of the given tree node.
-     *
-     * @param model TreeModel used to determine the node's children and their state.
-     * @param node  Node being queried.
-     * @return State of the given node.
-     */
-    protected SelectionTreeNode.State getState(final TreeModel model, final Object node) {
-        if (node instanceof SelectionTreeNode) {
-            final SelectionTreeNode.State state = ((SelectionTreeNode) node).getState();
-            return state == null ? SelectionTreeNode.State.NONE_SELECTED : state;
-        }
-
-        SelectionTreeNode.State state = null;
-        final int count = model.getChildCount(node);
-        for (int i = 0; i < count; i++) {
-            SelectionTreeNode.State childState = getState(model, node);
-            if (state == null)
-                state = childState;
-            else if (childState != null && childState != state)
-                return SelectionTreeNode.State.SOME_SELECTED;
-        }
-        return state;
-    }
-
-    /**
-     * Recursively sets the state the given node's chidren. This method is invoked when a non-leaf node in the
-     * tree is (de-)selected.
-     *
-     * @param node  Node which's chilren will be updated.
-     * @param mdl   Model being used for looking up the node's children.
-     * @param state State to set on each child node.
-     */
-    protected void setChildrenRecursively(final Object node, final TreeModel mdl,
-                                          final SelectionTreeNode.State state) {
-        final int count = mdl.getChildCount(node);
-        for (int i = 0; i < count; i++)
-            setChildrenRecursively(mdl.getChild(node, i), mdl, state);
-        if (node instanceof SelectionTreeNode)
-            ((SelectionTreeNode) node).setState(state);
     }
 }
