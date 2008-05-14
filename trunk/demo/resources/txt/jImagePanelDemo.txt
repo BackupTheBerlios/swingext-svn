@@ -1,0 +1,3 @@
+The JImagePanel class offers support for displaying images in Swing. Other than the JLabel, it works directly on Image instances rather than Icons. It provides a set of utility methods for scaling the image, as well as a basic user interaction. The user can zoom into the image or move the visible section by dragging the mouse. Those functions can of course be disabled.
+
+As far as the platform supports it, the image will be rendered using hardware acceleration. Unless hardware support is disabled on the target system, zooming and moving should work fluently on all remotely modern computers.

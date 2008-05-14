@@ -1,0 +1,4 @@
+A JSelectionTree is a widget for displaying and editing hierarchical options. It is a rather well-known component, usually found in software installers. Every leaf in the tree can either be selected or unselected. Each non-leaf node in the tree can have three states: None, some and all, which indicate how many of the node's children are selected.
+
+The JSelection tree imlementation is a subclass of JTree which uses a special type of TreeNode. You can, however, combine normal tree nodes and SelectionTreeNodes (see lower example). You can install listeners on the nodes in order to be notified when a state change occurs.
+

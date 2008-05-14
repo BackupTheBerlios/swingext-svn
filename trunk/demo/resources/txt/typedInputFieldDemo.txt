@@ -1,0 +1,9 @@
+When providing input components for a user, you will usually want to restrict the input with regards to the value type being entered. Swing does not offer comfortable ways to do this, since the only way to archieve a restriction is by using the JFormattedTextField. There are a few downsides to this class, most notably:
+
+1) The user will only be notified that his input is illegal until he attempts to leave the field. Depending on your configuration, his input may be lost at this point.
+2) The user is allowed to enter characters which won't make sense under any circumstances. If you're entering an integer value, you should be prevented form entering letters in the first place.
+3) You can't really customize the behaviour of the text field to give an appropriate response.
+4) You are limited regarding the possible format strings.
+
+The TypedInputField implementation addresses those aspects. You can prevent certain kinds of input, give a proper and customized feedback while typing and specify more sophisticated formats.
+
