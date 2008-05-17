@@ -46,11 +46,17 @@
     <target name="create-webstart" description="Create a webstart deployment" depends="clean-dist">
         <mkdir dir="${webstart.dir}"/>
 
+        <input message="Enter keystore password" addproperty="keypass"/>
+        <echo>Signing core.jar</echo>
+        <signjar jar="${core.jar}" alias="swingext" keystore="swingext.keystore" storepass="${keypass}"/>
+        <echo>Signing demo.jar</echo>
+        <signjar jar="${demo.jar}" alias="swingext" keystore="swingext.keystore" storepass="${keypass}"/>
         <copy todir="${webstart.dir}">
             <fileset file="${core.jar}"/>
             <fileset file="${demo.jar}"/>
             <fileset file="${jnlp.file}"/>
         </copy>
+
     </target>
 
     <target name="release" description="Create a new release">
