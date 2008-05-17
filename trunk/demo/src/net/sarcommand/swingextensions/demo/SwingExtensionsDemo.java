@@ -1,5 +1,7 @@
 package net.sarcommand.swingextensions.demo;
 
+import net.sarcommand.swingextensions.exception.ExceptionDialog;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -66,6 +68,8 @@ public class SwingExtensionsDemo {
                 _demoPanel.add(demo.getDemoName(), panel);
             } catch (Exception e) {
                 System.err.println("Could not instanciate demo " + demoClass.getName());
+                final ExceptionDialog dlg = new ExceptionDialog();
+                dlg.display(_demoPanel, "Could not load demo " + demoClass.getName(), e);
                 e.printStackTrace();
             }
         }
