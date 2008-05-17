@@ -1,16 +1,28 @@
 package net.sarcommand.swingextensions.exception;
 
-import static net.sarcommand.swingextensions.internal.SwingExtResources.*;
+import static net.sarcommand.swingextensions.internal.SwingExtResources.getIconResource;
 
 import javax.swing.*;
-import javax.swing.plaf.*;
-import javax.swing.text.*;
+import javax.swing.plaf.ComponentUI;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 import java.awt.*;
-import java.beans.*;
-import java.io.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
- * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
+ * <hr/> Copyright 2006 Torsten Heup
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class BasicExceptionDialogPaneUI extends ComponentUI {
     public static final String ERROR_ICON = "BasicExceptionDialogPaneUI.errorIcon";
@@ -84,7 +96,7 @@ public class BasicExceptionDialogPaneUI extends ComponentUI {
     }
 
     protected void initLayout() {
-        _actionPanel.setLayout(new GridBagLayout());
+        _actionPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         layoutActionPanel();
 
         _contentPane.setLayout(new GridBagLayout());
@@ -107,6 +119,8 @@ public class BasicExceptionDialogPaneUI extends ComponentUI {
                     exceptionPropertyChanged();
                 else if (name.equals(ExceptionDialog.MESSAGE_PROPERTY))
                     messagePropertyChanged();
+                else if (name.equals(ExceptionDialog.ACTIONS_PROPERTY))
+                    layoutActionPanel();
             }
         });
     }
@@ -156,10 +170,8 @@ public class BasicExceptionDialogPaneUI extends ComponentUI {
     protected void layoutActionPanel() {
         _actionPanel.removeAll();
         final Action[] actions = _target.getDialog().getActions();
-        for (Action a : actions) {
-            _actionPanel.add(new JButton(a), new GridBagConstraints(GridBagConstraints.RELATIVE, 0, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 4, 4));
-        }
+        for (Action a : actions)
+            _actionPanel.add(new JButton(a));
     }
 }
 
