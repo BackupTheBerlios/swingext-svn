@@ -7,34 +7,30 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.VolatileImage;
 
 /**
- * A JImagePanel is a component which allows you to display images with swing.
- * Other than the JLabel class, which is more suitable for displaying icons or small gifs, the JImagePanel is meant to
- * be used for larger images. It also offers a basic shared interaction as it allows to scale and translate the image
- * directly (these options can of course be disabled). By default, the image can be rescaled usig the mouse wheel and
- * translated by dragging the mouse with the first mouse button pressed.<br><br>
+ * A JImagePanel is a component which allows you to display images with swing. Other than the JLabel class, which is
+ * more suitable for displaying icons or small gifs, the JImagePanel is meant to be used for larger images. It also
+ * offers a basic shared interaction as it allows to scale and translate the image directly (these options can of course
+ * be disabled). By default, the image can be rescaled usig the mouse wheel and translated by dragging the mouse with
+ * the first mouse button pressed.<br><br>
  * <p/>
  * The JImagePanel takes advantage of hardware acceleration as far as it's possible. Note that performance may differ
  * greatly between the different platforms, especially linux based systems without hardware acceleration have been known
  * to perform particularly sluggish. Please bear in mind that the {@link Transparency} of an image also greatly
  * influences the drawing performance.<br><br>
  * <p/>
- * The JImagePanel class offers several static conveniance methods to create preconfigured instances and frames
- * or dialogs wrapping a JImagePanel.
+ * The JImagePanel class offers several static conveniance methods to create preconfigured instances and frames or
+ * dialogs wrapping a JImagePanel.
  * <p/>
- * <hr/>
- * Copyright 2006 Torsten Heup
+ * <hr/> Copyright 2006 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class JImagePanel extends JPanel implements Scrollable {
     /**
@@ -55,8 +51,8 @@ public class JImagePanel extends JPanel implements Scrollable {
     public static final int SCALE_MANUALLY = 103;
 
     /**
-     * Returns a JFrame instance wrapping a JImagePanel. The JImagePanel itself can be accessed using the
-     * {@link javax.swing.JFrame#getContentPane()} method. The frame will appear centered on the screen.
+     * Returns a JFrame instance wrapping a JImagePanel. The JImagePanel itself can be accessed using the {@link
+     * javax.swing.JFrame#getContentPane()} method. The frame will appear centered on the screen.
      *
      * @param image     The image to display.
      * @param scalable  Determines whether or not the image should be scalable.
@@ -82,8 +78,8 @@ public class JImagePanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Displays a JFrame wrapping a JImagePanel. The displayed image will not be manually scalable or translatable
-     * and will be scaled to fit the frame.
+     * Displays a JFrame wrapping a JImagePanel. The displayed image will not be manually scalable or translatable and
+     * will be scaled to fit the frame.
      *
      * @param title Title for the new frame.
      * @param image Image to display.
@@ -96,8 +92,7 @@ public class JImagePanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Displays a JFrame wrapping a JImagePanel. The shared will be able to scale and translate the image
-     * manually.
+     * Displays a JFrame wrapping a JImagePanel. The shared will be able to scale and translate the image manually.
      *
      * @param title Title fo the new frame.
      * @param image Image to display.
@@ -110,8 +105,8 @@ public class JImagePanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Returns a JDialog instance wrapping a JImagePanel. The JImagePanel itself can be accessed using the
-     * {@link javax.swing.JDialog#getContentPane()} method. The dialog will appear centered on the screen.
+     * Returns a JDialog instance wrapping a JImagePanel. The JImagePanel itself can be accessed using the {@link
+     * javax.swing.JDialog#getContentPane()} method. The dialog will appear centered on the screen.
      *
      * @param parent    Parent frame for the dialog to create. May be <code>null</code>
      * @param modal     Whether or not the dialog should be modal.
@@ -139,8 +134,8 @@ public class JImagePanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Displays a JDialog wrapping a JImagePanel. The displayed image will not be manually scalable or translatable
-     * and will be scaled to fit the dialog.
+     * Displays a JDialog wrapping a JImagePanel. The displayed image will not be manually scalable or translatable and
+     * will be scaled to fit the dialog.
      *
      * @param parent Parent frame for the dialog. May be null.
      * @param modal  Whether or not the dialog should be modal
@@ -155,8 +150,8 @@ public class JImagePanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Displays a JDialog wrapping a JImagePanel. The displayed image will not be manually scalable or translatable
-     * and will be scaled to fit the dialog.
+     * Displays a JDialog wrapping a JImagePanel. The displayed image will not be manually scalable or translatable and
+     * will be scaled to fit the dialog.
      *
      * @param parent Parent frame for the dialog. May be null.
      * @param modal  Whether or not the dialog should be modal
@@ -171,8 +166,8 @@ public class JImagePanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Returns a new 'static' JImagePanel instance, meaning the shared will not be allowed to translate or rescale
-     * the image by mouse interaction. This is a mere conveniance method.
+     * Returns a new 'static' JImagePanel instance, meaning the shared will not be allowed to translate or rescale the
+     * image by mouse interaction. This is a mere conveniance method.
      *
      * @param image Image to display.
      * @return JImagePanel instance.
@@ -191,8 +186,8 @@ public class JImagePanel extends JPanel implements Scrollable {
     protected transient Image _image;
 
     /**
-     * Volatile image buffer. The image buffer is necessary as some image types would preform more than lousy
-     * if painted directly.
+     * Volatile image buffer. The image buffer is necessary as some image types would preform more than lousy if painted
+     * directly.
      */
     protected transient VolatileImage _buffer;
 
@@ -302,7 +297,7 @@ public class JImagePanel extends JPanel implements Scrollable {
         _scaleRate = 1.;
         _dragMask = MouseEvent.BUTTON1_MASK;
         setDraggable(true);
-        _scalable = true;
+        setScalable(true);
 
         /* Initialize internal variables */
         _scaleAmount = 1.;
@@ -392,11 +387,11 @@ public class JImagePanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Set's the image to be displayed. The JImagePanel will be updated automatically. Note that the image will
-     * be copied to an image buffer to increase performance, so the JImagePanel will not react to changes you
-     * apply to the original image by modifying it's data buffer. As this approach is generally discouraged for
-     * performance reasons, you will have to invoke setImage again when you altered the image. As this method
-     * performs very fast this shouldn't be much of a inconveniance.
+     * Set's the image to be displayed. The JImagePanel will be updated automatically. Note that the image will be
+     * copied to an image buffer to increase performance, so the JImagePanel will not react to changes you apply to the
+     * original image by modifying it's data buffer. As this approach is generally discouraged for performance reasons,
+     * you will have to invoke setImage again when you altered the image. As this method performs very fast this
+     * shouldn't be much of a inconveniance.
      *
      * @param image Image to display.
      */
@@ -488,8 +483,8 @@ public class JImagePanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Returns the rate at which the scale factor changes when the shared moved the mouse wheel. A rate of
-     * 1 is considered a change of 3% per wheel event.
+     * Returns the rate at which the scale factor changes when the shared moved the mouse wheel. A rate of 1 is
+     * considered a change of 3% per wheel event.
      *
      * @return Rate at which scale factor changes.
      */
@@ -498,8 +493,8 @@ public class JImagePanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Sets the rate at which the scale factor changes when the shared moved the mouse wheel. A rate of
-     * 1 is considered a change of 3% per wheel event.
+     * Sets the rate at which the scale factor changes when the shared moved the mouse wheel. A rate of 1 is considered
+     * a change of 3% per wheel event.
      */
     public void setScaleRate(final double scaleRate) {
         _scaleRate = scaleRate;
@@ -516,11 +511,11 @@ public class JImagePanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Sets the event mask used to determine whether the image should be tanslated when receiving a
-     * mouseDragged event. The default mask is {@link MouseEvent#BUTTON1_MASK}, which means the image will
-     * be translated when the shared drags the mouse with the first mouse button pressed. You could for example
-     * change this behaviour to {@link KeyEvent#CTRL_MASK} & {@link MouseEvent#BUTTON1_MASK} if you wanted the
-     * image to translate only if the control key was pressed.
+     * Sets the event mask used to determine whether the image should be tanslated when receiving a mouseDragged event.
+     * The default mask is {@link MouseEvent#BUTTON1_MASK}, which means the image will be translated when the shared
+     * drags the mouse with the first mouse button pressed. You could for example change this behaviour to {@link
+     * KeyEvent#CTRL_MASK} & {@link MouseEvent#BUTTON1_MASK} if you wanted the image to translate only if the control
+     * key was pressed.
      *
      * @param dragMask New event mask.
      */
@@ -562,10 +557,10 @@ public class JImagePanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Reverts the affine transform which is used when display the image to the identity transform. This means:
-     * <li>The scale factor will be reset to 1, scaling the image to it's original size</li>
-     * <li>The translation in both directions will be set to 0, centering the image in the panel</li>
-     * <li>The scale mode will be reset to manual scaling.</li>
+     * Reverts the affine transform which is used when display the image to the identity transform. This means: <li>The
+     * scale factor will be reset to 1, scaling the image to it's original size</li> <li>The translation in both
+     * directions will be set to 0, centering the image in the panel</li> <li>The scale mode will be reset to manual
+     * scaling.</li>
      */
     public void setToIdentity() {
         _transX = 0;
@@ -585,17 +580,15 @@ public class JImagePanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Sets the scale mode property. The scale mode determines in which way the JImagePanel will try to fit
-     * the image to the panels size:
-     * <li>{@link JImagePanel#SCALE_MANUALLY} scales the image according to the shared's mouse wheel interaction</li>
-     * <li>{@link JImagePanel#SCALE_HORIZONTAL} attempts to fit the image horizontally, regardless of it's height</li>
-     * <li>{@link JImagePanel#SCALE_VERTICAL} attempts to fit the image vertically, regardless of it's width.
-     * <li>{@link JImagePanel#SCALE_BOTH} tries to find the best fit for the image in both dimensions</li>
+     * Sets the scale mode property. The scale mode determines in which way the JImagePanel will try to fit the image to
+     * the panels size: <li>{@link JImagePanel#SCALE_MANUALLY} scales the image according to the shared's mouse wheel
+     * interaction</li> <li>{@link JImagePanel#SCALE_HORIZONTAL} attempts to fit the image horizontally, regardless of
+     * it's height</li> <li>{@link JImagePanel#SCALE_VERTICAL} attempts to fit the image vertically, regardless of it's
+     * width. <li>{@link JImagePanel#SCALE_BOTH} tries to find the best fit for the image in both dimensions</li>
      * <p/>
-     * Note that as long as scaling is allowed, the shared will still be able to change the scale factor using the
-     * mouse wheel. The scale mode will then be reset to SCALE_MANUALLY. If you want to 'lock' one of the three
-     * automatic scale modes you will have to invoke {@link JImagePanel#setScalable(boolean)} with a 'false'
-     * argument.
+     * Note that as long as scaling is allowed, the shared will still be able to change the scale factor using the mouse
+     * wheel. The scale mode will then be reset to SCALE_MANUALLY. If you want to 'lock' one of the three automatic
+     * scale modes you will have to invoke {@link JImagePanel#setScalable(boolean)} with a 'false' argument.
      *
      * @param scaleMode new scale mode.
      */
