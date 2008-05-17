@@ -1,0 +1,5 @@
+The ExceptionDialog is a simple dialog implementation for displaying runtime errors in your application. It will render the stack trace, an optional styled text message (if you don't define a message, the exception's message will be used) and a set of actions to handle the error.
+
+By default, the ExceptionDialog offers two options to the user: To shut down the application (resulting in a call to System.exit(1) or to continue working. You can, however, easily customize the dialog in this regard, and add/remove actions in which ever manner you like. In the above example, the lower button will show a dialog with an added 'submit bugreport' action. See the Javadoc for an example on how to do this.
+
+You might want to use the exception dialog in conjunction with a Thread.uncaughtExceptionHandler when delegating tasks to worker threads. Also, it is usually a good idea to use the DefaultAWTExceptionHandler class, which can be used to handle errors occuring on the AWT event thread. Usually, most exceptions will occur in response to user interaction, so this adds nicely to the overall quality of your application.
