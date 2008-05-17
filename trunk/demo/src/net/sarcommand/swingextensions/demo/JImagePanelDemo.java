@@ -11,24 +11,20 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
- * Creates a simple demo for the JImagePanel component. The frame offers two checkboxes to allow
- * the user to choose whether or not scaling and dragging should be allowed. Four other buttons cover the
- * setScaleMode(int) and setToIdentity() methods.
+ * Creates a simple demo for the JImagePanel component. The frame offers two checkboxes to allow the user to choose
+ * whether or not scaling and dragging should be allowed. Four other buttons cover the setScaleMode(int) and
+ * setToIdentity() methods.
  * <p/>
- * <hr/>
- * Copyright 2006 Torsten Heup
+ * <hr/> Copyright 2006 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class JImagePanelDemo extends DemoClass {
     private JImagePanel _imagePanel;
@@ -50,8 +46,8 @@ public class JImagePanelDemo extends DemoClass {
     }
 
     /**
-     * Initializes this component. This method should be invoked by every constructor as it take's care of
-     * setting up the required fields and layout definitons.
+     * Initializes this component. This method should be invoked by every constructor as it take's care of setting up
+     * the required fields and layout definitons.
      */
     protected void init() {
         initComponents();
@@ -60,8 +56,7 @@ public class JImagePanelDemo extends DemoClass {
     }
 
     /**
-     * Initializes all graphical subcomponents and defines their behavious by setting the accordant
-     * properties.
+     * Initializes all graphical subcomponents and defines their behavious by setting the accordant properties.
      */
     protected void initComponents() {
         _imagePanel = new JImagePanel();
@@ -74,7 +69,7 @@ public class JImagePanelDemo extends DemoClass {
 
         _imagePanel.setBorder(BorderFactory.createRaisedBevelBorder());
         try {
-            final BufferedImage image = ImageIO.read(getClass().getClassLoader().getResourceAsStream("jimagepaneldemo.jpg"));
+            final BufferedImage image = ImageIO.read(getClass().getClassLoader().getResourceAsStream("jImagePanelDemo.jpg"));
             _imagePanel.setImage(image);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Missing demo resource:\njimagepaneldemo.jpg", "Error", JOptionPane.ERROR_MESSAGE);
