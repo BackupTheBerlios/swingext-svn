@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE jnlp SYSTEM "http://java.sun.com/dtd/JNLP-6.0.dtd">
-<jnlp spec="1.0" codebase="www.sarcommand.org/swingext/demo/" href="ssxDemo.jnlp">
+<jnlp spec="1.0" codebase="http://www.sarcommand.org/swingext/demo/" href="ssxDemo.jnlp">
     <information>
         <title>SarcomandSwingExtensions demo</title>
         <vendor>www.sarcommand.org</vendor>
@@ -8,9 +8,12 @@
         <homepage href="http://www.sarcommand.org/en/index.php?title=SwingExtensions"/>
         <offline-allowed/>
     </information>
+    <security>
+        <all-permissions/>
+    </security>
     <resources>
-        <jar href="SwingExtDemo.jar"/>
-        <jar href="swingextensions.jar"/>
+        <jar href="SwingExtensionsDemo.jar"/>
+        <jar href="swingExtensions.jar"/>
         <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
     </resources>
     <application-desc main-class="net.sarcommand.swingextensions.demo.SwingExtensionsDemo"/>
