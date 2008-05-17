@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<project name="Sarcommand SwingExtensions Demo" basedir="." default="clean-dist">
+    <property name="build.dir" location="_build"/>
+    <property name="dist.dir" location="dist"/>
+    <property name="demo.jar" location="${dist.dir}/SwingExtensionsDemo.jar"/>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <target name="compile" depends="clean">
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="src" destdir="${build.dir}" classpath="${core.jar}"/>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="${dist.dir}"/>
+        <jar basedir="${build.dir}" destfile="${demo.jar}"/>
+    </target>
+
+    <target name="clean-dist" depends="jar">
+    </target>
+</project>
