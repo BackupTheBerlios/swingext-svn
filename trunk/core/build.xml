@@ -19,7 +19,7 @@
     <property name="ivy.module" value="swingExtensions"/>
     <property name="ivy.revision" value="${version.id}"/>
 
-    <property name="core.jar" location="${dist.dir}/swingExtensions-${version.id}.jar"
+    <property name="core.jar" location="${dist.dir}/swingextensions.jar"
               description="Destination jar. Only used when running as standalone script"/>
 
     <path id="classpath.compile"/>
