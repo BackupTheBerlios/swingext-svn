@@ -8,16 +8,17 @@ import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * The ActionManager class is a utility meant to help you handle the javax.swing.Action instances within your
  * application. It combines the following three major functions:
  * <p/>
  * <li> Creation and management of singleton instances for each Action, organized by identifiers.</li> <li> Handling
- * action execution by implementing a responder chain mechanism</li> <li> Management of action states (which actions are
- * available and which aren't at a certain point</li>
- * <p/>
+ * action execution by implementing a responder chain mechanism</li>
  * <p/>
  * <h3> Creating and managing actions</h3>
  * <p/>
@@ -55,8 +56,6 @@ import java.util.*;
  * RESPONDER_CHAIN_ROOT property. This property can take two values, 'component' or 'focus'. If the property has not
  * been set, the ActionManager will assume that the action is a focus action since this should apply in the majority of
  * cases.
- * <p/>
- * todo [heup] pending completion
  * <p/>
  * <hr/> Copyright 2006 Torsten Heup
  * <p/>
@@ -348,76 +347,6 @@ public class ActionManager {
                 state.setEnabled(action, action.isEnabled());
         }
         return state;
-    }
-
-    /**
-     * Sets the current action state. This will cause the actions' enabled states to be adjusted accoring to the given
-     * state.
-     *
-     * @param state The action state to set.
-     */
-    public static void setCurrentActionState(final ActionState state) {
-        if (state == null)
-            throw new IllegalArgumentException("Parameter 'state' must not be null!");
-
-        final Map<Action, Boolean> states = state.getEnabledStates();
-        for (Action a : states.keySet())
-            a.setEnabled(state.isEnabled(a));
-    }
-
-    /**
-     * Sets the current action state, using a previously stored action state.
-     *
-     * @param stateKey The identifier under which the state has previously been stored using putState.
-     */
-    public static void setCurrentActionState(final Object stateKey) {
-        if (stateKey == null)
-            throw new IllegalArgumentException("Parameter 'stateKey' must not be null!");
-
-        final ActionState state = __actionStates.get(stateKey);
-        if (state == null)
-            throw new IllegalArgumentException("Illegal state key:" + stateKey);
-
-        final Map<Action, Boolean> states = state.getEnabledStates();
-        for (Action a : states.keySet())
-            a.setEnabled(state.isEnabled(a));
-    }
-
-    /**
-     * Returns the action state which was previously stored under the given identifier using putActionState. Note that
-     * this is not necessarily the current action state, this is just a conveniance method which allows you to store
-     * action states.
-     *
-     * @param identifier Identifier under which the action state has been stored.
-     * @return the action state which was previously stored under the given identifier using putActionState.
-     */
-    public static ActionState getActionState(final Object identifier) {
-        return __actionStates == null ? null : __actionStates.get(identifier);
-    }
-
-    /**
-     * Registers an action state under the given identifier. Invoking this method will not have any effect on the
-     * actions, this is merely a conveniance method used to 'store' action states for later use.
-     *
-     * @param identifier Identifier under which this state should be stored, non-null.
-     * @param state      ActionState to store, may be null.
-     */
-    public static void putActionState(final Object identifier, final ActionState state) {
-        if (identifier == null)
-            throw new IllegalArgumentException("Parameter 'identifier' must not be null!");
-
-        if (__actionStates == null)
-            __actionStates = new HashMap<Object, ActionState>(4);
-        __actionStates.put(identifier, state);
-    }
-
-    /**
-     * Sets the action provider, a factory used to create new actions.
-     *
-     * @param provider a factory used to create new actions.
-     */
-    public static void setActionProvider(final ActionProvider provider) {
-        __actionProvider = provider;
     }
 
     /**
