@@ -94,11 +94,6 @@ public class ActionManager {
     private static HashMap<Object, Collection<Action>> __groups;
 
     /**
-     * In this map, state information on collections of actions will be cached.
-     */
-    private static HashMap<Object, ActionState> __actionStates;
-
-    /**
      * Flag determining whether the ActionManager has been properly initialized.
      */
     protected static boolean __initialized;
@@ -330,23 +325,6 @@ public class ActionManager {
                     groupAction.putValue(Action.SELECTED_KEY, false);
             }
         }
-    }
-
-    /**
-     * Returns the current action state. This method is useful if you need to 'remember' the state of your application,
-     * for instance if you want to temporarily disable all actions while loading a file and then restore the previous
-     * state.
-     *
-     * @return the current action state.
-     */
-    public static ActionState getCurrentActionState() {
-        final ActionState state = new SimpleActionState();
-        for (Object key : __actionMap.keySet()) {
-            final Action action = __actionMap.get(key);
-            if (action != null)
-                state.setEnabled(action, action.isEnabled());
-        }
-        return state;
     }
 
     /**
