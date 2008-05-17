@@ -19,7 +19,12 @@
 
     <target name="jar" depends="compile">
         <mkdir dir="${dist.dir}"/>
-        <jar basedir="${build.dir}" destfile="${demo.jar}"/>
+        <jar basedir="${build.dir}" destfile="${demo.jar}">
+            <manifest>
+                <attribute name="Main-Class" value="net.sarcommand.swingextensions.demo.SwingExtensionsDemo"/>
+                <attribute name="Class-Path" value="swingExtensions.jar"/>
+            </manifest>
+        </jar>
     </target>
 
     <target name="clean-dist" depends="jar">
