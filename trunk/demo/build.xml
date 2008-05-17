@@ -12,6 +12,9 @@
     <target name="compile" depends="clean">
         <mkdir dir="${build.dir}"/>
         <javac srcdir="src" destdir="${build.dir}" classpath="${core.jar}"/>
+        <copy todir="${build.dir}">
+            <fileset dir="resources"/>
+        </copy>
     </target>
 
     <target name="jar" depends="compile">
