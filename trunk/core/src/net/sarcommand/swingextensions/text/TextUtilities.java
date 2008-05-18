@@ -33,7 +33,7 @@ public class TextUtilities {
         if (UIManager.getLookAndFeel().getName().toLowerCase().contains("aqua"))
             textField.putClientProperty("JTextField.variant", "search");
         else {
-
+            textField.setUI(new SearchFieldUI(textField.getUI()));
         }
     }
 
