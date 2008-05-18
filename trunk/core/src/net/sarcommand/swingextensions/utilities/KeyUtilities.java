@@ -54,4 +54,47 @@ public class KeyUtilities {
         strokes.remove(stroke);
         target.setFocusTraversalKeys(id, strokes);
     }
+
+    /**
+     * Registers the given action for a keystroke.
+     *
+     * @param component Compontent the action should be registered on.
+     * @param condition The condition for the input map (as you would pass to JComponent#getInputMap(int))
+     * @param keyStroke Keystroke the action should be registered for.
+     * @param action    Action to register for the given keystroke.
+     * @return The previous action key bound to the keystroke, if there is one.
+     */
+    public static Object setActionKeyBinding(final JComponent component, final int condition,
+                                             final KeyStroke keyStroke, final Action action) {
+        if (component == null)
+            throw new IllegalArgumentException("Parameter 'component' must not be null!");
+        if (keyStroke == null)
+            throw new IllegalArgumentException("Parameter 'keyStroke' must not be null!");
+        if (action == null)
+            throw new IllegalArgumentException("Parameter 'action' must not be null!");
+
+        String actionKey = (String) action.getValue(Action.NAME);
+        if (actionKey != null)
+            actionKey = "action" + System.identityHashCode(action);
+
+        final InputMap map = component.getInputMap(condition);
+        final Object previousKeyBinding = map.get(keyStroke);
+        map.put(keyStroke, actionKey);
+        component.setInputMap(condition, map);
+        component.getActionMap().put(actionKey, action);
+        return previousKeyBinding;
+    }
+
+    /**
+     * Registers the given action for a keystroke, using JComponent.WHEN_FOCUSED as condition for the input map.
+     *
+     * @param component Compontent the action should be registered on.
+     * @param keyStroke Keystroke the action should be registered for.
+     * @param action    Action to register for the given keystroke.
+     * @return The previous action key bound to the keystroke, if there is one.
+     */
+    public static Object setActionKeyBinding(final JComponent component, final KeyStroke keyStroke,
+                                             final Action action) {
+        return setActionKeyBinding(component, JComponent.WHEN_FOCUSED, keyStroke, action);
+    }
 }
