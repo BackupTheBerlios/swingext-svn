@@ -150,6 +150,15 @@ public class ActionManager {
     }
 
     /**
+     * Sets the action provider, a factory used to create new actions.
+     *
+     * @param provider a factory used to create new actions.
+     */
+    public static void setActionProvider(final ActionProvider provider) {
+        __actionProvider = provider;
+    }
+
+    /**
      * Returns the action for the given identifier. If the action already exists, it will simply be returned, otherwise
      * the action provider will be used to create a new singleton instance.
      *
