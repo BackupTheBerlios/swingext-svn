@@ -4,10 +4,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * This class basically performs the same tasks as the EventSupport (see this class for usage detail), however, it uses
@@ -32,6 +29,16 @@ import java.util.Vector;
  *      for the specific language governing permissions and limitations under the License.
  */
 public class WeakEventSupport<T> {
+    /**
+     * Creates a new WeakEventSupport for the given listener class. This is the only way to create an WeakEventSupport.
+     *
+     * @param listenerClass Class of the listener type this instance is being created for.
+     * @return a new EventSupport for the given listener class.
+     */
+    public static <T extends EventListener> WeakEventSupport<T> create(final Class<T> listenerClass) {
+        return new WeakEventSupport<T>(listenerClass);
+    }
+
     protected T _delegate;
 
     /**
@@ -48,8 +55,14 @@ public class WeakEventSupport<T> {
         final InvocationHandler handler = new InvocationHandler() {
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 if (proxy == _delegate) {
-                    for (int i = _elements.size() - 1; i >= 0; i--)
-                        method.invoke(_elements.get(i), args);
+                    for (int i = _elements.size() - 1; i >= 0; i--) {
+                        final WeakReference<T> ref = _elements.get(i);
+                        final T listener = ref.get();
+                        if (listener == null)
+                            _elements.remove(i);
+                        else
+                            method.invoke(listener, args);
+                    }
                 }
                 return null;
             }
