@@ -41,7 +41,7 @@ public class LabelUtilities {
 
         protected void textChanged() {
             final String text = _label.getText();
-            if (!text.toLowerCase().contains("<html>"))
+            if (text != null && !text.toLowerCase().contains("<html>"))
                 _label.setText("<html></head><body><font color=\"blue\"><u>" + text + "</u></font></body></html>");
         }
     }
