@@ -1,4 +1,4 @@
-package net.sarcommand.swingextensions.misc;
+package net.sarcommand.swingextensions.progress;
 
 import net.sarcommand.swingextensions.utilities.ColorUtilities;
 
@@ -14,20 +14,16 @@ import java.awt.geom.Point2D;
 /**
  * Implements the most common ajax-like look for a progress indicator.
  * <p/>
- * <hr/>
- * Copyright 2006 Torsten Heup
+ * <hr/> Copyright 2006 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class DefaultProgressIndicatorUI extends ProgressIndicatorUI {
     /**
@@ -51,8 +47,8 @@ public class DefaultProgressIndicatorUI extends ProgressIndicatorUI {
     protected JProgressIndicator _target;
 
     /**
-     * A counter variable (0-11) used to decide which branch should be highlighted. Will be updated after
-     * 'updateDelay' miliseconds.
+     * A counter variable (0-11) used to decide which branch should be highlighted. Will be updated after 'updateDelay'
+     * miliseconds.
      */
     protected int _timerValue;
 
