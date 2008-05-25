@@ -21,12 +21,12 @@ import java.beans.PropertyChangeListener;
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-class SwingWorkerBinding implements PropertyChangeListener, ProgressBarBinding {
+class SwingWorkerProgressBinding implements PropertyChangeListener, ProgressBarVariation {
     private JProgressBar _progressBar;
     private SwingWorker _swingWorker;
     private boolean _indeterminate;
 
-    public SwingWorkerBinding(final JProgressBar progressBar, final SwingWorker swingWorker) {
+    public SwingWorkerProgressBinding(final JProgressBar progressBar, final SwingWorker swingWorker) {
         _progressBar = progressBar;
         _progressBar.setMinimum(0);
         _progressBar.setMaximum(100);
@@ -56,5 +56,9 @@ class SwingWorkerBinding implements PropertyChangeListener, ProgressBarBinding {
 
     public void detach() {
         _swingWorker.removePropertyChangeListener(this);
+    }
+
+    public JProgressBar getAlteredComponent() {
+        return _progressBar;
     }
 }
