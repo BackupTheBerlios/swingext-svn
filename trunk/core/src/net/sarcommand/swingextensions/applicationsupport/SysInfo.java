@@ -1,6 +1,9 @@
 package net.sarcommand.swingextensions.applicationsupport;
 
 import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * A small utility class used to retrieve information on the operating system without having to deal with
@@ -69,11 +72,11 @@ public class SysInfo {
         if (exponent < 10)
             return mem + "B";
         if (exponent < 20)
-            return (mem / 1024) + "KB";
+            return Math.round(mem / 1024. * 100) / 100. + "KB";
         if (exponent < 30)
-            return (mem / 1024 / 1024) + "MB";
+            return Math.round(mem / 1024. / 1024. * 100) / 100. + "MB";
 
-        return (mem / 1024 / 1024 / 1024) + "GB";
+        return Math.round(mem / 1024. / 1024. / 1024. * 100) / 100. + "GB";
     }
 
     public static int getCPUCount() {
@@ -90,6 +93,35 @@ public class SysInfo {
     public static boolean isImageAccelerationAvailable() {
         return GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
                 .getDefaultConfiguration().getImageCapabilities().isAccelerated();
+    }
+
+    /**
+     * Returns the version string of the java runtime being used.
+     *
+     * @return the version string of the java runtime being used.
+     */
+    public static String getRuntimeVersion() {
+        return System.getProperty("java.runtime.version");
+    }
+
+    /**
+     * Creates a string containing all available system information. This is merely a conveniance method which can be
+     * used for diagnotic purposes.
+     *
+     * @return a string containing all available system information.
+     */
+    public static String getSystemInformation() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append("Operating system:   ").append(getDisplayName()).append(' ').append(getVersion()).append(' ')
+                .append(getArchitecture()).append('\n');
+        builder.append("Java version:       ").append(getRuntimeVersion()).append('\n');
+        builder.append("Date:               ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
+                .append('\n');
+        builder.append("Locale:             ").append(Locale.getDefault()).append('\n');
+        builder.append("Number of CPUs:     ").append(getCPUCount()).append('\n');
+        builder.append("Max. heap size:     ").append(getHeapSizeAsString()).append('\n');
+        builder.append("Video acceleration: ").append(isImageAccelerationAvailable() ? "available" : "not available");
+        return builder.toString();
     }
 
     private SysInfo() {
