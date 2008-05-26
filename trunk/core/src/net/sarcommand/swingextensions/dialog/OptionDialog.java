@@ -10,7 +10,18 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
+ * A dialog implementation which can be used to prompt the user to select a value from a list. This works pretty much
+ * analogous to the JOptionPane counterpart, only that a proper JList is being used, making this implementation more
+ * suitable for a larger number of items. <hr/> Copyright 2006-2008 Torsten Heup
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class OptionDialog extends JDialog {
     public static final String OK_BUTTON_ACTION = "OptionDialog.buttonOK";
