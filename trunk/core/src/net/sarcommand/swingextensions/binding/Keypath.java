@@ -1,5 +1,7 @@
 package net.sarcommand.swingextensions.binding;
 
+import java.beans.PropertyChangeListener;
+
 /**
  * Keypaths are the central elements employed by the swingext library to get and set properties using reflection. A
  * keypath is created using a list of property names, contatenated in a string and separated by dots. Starting from a
@@ -130,6 +132,58 @@ public class Keypath<T> {
                 return null;
         }
         return runner;
+    }
+
+    protected KeypathElement[] resolveElements(final Object entryPoint) {
+        if (entryPoint == null)
+            throw new IllegalArgumentException("Parameter 'entryPoint' must not be null!");
+
+        Class clazz;
+        Object runner = entryPoint;
+        final KeypathElement[] elements = new KeypathElement[_properties.length];
+        for (int i = 0; i < _properties.length; i++) {
+            clazz = runner.getClass();
+            elements[i] = KeypathElementCache.getElement(clazz, _properties[i]);
+            runner = elements[i].get(runner);
+            if (runner == null)
+                break;
+        }
+        return elements;
+    }
+
+    protected Object[] resolveValues(final Object entryPoint) {
+        if (entryPoint == null)
+            throw new IllegalArgumentException("Parameter 'entryPoint' must not be null!");
+
+        Class clazz;
+        Object runner = entryPoint;
+        KeypathElement element;
+        final Object[] values = new Object[_properties.length + 1];
+        values[0] = entryPoint;
+        for (int i = 0; i < _properties.length; i++) {
+            clazz = runner.getClass();
+            element = KeypathElementCache.getElement(clazz, _properties[i]);
+            runner = element.get(runner);
+            values[i + 1] = runner;
+            if (runner == null)
+                break;
+        }
+        return values;
+    }
+
+    public boolean isObservable(final Object entryPoint) {
+        final KeypathElement[] keypathElements = resolveElements(entryPoint);
+        for (KeypathElement element : keypathElements)
+            if (!element.isObservable())
+                return false;
+        return true;
+    }
+
+    public KeypathObserver createObserver(final Object entryPoint, final PropertyChangeListener delegate) {
+        if (entryPoint == null)
+            throw new IllegalArgumentException("Parameter 'entryPoint' must not be null!");
+
+        return new KeypathObserver(entryPoint, this, delegate);
     }
 
     public String toString() {
