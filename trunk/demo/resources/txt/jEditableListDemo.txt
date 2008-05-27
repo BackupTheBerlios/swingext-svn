@@ -1,0 +1,3 @@
+The JEditableList is a JList subclass which allows editing items. It works pretty much analogous to the other editable classes in swing, like JTable. You need to specify an implementation of EditableListModel as data model, which merely extends the normal list model by two methods. Additionally, you have to provide an implementation of a ListCellEditor. For both cases, default implementations are available.
+
+Besides the editing functionality, the editable list will behave like a usual JList, including support for different layout orientations, drag and drop and so on.  
