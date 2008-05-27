@@ -23,6 +23,7 @@ public class SwingExtensionsDemo {
     private static final Class[] DEMO_CLASSES = {
             JImagePanelDemo.class,
             SelectionTreeDemo.class,
+            JEditableListDemo.class,
             ExceptionDialogDemo.class,
             TypedInputFieldDemo.class,
             BlockingGlassPaneDemo.class,
