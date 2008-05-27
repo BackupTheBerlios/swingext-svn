@@ -13,20 +13,16 @@ import java.util.regex.Pattern;
  * This class implements a Document which restricts its data to match one or more regular expressions. This class is
  * used internally by the text based TypedInputField implementations.
  * <p/>
- * <hr/>
- * Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2008 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class RegexpConstrainedDocument extends PlainDocument {
     /**
@@ -54,8 +50,7 @@ public class RegexpConstrainedDocument extends PlainDocument {
      * @param str  the string to insert; does nothing with null/empty strings
      * @param a    the attributes for the inserted content
      * @throws javax.swing.text.BadLocationException
-     *          the given insert position is not a valid
-     *          position within the document
+     *          the given insert position is not a valid position within the document
      * @see javax.swing.text.Document#insertString
      */
     @Override
@@ -99,8 +94,7 @@ public class RegexpConstrainedDocument extends PlainDocument {
      * @param offs the starting offset >= 0
      * @param len  the number of characters to remove >= 0
      * @throws javax.swing.text.BadLocationException
-     *          the given remove position is not a valid
-     *          position within the document
+     *          the given remove position is not a valid position within the document
      * @see javax.swing.text.Document#remove
      */
     @Override
@@ -111,14 +105,11 @@ public class RegexpConstrainedDocument extends PlainDocument {
             buffer.delete(offs, offs + len);
 
             boolean matches = false;
-            boolean hitEnd = false;
             for (Pattern p : _patterns) {
                 final Matcher m = p.matcher(buffer);
                 if (m.matches()) {
                     matches = true;
                     break;
-                } else if (m.hitEnd()) {
-                    hitEnd = true;
                 }
             }
 
@@ -126,11 +117,9 @@ public class RegexpConstrainedDocument extends PlainDocument {
             if (matches) {
                 callback.inputLegal(_field);
                 super.remove(offs, len);
-            } else if (hitEnd) {
+            } else {
                 callback.inputIncomplete(_field);
                 super.remove(offs, len);
-            } else {
-                callback.inputIllegal(_field);
             }
         } catch (BadLocationException e) {
             throw new RuntimeException("Internal error:", e);
