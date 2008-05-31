@@ -1,5 +1,7 @@
 package net.sarcommand.swingextensions.text;
 
+import net.sarcommand.swingextensions.utilities.SearchTask;
+
 import javax.swing.*;
 
 /**
@@ -17,24 +19,16 @@ import javax.swing.*;
  * specific language governing permissions and limitations under the License.
  */
 public class TextUtilities {
-    /**
-     * This call will turn the given text field into a search field:
-     * <p/>
-     * <li>It will be supplied with an appropriate icon</li> <li>If text is entered, a clear button will appear</li>
-     * <li>The user can clear the field by pressing escape</li>
-     * <p/>
-     * The text field will be transformed with the help of the SearchFieldUI class. On Mac OSX, or rather when using the
-     * Aqua LookAndFeel, a better-looking, more native-like implementation is available by setting a client property.
-     * This method will revert to this implementation when the aqua Lookandfeel is detected.
-     *
-     * @param textField Text field to transform.
-     */
     public static void turnIntoSearchField(final JTextField textField) {
-        if (UIManager.getLookAndFeel().getName().toLowerCase().contains("aqua"))
-            textField.putClientProperty("JTextField.variant", "search");
-        else {
-            textField.setUI(new SearchFieldUI(textField.getUI()));
-        }
+        turnIntoSearchField(textField, null);
+    }
+
+    public static void turnIntoSearchField(final JTextField textField, final SearchTask searchTask) {
+        final Object clientProperty = textField.getClientProperty(TextVariation.CLIENT_PROPERTY);
+        if (clientProperty != null)
+            ((TextVariation) clientProperty).detach();
+        final SearchFieldVariation variation = new SearchFieldVariation(textField, searchTask);
+        textField.putClientProperty(TextVariation.CLIENT_PROPERTY, variation);
     }
 
     private TextUtilities() {
