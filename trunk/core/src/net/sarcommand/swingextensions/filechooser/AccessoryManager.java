@@ -2,17 +2,20 @@ package net.sarcommand.swingextensions.filechooser;
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.HashMap;
 
 /**
  * The AccessoryManager class enables you to add custom components to a JFileChooser instance. Other than JFileChooser's
- * setAccessory(JComponent) method, which forces you to use a platform dependent location for the accessory, this
- * class allows editing content on top of, below and on both sides of the FileView.
+ * setAccessory(JComponent) method, which forces you to use a platform dependent location for the accessory, this class
+ * allows editing content on top of, below and on both sides of the FileView.
  * <p/>
  * Currently, two subclasses exist: The SimpleAccessoryManager will merely allow you install a custom component in those
  * locations. The MimeAccessoryManager on the other hand allows you to 'register' accessories for certain mime types,
- * for instance you could register an image preview for jpg and png types and a text preview for txt files. Please
- * refer to those subclasses for details.
+ * for instance you could register an image preview for jpg and png types and a text preview for txt files. Please refer
+ * to those subclasses for details.
  * <p/>
  * In order to use an AccessoryManager, all you have to do is tell it which JFileChooser to extend:
  * <pre>
@@ -25,20 +28,16 @@ import java.util.HashMap;
  * manager.setAccessory(new JLabel("Foo"), SwingConstants.SOUTH);
  * </pre>
  * <p/>
- * <hr/>
- * Copyright 2006 Torsten Heup
+ * <hr/> Copyright 2006 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public abstract class AccessoryManager {
     /**
@@ -49,7 +48,9 @@ public abstract class AccessoryManager {
     /**
      * A hashmap keeping track of the installed accessories.
      */
-    protected HashMap<Integer, JComponent> _accessories;
+    protected HashMap<Integer, JComponent> _accessoryComponents;
+
+    protected HashMap<Integer, FileChooserAccessory> _fileChooserAccesories;
 
     /**
      * The JFileChooser instance on which this manager was installed.
@@ -57,8 +58,8 @@ public abstract class AccessoryManager {
     protected JFileChooser _chooser;
 
     /**
-     * Creates a new AccessoryManager. Be aware that you will have to invoke installAccessoryPane(JFileChooser)
-     * before using this instance.
+     * Creates a new AccessoryManager. Be aware that you will have to invoke installAccessoryPane(JFileChooser) before
+     * using this instance.
      */
     public AccessoryManager() {
     }
@@ -75,16 +76,16 @@ public abstract class AccessoryManager {
     }
 
     /**
-     * Installs the manager's accessory pane into the given file chooser. In order to do so, a rather crude hack
-     * is being used, however, I am pretty sure that this implementation will work for all future swing
-     * versions as well.
+     * Installs the manager's accessory pane into the given file chooser. In order to do so, a rather crude hack is
+     * being used, however, I am pretty sure that this implementation will work for all future swing versions as well.
      *
      * @param chooser JFileChooser instance on which this manager should be installed
      */
     public void installAccessoryPane(final JFileChooser chooser) {
         _chooser = chooser;
         _accessoryPane = new JPanel();
-        _accessories = new HashMap<Integer, JComponent>(4);
+        _accessoryComponents = new HashMap<Integer, JComponent>(4);
+        _fileChooserAccesories = new HashMap<Integer, FileChooserAccessory>(4);
 
         final JScrollPane sPane = (JScrollPane)
                 find(chooser, JScrollPane.class);
@@ -110,6 +111,18 @@ public abstract class AccessoryManager {
         newViewport.setView(_accessoryPane);
         sPane.setViewport(newViewport);
         sPane.setPreferredSize(copy.getMaximumSize());
+
+        chooser.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(final PropertyChangeEvent evt) {
+                if ("SelectedFileChangedProperty".equals(evt.getPropertyName()))
+                    selectedFileChanged((File) evt.getNewValue());
+            }
+        });
+    }
+
+    protected void selectedFileChanged(final File file) {
+        for (Integer i : _fileChooserAccesories.keySet())
+            _fileChooserAccesories.get(i).setFile(file);
     }
 
     /**
