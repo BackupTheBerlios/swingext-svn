@@ -1,5 +1,9 @@
 package net.sarcommand.swingextensions.progress;
 
+import net.sarcommand.swingextensions.utilities.ComponentVariation;
+
+import javax.swing.*;
+
 /**
  * Interface used to bind a JProgressBar to some kind of event source indicating a tasks progress. Implementations may
  * for instance be used to track the progress of a SwingWorker instance or a ProgressMonitorInputStream.
@@ -15,10 +19,5 @@ package net.sarcommand.swingextensions.progress;
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-public interface ProgressBarBinding {
-    /**
-     * Invoked when the ProgressBarBinding should remove itself from the JProgressBar. Implementations have to make sure
-     * that they uninstall properly, so that they may be garbage collected if no other references on them exist.
-     */
-    public void detach();
+public interface ProgressBarVariation extends ComponentVariation<JProgressBar> {
 }
