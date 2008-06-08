@@ -20,7 +20,7 @@ public class ProgressBarUtilities {
     /**
      * Name of the client property used to store ProgressBarBindings on a JProgressBar.
      *
-     * @see net.sarcommand.swingextensions.progress.ProgressBarBinding
+     * @see ProgressBarVariation
      */
     public static final String PROGRESS_BAR_BINDING = "SwingExt.ProgressBarUtilities.progressBarBinding";
 
@@ -30,15 +30,15 @@ public class ProgressBarUtilities {
      *
      * @param progressBar ProgressBar used to monitor the progress of 'worker'.
      * @param worker      SwingWorker instance being monitored.
-     * @see net.sarcommand.swingextensions.progress.SwingWorkerBinding
+     * @see SwingWorkerProgressBinding
      */
     public static void attachToSwingWorker(final JProgressBar progressBar, final SwingWorker worker) {
-        final ProgressBarBinding previousBinding =
-                (ProgressBarBinding) progressBar.getClientProperty(PROGRESS_BAR_BINDING);
-        if (previousBinding != null)
-            previousBinding.detach();
+        final ProgressBarVariation previousVariation =
+                (ProgressBarVariation) progressBar.getClientProperty(PROGRESS_BAR_BINDING);
+        if (previousVariation != null)
+            previousVariation.detach();
 
-        final SwingWorkerBinding binding = new SwingWorkerBinding(progressBar, worker);
-        progressBar.putClientProperty(PROGRESS_BAR_BINDING, binding);
+        final SwingWorkerProgressBinding progressBinding = new SwingWorkerProgressBinding(progressBar, worker);
+        progressBar.putClientProperty(PROGRESS_BAR_BINDING, progressBinding);
     }
 }
