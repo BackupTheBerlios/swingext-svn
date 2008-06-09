@@ -397,23 +397,27 @@ public class JImagePanel extends JPanel implements Scrollable {
      */
     public void setImage(final Image image) {
         _image = image;
-        _imageWidth = image.getWidth(null);
-        _imageHeight = image.getHeight(null);
+        _imageWidth = image != null ? image.getWidth(null) : 0;
+        _imageHeight = image != null ? image.getHeight(null) : 0;
 
-        final int transparency = (image instanceof Transparency) ? ((Transparency) image).getTransparency() : Transparency.TRANSLUCENT;
-        final GraphicsConfiguration graphicsConfiguration = getGraphicsConfiguration();
-        if (graphicsConfiguration != null)
-            _buffer = graphicsConfiguration.createCompatibleVolatileImage(_imageWidth, _imageHeight, transparency);
-        else
-            _buffer = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleVolatileImage(_imageWidth, _imageHeight, transparency);
-        final Graphics g2 = _buffer.createGraphics();
-        g2.drawImage(image, 0, 0, null);
+        if (_image != null) {
+            final int transparency = (image instanceof Transparency) ? ((Transparency) image).getTransparency() : Transparency.TRANSLUCENT;
+            final GraphicsConfiguration graphicsConfiguration = getGraphicsConfiguration();
+            if (graphicsConfiguration != null)
+                _buffer = graphicsConfiguration.createCompatibleVolatileImage(_imageWidth, _imageHeight, transparency);
+            else
+                _buffer = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleVolatileImage(_imageWidth, _imageHeight, transparency);
+            final Graphics g2 = _buffer.createGraphics();
+            g2.drawImage(image, 0, 0, null);
 
-        final Container parent = getParent();
-        if (parent != null)
-            parent.validate();
+            final Container parent = getParent();
+            if (parent != null)
+                parent.validate();
 
-        setPreferredSize(new Dimension(_imageWidth, _imageHeight));
+            setPreferredSize(new Dimension(_imageWidth, _imageHeight));
+        } else
+            _buffer = null;
+
         setToIdentity();
         repaint();
     }
