@@ -393,4 +393,31 @@ public class SwingExtUtil {
             value = convertNumber(setter.getParameterTypes()[0], (Number) value);
         setter.invoke(target, value);
     }
+
+    /**
+     * Returns whether a component is a direct descendant of another one. This method will traverse the component
+     * hierarchy, following the 'parent' relation for normal components and the 'invoker' relation for JPopupMenu
+     * instances.
+     *
+     * @param supposedParent The supposed ancestor component
+     * @param supposedChild  The supposed child component
+     * @return if 'supposedChild' is a descendant of 'supposedParent'
+     */
+    public static boolean isDescendant(final Component supposedParent, final Component supposedChild) {
+        if (supposedParent == null)
+            throw new IllegalArgumentException("Parameter 'supposedParent' must not be null!");
+        if (supposedChild == null)
+            throw new IllegalArgumentException("Parameter 'supposedChild' must not be null!");
+
+        Component runner = supposedChild;
+        while (runner != null) {
+            if (runner == supposedParent)
+                return true;
+            if (runner instanceof JPopupMenu)
+                runner = ((JPopupMenu) runner).getInvoker();
+            else
+                runner = runner.getParent();
+        }
+        return false;
+    }
 }
