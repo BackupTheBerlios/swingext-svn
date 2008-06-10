@@ -24,7 +24,7 @@ import java.io.File;
 public class ExtensionFileFilter extends FileFilter implements java.io.FileFilter {
     private String[] _extensions;
     private String _description;
-    private final boolean _acceptDirectories;
+    private boolean _acceptDirectories;
 
     /**
      * Create a new FileFilter instance which will accept a file if it's extension is among the given list of valid
@@ -111,11 +111,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
         return _acceptDirectories;
     }
 
-    public static void main(String[] args) {
-        final ExtensionFileFilter _codeTableFileFilter = new ExtensionFileFilter("");
-        _codeTableFileFilter.setExtensions("codetable.xml");
-        _codeTableFileFilter.setDescription("CodeTable files");
-
-        System.out.println(_codeTableFileFilter.accept(new File("/Users/heup/temp/E_Class_Demo.codetable.xml")));
+    public void setAcceptDirectories(final boolean acceptDirectories) {
+        _acceptDirectories = acceptDirectories;
     }
 }
