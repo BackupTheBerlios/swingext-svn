@@ -1,37 +1,34 @@
 package net.sarcommand.swingextensions.filechooser;
 
 import javax.swing.filechooser.FileFilter;
-import java.io.*;
+import java.io.File;
 
 /**
- * Provides a default implementation for FileFilter instances which will filter by looking at the file's
- * extension. This is a mere conveniance class to keep you the efford from writing an anonymous
- * implementation every time you require an extension-based filter.
+ * Provides a default implementation for FileFilter instances which will filter by looking at the file's extension. This
+ * is a mere conveniance class to keep you the efford from writing an anonymous implementation every time you require an
+ * extension-based filter.
  * <p/>
  * todo add demo code
  * <p/>
  * Copyright 2006 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
-public class ExtensionFileFilter extends FileFilter {
+public class ExtensionFileFilter extends FileFilter implements java.io.FileFilter {
     private String[] _extensions;
     private String _description;
     private final boolean _acceptDirectories;
 
     /**
-     * Create a new FileFilter instance which will accept a file if it's extension is among the given list of
-     * valid extensions. All directories will be accepted as well.
+     * Create a new FileFilter instance which will accept a file if it's extension is among the given list of valid
+     * extensions. All directories will be accepted as well.
      *
      * @param extensions  A single extension or a list of extensions to be accepted by this FileFilter.
      * @param description The description which should be displayed in the FileChooser when using this filter.
@@ -41,9 +38,9 @@ public class ExtensionFileFilter extends FileFilter {
     }
 
     /**
-     * Create a new FileFilter instance which will accept a file if it's extension is among the given list of
-     * valid extensions. If required you can have the filter deny all directories by setting the 'acceptDirectories'
-     * parameter accordingly.
+     * Create a new FileFilter instance which will accept a file if it's extension is among the given list of valid
+     * extensions. If required you can have the filter deny all directories by setting the 'acceptDirectories' parameter
+     * accordingly.
      *
      * @param extensions        A single extensions or a list of suffixes to be accepted by this FileFilter.
      * @param description       The description which should be displayed in the FileChooser when using this filter.
