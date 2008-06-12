@@ -115,10 +115,8 @@ public class JEditableList extends JList {
 
         final PropertyChangeListener listener = new PropertyChangeListener() {
             public void propertyChange(final PropertyChangeEvent evt) {
-                System.err.println(evt.getPropertyName() + " " + evt.getOldValue() + " " + evt.getNewValue());
                 if (isEditing() && (evt.getNewValue() == JEditableList.this || (evt.getNewValue() != null &&
                         !SwingExtUtil.isDescendant(JEditableList.this, (Component) evt.getNewValue())))) {
-                    System.err.println("cancel");
                     cancelEditing();
                 }
             }
