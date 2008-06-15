@@ -26,7 +26,7 @@ public class SwingExtensionsDemo {
             JEditableListDemo.class,
             ExceptionDialogDemo.class,
             TypedInputFieldDemo.class,
-            BlockingGlassPaneDemo.class,
+            GlassPaneDemo.class,
             AccessoryManagerDemo.class,
             MultiCellSplitPaneDemo.class
     };
