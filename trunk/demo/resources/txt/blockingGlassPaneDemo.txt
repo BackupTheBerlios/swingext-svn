@@ -1,9 +1,0 @@
-A glasspane can come in handy to block frames while your application is busy, for instance while loading a file. It will block all user input for this frame while allowing the event thread to continue normally. This way you can delegate your loading procedure to a separate thread while the GUI stays responsive and the user can't provoke race conditions while clicking around wildly.
-
-The BlockingGlassPane implementation will display a JProgressIndicator in the center of the screen in order to appear less boring :-). The content of the frame will be grayed out and blured as a visual response to the controls being off limits for the time being.
-
-You can set text messages which will be displayed right below the progress indicator to notify the user of the current state of your process. The BlockingGlassPane accepts plain text as well as styled message.
-
-In order to give it a try, just enable the 'glass pane visible' checkbox. If you wait for a few seconds, you will see different possible styles of messages.
-
-If you're interested in the components used in this demo, check out the JProgressIndicator class (the rotating thingy in the center) and the ImageOperations utility (responsible for the blur effect) as well.

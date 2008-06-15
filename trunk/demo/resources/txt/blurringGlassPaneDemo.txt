@@ -1,0 +1,5 @@
+Glass panes can be a valuable tool for when designing swing applications. Besides allowing you to render overlay information, they can be used to block all user input while a long-running operation is being performed. For instance, when loading a large document, you might want to prevent the user from clicking around in your window.
+
+However, simply installing a JPanel which consumes the user's events provides poor visual feedback. After all, your ui will appear to be ready for input when it really isn't. The blurring glass pane enhances visibility by greying out the content of the frame and providing a simple blur effect, as seen on several modern operating systems.
+
+Additionally, you may want to install some kind of what is here referred to as 'notification'. A GlassPaneNotification is basically a widget which is added to the glasspane, informing the user what is current happening. While a BlurringGlassPane is just another JPanel and can be layouted and used any way you like, some prebuilt widgets are provided which integrate into the lookandfeel. Check out the .glasspane subpackage for details.
