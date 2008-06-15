@@ -7,6 +7,8 @@ import javax.swing.plaf.ComponentUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -52,6 +54,18 @@ public class DefaultProgressIndicatorUI extends ProgressIndicatorUI {
      */
     protected int _timerValue;
 
+    /**
+     * Internal flag indicating whether the JProgressIndicator is currently active. This flag is used to correctly
+     * stop/start the update timer when the component is hidden/shown.
+     */
+    protected boolean _indicatingProgress;
+
+    /**
+     * Listener to be notified when the targeted HierarchyListener is shown/hidden. It will restart/pause the interal
+     * update timer accordingly to save resources.
+     */
+    protected HierarchyListener _hierarchyListener;
+
     public static ComponentUI createUI(JComponent c) {
         if (!(c instanceof JProgressIndicator))
             throw new IllegalArgumentException("Cannot create UI for class " + c.getClass().getName());
@@ -72,6 +86,17 @@ public class DefaultProgressIndicatorUI extends ProgressIndicatorUI {
                 ColorUtilities.darker(_baseColor, 60),
                 ColorUtilities.darker(_baseColor, 30),
         };
+
+        _hierarchyListener = new HierarchyListener() {
+            public void hierarchyChanged(final HierarchyEvent e) {
+                if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) == HierarchyEvent.SHOWING_CHANGED) {
+                    if (_target.isShowing() && _indicatingProgress)
+                        startProgress0();
+                    else if (!_target.isShowing() && _indicatingProgress)
+                        stopProgress0();
+                }
+            }
+        };
     }
 
     public void installUI(final JComponent c) {
@@ -86,15 +111,27 @@ public class DefaultProgressIndicatorUI extends ProgressIndicatorUI {
         _target.setMinimumSize(new Dimension(24, 24));
         _target.setPreferredSize(new Dimension(32, 32));
         _target.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        _target.addHierarchyListener(_hierarchyListener);
     }
 
     public void startProgress() {
+        _indicatingProgress = true;
+        if (_target.isShowing())
+            startProgress0();
+    }
+
+    private void startProgress0() {
         _timerValue = 0;
         _timer.restart();
         _target.repaint();
     }
 
     public void stopProgress() {
+        _indicatingProgress = false;
+        stopProgress0();
+    }
+
+    private void stopProgress0() {
         _timer.stop();
         _target.repaint();
     }
