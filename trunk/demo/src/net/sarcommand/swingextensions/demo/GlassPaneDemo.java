@@ -25,7 +25,6 @@ public class GlassPaneDemo extends DemoClass {
     private JInternalFrame _internalFrame;
 
     private BlurringGlassPane _glassPane;
-    private DefaultProgressNotification _notification;
 
     private JCheckBox _visibleCB;
 
@@ -72,10 +71,11 @@ public class GlassPaneDemo extends DemoClass {
     protected void initComponents() {
         _glassPane = new BlurringGlassPane();
 
-        _notification = new DefaultProgressNotification();
-        _notification.setText("Importing data...");
+        final DefaultProgressNotification notification = new DefaultProgressNotification();
+//        final IndeterminateProgressNotification notification = new IndeterminateProgressNotification();
+        notification.setText("Importing data...");
 
-        _glassPane.setNotification(_notification);
+        _glassPane.setNotification(notification);
 
         initDemoFrame();
         _desktop = new JDesktopPane();
