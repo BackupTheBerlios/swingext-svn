@@ -2,6 +2,7 @@ package net.sarcommand.swingextensions.binding;
 
 import net.sarcommand.swingextensions.utilities.SwingExtUtil;
 
+import java.beans.PropertyChangeListener;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -160,6 +161,12 @@ public class KeypathElement {
         } else
             throw new MalformedKeypathException("Can't invoke set for property " + _property + " on objects of type "
                     + _entryClass);
+    }
+
+    public boolean isObservable() {
+        final Method method = SwingExtUtil.getMethod(_entryClass, "addPropertyChangeListener", String.class,
+                PropertyChangeListener.class);
+        return method != null;
     }
 
     public Class getValueClass() {
