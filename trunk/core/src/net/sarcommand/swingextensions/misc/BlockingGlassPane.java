@@ -1,42 +1,40 @@
 package net.sarcommand.swingextensions.misc;
 
-import net.sarcommand.swingextensions.utilities.*;
+import net.sarcommand.swingextensions.progress.JProgressIndicator;
+import net.sarcommand.swingextensions.utilities.ImageOperations;
+import net.sarcommand.swingextensions.utilities.SwingExtUtil;
 
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.VolatileImage;
 
 /**
  * Implements a simple component which can be used as a glass pane to block windows while the application is working.
  * The BlockingGlassPane application will
  * <p/>
  * <li>Create a gray translucent overlay for the frame (background color), blurring the content pane (this is
- * optional)</li>
- * <li>Block all input events from mouse and keyboard</li>
- * <li>Display an animated JProgressIndicator in the center of the screen</li>
- * <li>Allow you to display a status message below the progress indicator which accepts plain and styled text</li>
+ * optional)</li> <li>Block all input events from mouse and keyboard</li> <li>Display an animated JProgressIndicator in
+ * the center of the screen</li> <li>Allow you to display a status message below the progress indicator which accepts
+ * plain and styled text</li>
  * <p/>
- * The progress indicator will stop automatically whenever the glass pane is hidden and will be reenabled as soon
- * as the component is shown on the screen.
+ * The progress indicator will stop automatically whenever the glass pane is hidden and will be reenabled as soon as the
+ * component is shown on the screen.
  * <p/>
- * KNOWN BUG: The java 6 dp1 for mac seems to have a rendering issue when using image buffers. The blurred version
- * will therefore not draw properly.
- * <hr/>
- * Copyright 2006 Torsten Heup
+ * KNOWN BUG: The java 6 dp1 for mac seems to have a rendering issue when using image buffers. The blurred version will
+ * therefore not draw properly. <hr/> Copyright 2006 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class BlockingGlassPane extends JPanel {
     public static final String DEFAULT_STYLE = "defaultStyle";
@@ -52,8 +50,8 @@ public class BlockingGlassPane extends JPanel {
     protected JTextPane _messageSection;
 
     /**
-     * The attribute set which will be applied to text when setMessage(String) is used - contains paragraphs
-     * attributes only.
+     * The attribute set which will be applied to text when setMessage(String) is used - contains paragraphs attributes
+     * only.
      */
     protected MutableAttributeSet _attributeSetCentered;
 
@@ -90,9 +88,9 @@ public class BlockingGlassPane extends JPanel {
     }
 
     /**
-     * Sets whether or not the content pane should be blurred when the glasspane is visible. Defaults to true. Note
-     * that setting this property does not guarantee that a blur effect will be used: For technical reasons, this will
-     * only work when the glasspane is used within a JRootPane (which will be the case for all swing frames and windows.
+     * Sets whether or not the content pane should be blurred when the glasspane is visible. Defaults to true. Note that
+     * setting this property does not guarantee that a blur effect will be used: For technical reasons, this will only
+     * work when the glasspane is used within a JRootPane (which will be the case for all swing frames and windows.
      *
      * @param blurringContentPane whether or not the content pane should be blurred.
      */
@@ -108,10 +106,9 @@ public class BlockingGlassPane extends JPanel {
      * Recreates the internal image buffer used to store the blurred version of the underlying content pane. This method
      * will be invoked whenever:
      * <p/>
-     * <li>The glasspane is resized</li>
-     * <li>The glasspane is shown after being hidden</li>
-     * <li>The contents of the hardware-accelerated buffer have been lost since the last repaint. This should never
-     * happen unless the screensaver turns on</li>
+     * <li>The glasspane is resized</li> <li>The glasspane is shown after being hidden</li> <li>The contents of the
+     * hardware-accelerated buffer have been lost since the last repaint. This should never happen unless the
+     * screensaver turns on</li>
      */
     protected void recreateImageBuffer() {
         if (getWidth() > 0 && getHeight() > 0 && getParent() instanceof JRootPane) {
@@ -243,8 +240,7 @@ public class BlockingGlassPane extends JPanel {
     }
 
     /**
-     * Returns the styled document containing the message text. Use this method if you want to insert
-     * styled content.
+     * Returns the styled document containing the message text. Use this method if you want to insert styled content.
      *
      * @return the styled document containing the message text
      */
@@ -253,8 +249,8 @@ public class BlockingGlassPane extends JPanel {
     }
 
     /**
-     * Overwritten to create a transparent gray overlay. If the according property is set, the content pane will
-     * also be blurred.
+     * Overwritten to create a transparent gray overlay. If the according property is set, the content pane will also be
+     * blurred.
      *
      * @param g Graphics to use when painting the component.
      */
