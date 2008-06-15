@@ -34,7 +34,7 @@ public class GlassPaneDemo extends DemoClass {
     }
 
     public String getDemoName() {
-        return "Pane Demo";
+        return "BlurringGlassPane Demo";
     }
 
     protected void initialize() {
