@@ -1,7 +1,7 @@
 package net.sarcommand.swingextensions.demo;
 
 import net.sarcommand.swingextensions.glasspane.BlurringGlassPane;
-import net.sarcommand.swingextensions.glasspane.GlassPaneNotification;
+import net.sarcommand.swingextensions.glasspane.DefaultProgressNotification;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,7 +25,7 @@ public class GlassPaneDemo extends DemoClass {
     private JInternalFrame _internalFrame;
 
     private BlurringGlassPane _glassPane;
-    private GlassPaneNotification _notification;
+    private DefaultProgressNotification _notification;
 
     private JCheckBox _visibleCB;
 
@@ -72,16 +72,8 @@ public class GlassPaneDemo extends DemoClass {
     protected void initComponents() {
         _glassPane = new BlurringGlassPane();
 
-        _notification = new GlassPaneNotification();
-        _notification.setLayout(new GridLayout(2, 1));
-
-        final JProgressBar progressBar = new JProgressBar();
-        progressBar.setIndeterminate(true);
-
-        final JLabel label = new JLabel("Importing data...", JLabel.CENTER);
-        label.setFont(label.getFont().deriveFont(Font.BOLD));
-        _notification.add(label);
-        _notification.add(progressBar);
+        _notification = new DefaultProgressNotification();
+        _notification.setText("Importing data...");
 
         _glassPane.setNotification(_notification);
 
