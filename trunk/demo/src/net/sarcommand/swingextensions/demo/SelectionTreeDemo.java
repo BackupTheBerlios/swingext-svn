@@ -55,7 +55,10 @@ public class SelectionTreeDemo extends DemoClass {
         tree1.expandRow(1);
         tree1.expandRow(2);
 
+        tree0.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        tree1.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         setLayout(new GridLayout(2, 1));
+
         add(new JScrollPane(tree0), BorderLayout.CENTER);
         add(new JScrollPane(tree1), BorderLayout.CENTER);
     }
