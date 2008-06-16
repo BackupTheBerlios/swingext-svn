@@ -9,6 +9,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -419,5 +421,57 @@ public class SwingExtUtil {
                 runner = runner.getParent();
         }
         return false;
+    }
+
+    /**
+     * This method will collection all child components of the given container. Unlike Component#getComponent, this
+     * method will recursively delve into the depths of the component hierarchy, gathering all descendants rather than
+     * the direct children.
+     * <p/>
+     * Optionally, you may declare a filter for the children being collected by defining a list of Classes for all types
+     * you want included. <code> getChildComponents(myContentPane, JLabel.class) </code> would return all JLabels in the
+     * given container. This works for superclasses as well: <code> getChildComponents(myContentPane,
+     * JToggleButton.class) </code> would return all instances of JRadioButton and JCheckBox (and, of course, all other
+     * JToggleButton implementations). Finally, filtering also works for interfaces, so the specified classes do not
+     * necessarily have to extend Component: <code> getChildComponents(myContentPane, Accessible.class) </code> returns
+     * all components implementing the Accessible interface.
+     *
+     * @param container The container which's children are being collected. Non-null.
+     * @param filter    The filter to apply to the list of child components. May be null.
+     * @return All descendants of the given container. The results may optionally be filtered by the 'filter' array.
+     */
+    public static Collection<Component> getChildComponents(final Container container,
+                                                           final Class... filter) {
+        if (container == null)
+            throw new IllegalArgumentException("Parameter 'parent' must not be null!");
+        final LinkedList<Component> children = new LinkedList<Component>();
+        getChildComponents(container, filter, children);
+        return children;
+    }
+
+    /**
+     * The internal, recursive implementation of getChildComponents(Container, Class...).
+     *
+     * @param parent     Container which's children are being gathered.
+     * @param filter     The class filter applied, may be null.
+     * @param resultList The list of gathered child components.
+     */
+    protected static void getChildComponents(final Container parent, final Class[] filter,
+                                             final Collection resultList) {
+        final Component[] components = parent.getComponents();
+        for (Component c : components) {
+            if (filter.length == 0)
+                resultList.add(c);
+            else {
+                for (Class f : filter) {
+                    if (f.isAssignableFrom(c.getClass())) {
+                        resultList.add(c);
+                        break;
+                    }
+                }
+            }
+            if (c instanceof Container)
+                getChildComponents((Container) c, filter, resultList);
+        }
     }
 }
