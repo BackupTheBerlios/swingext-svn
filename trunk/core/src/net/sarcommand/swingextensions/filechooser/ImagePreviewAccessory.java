@@ -112,6 +112,7 @@ public class ImagePreviewAccessory extends AbstractFileChooserAccessory {
                     public void imageLoaded(final BufferedImage image) {
                         if (image != null) {
                             _imagePanel.setImage(image);
+                            _imagePanel.setScaleMode(JImagePanel.SCALE_BOTH);
                             _cardLayout.show(_accessoryPanel, IMAGE_PANEL_LAYOUT_KEY);
                         } else
                             _cardLayout.show(_accessoryPanel, NO_IMAGE_LABEL_LAYOUT_KEY);
