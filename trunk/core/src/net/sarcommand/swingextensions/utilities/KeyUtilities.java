@@ -97,4 +97,20 @@ public class KeyUtilities {
                                              final Action action) {
         return setActionKeyBinding(component, JComponent.WHEN_FOCUSED, keyStroke, action);
     }
+
+    /**
+     * Clears the action key registered under the given keystroke. The action itself will remain in the component's
+     * action map, only the binding from the input map will be removed.
+     *
+     * @param component Component which's action binding should be cleared.
+     * @param keyStroke Keystroke triggering the binding to be removed,
+     * @param condition The condition for the input map (as you would pass to JComponent#getInputMap(int))
+     */
+    public static void clearActionBinding(final JComponent component, final KeyStroke keyStroke, final int condition) {
+        InputMap map = component.getInputMap(condition);
+        while (map != null) {
+            map.remove(keyStroke);
+            map = map.getParent();
+        }
+    }
 }
