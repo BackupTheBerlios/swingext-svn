@@ -51,14 +51,16 @@ public class DoubleInputField extends AbstractTypedTextField<Double> implements 
 
     public void setValue(final Double value) {
         final String s;
-        if (_format != null && value != null) {
+        if (value == null)
+            s = "0";
+        else if (_format != null) {
             try {
                 s = _format.format(value);
             } catch (Exception e) {
                 throw new RuntimeException("Could not format value '" + value + "'", e);
             }
         } else
-            s = "";
+            s = Double.toString(value);
         setText(s);
     }
 
