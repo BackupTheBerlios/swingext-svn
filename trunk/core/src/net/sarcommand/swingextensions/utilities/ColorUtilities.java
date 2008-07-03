@@ -55,7 +55,25 @@ public class ColorUtilities {
         if (string == null)
             throw new IllegalArgumentException("Parameter 'string' must not be null!");
 
-        return new Color(Integer.parseInt(string, 16));
+        final int color = Integer.parseInt(string, 16);
+        return new Color(color, color > 0xFFFFFF);
+    }
+
+    /**
+     * Parses a color instance from the given hex string and replaces its alpha value with the given parameter.
+     *
+     * @param string string to parse color value from.
+     * @param alpha  the alpha value to apply to the color.
+     * @return a color instance parsed from the given hex string.
+     */
+    public static Color fromHexString(final String string, final int alpha) {
+        if (string == null)
+            throw new IllegalArgumentException("Parameter 'string' must not be null!");
+        if (alpha < 0 || alpha > 255)
+            throw new IllegalArgumentException("Illegal alpha value: " + alpha + ", expected a value between 0 and 255");
+
+        final int color = (Integer.parseInt(string, 16) & 0xFFFFFF) | (alpha << 24);
+        return new Color(color, true);
     }
 
     /**
