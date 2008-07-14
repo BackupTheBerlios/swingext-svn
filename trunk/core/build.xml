@@ -1,5 +1,11 @@
 <?xml version="1.0"?>
 <project name="SwingExtensions core" basedir="." default="clean-dist">
+    <taskdef name="svnrevision" classname="org.sarcommand.svntask.SVNTask">
+        <classpath>
+            <pathelement location="../tools/svnkit.jar"/>
+            <pathelement location="../tools/svntask.jar"/>
+        </classpath>
+    </taskdef>
 
     <property name="dist.dir" location="dist"
               description="Destination directory. Only used when running as standalone script"/>
@@ -54,14 +60,13 @@
     </target>
 
     <target name="package" depends="compile" description="Create jar file">
-        <!--Will be skipped if the commit number is already defined-->
-        <input addproperty="revision" message="Please enter the current revision"/>
-
+        <svnrevision dir="." property="revision"/>
+        <echo>Current revision is ${revision}</echo>
         <jar basedir="${build.dir}" destfile="${core.jar}" index="true" manifestencoding="UTF-8">
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Created-By" value="www.sarcommand.net"/>
-                <attribute name="Implementation-Version" value="${version.id}b${revision}"/>
+                <attribute name="Implementation-Version" value="${version.id}r${revision}"/>
                 <attribute name="Implementation-Vendor" value="www.sarcommand.net"/>
                 <attribute name="Implementation-URL" value="swingext.berlios.de"/>
                 <attribute name="Implementation-Title" value="Sarcommand SwingExtensions"/>
