@@ -30,15 +30,36 @@ import java.util.*;
  */
 public class WeakEventSupport<T> {
     /**
-     * Creates a new WeakEventSupport for the given listener class. This is the only way to create an WeakEventSupport.
+     * Creates a new WeakEventSupport for the given listener class.
      *
      * @param listenerClass Class of the listener type this instance is being created for.
      * @return a new EventSupport for the given listener class.
      */
     public static <T extends EventListener> WeakEventSupport<T> create(final Class<T> listenerClass) {
-        return new WeakEventSupport<T>(listenerClass);
+        return new WeakEventSupport<T>(listenerClass, false);
     }
 
+    /**
+     * Creates a new WeakEventSupport for the given listener class. You may also specify whether all events should
+     * automatically be delegated to the event dispatch thread.
+     *
+     * @param listenerClass Class of the listener type this instance is being created for.
+     * @param dispatchOnEDT Whether events should automatically be dispatched on the EDT.
+     * @return a new EventSupport for the given listener class.
+     */
+    public static <T extends EventListener> EventSupport<T> create(final Class<T> listenerClass,
+                                                                   final boolean dispatchOnEDT) {
+        return new EventSupport<T>(listenerClass, dispatchOnEDT);
+    }
+
+    /**
+     * Determines whether this instance will automatically dispatch all events on the EDT.
+     */
+    protected final boolean _dispatchingOnEDT;
+
+    /**
+     * The proxy object used to delegate all method invocations to the list of registered listeners.
+     */
     protected T _delegate;
 
     /**
@@ -49,9 +70,11 @@ public class WeakEventSupport<T> {
     /**
      * Internal constructor. You should use the factory method create(Class) to obtain a new instance.
      *
-     * @param listenerClass The listener type supported by the new instance.
+     * @param listenerClass    The listener type supported by the new instance.
+     * @param dispatchingOnEDT Whether events will automatically be dispatched on the EDT.
      */
-    protected WeakEventSupport(final Class<T> listenerClass) {
+    protected WeakEventSupport(final Class<T> listenerClass, final boolean dispatchingOnEDT) {
+        _dispatchingOnEDT = dispatchingOnEDT;
         final InvocationHandler handler = new InvocationHandler() {
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 if (proxy == _delegate) {
@@ -99,6 +122,15 @@ public class WeakEventSupport<T> {
                 break;
             }
         }
+    }
+
+    /**
+     * Returns whether this instance will autmatically dispatch all events on the EDT.
+     *
+     * @return whether this instance will autmatically dispatch all events on the EDT.
+     */
+    public boolean isDispatchingOnEDT() {
+        return _dispatchingOnEDT;
     }
 
     /**
