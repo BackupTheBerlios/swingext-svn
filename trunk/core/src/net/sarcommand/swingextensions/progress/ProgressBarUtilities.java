@@ -30,7 +30,7 @@ public class ProgressBarUtilities {
      *
      * @param progressBar ProgressBar used to monitor the progress of 'worker'.
      * @param worker      SwingWorker instance being monitored.
-     * @see SwingWorkerProgressBinding
+     * @see SwingWorkerProgressBarBinding
      */
     public static void attachToSwingWorker(final JProgressBar progressBar, final SwingWorker worker) {
         final ProgressBarVariation previousVariation =
@@ -38,7 +38,7 @@ public class ProgressBarUtilities {
         if (previousVariation != null)
             previousVariation.detach();
 
-        final SwingWorkerProgressBinding progressBinding = new SwingWorkerProgressBinding(progressBar, worker);
-        progressBar.putClientProperty(PROGRESS_BAR_BINDING, progressBinding);
+        final SwingWorkerProgressBarBinding progressBarBinding = new SwingWorkerProgressBarBinding(progressBar, worker);
+        progressBar.putClientProperty(PROGRESS_BAR_BINDING, progressBarBinding);
     }
 }
