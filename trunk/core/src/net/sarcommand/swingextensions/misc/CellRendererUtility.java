@@ -38,8 +38,8 @@ public class CellRendererUtility {
      * @param row        see TableCellRenderer.
      * @param column     see TableCellRenderer.
      */
-    public void adaptToTable(final JComponent renderer, final JTable table, boolean isSelected,
-                             final boolean hasFocus, final int row, final int column) {
+    public static void adaptToTable(final JComponent renderer, final JTable table, boolean isSelected,
+                                    final boolean hasFocus, final int row, final int column) {
         Color fg = null;
         Color bg = null;
 
@@ -104,8 +104,8 @@ public class CellRendererUtility {
      * @param row        see TreeTableCellRenderer.
      * @param column     see TreeTableCellRenderer.
      */
-    public void adaptToTreeTable(final JComponent renderer, final JTreeTable table, boolean isSelected,
-                                 final boolean hasFocus, final int row, final int column) {
+    public static void adaptToTreeTable(final JComponent renderer, final JTreeTable table, boolean isSelected,
+                                        final boolean hasFocus, final int row, final int column) {
         if (isSelected) {
             renderer.setForeground(table.getSelectionForeground());
             renderer.setBackground(table.getSelectionBackground());
@@ -153,8 +153,8 @@ public class CellRendererUtility {
      * @param isSelected   see ListCellRenderer.
      * @param cellHasFocus see ListCellRenderer.
      */
-    public void adaptToList(final JComponent renderer, JList list, Object value, int index, boolean isSelected,
-                            boolean cellHasFocus) {
+    public static void adaptToList(final JComponent renderer, JList list, Object value, int index, boolean isSelected,
+                                   boolean cellHasFocus) {
 
         renderer.setComponentOrientation(list.getComponentOrientation());
 
