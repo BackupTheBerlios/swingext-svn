@@ -37,6 +37,7 @@ public abstract class Application {
         final File workingDirectory;
         switch (SysInfo.getPlatform()) {
             case LINUX:
+            case SOLARIS:
                 workingDirectory = new File(userHome, '.' + applicationName + '/');
                 break;
             case WINDOWS:
