@@ -79,6 +79,11 @@ public class SysInfo {
         return Math.round(mem / 1024. / 1024. / 1024. * 100) / 100. + "GB";
     }
 
+    /**
+     * Returns the number of available cpus.
+     *
+     * @return the number of available cpus.
+     */
     public static int getCPUCount() {
         return Runtime.getRuntime().availableProcessors();
     }
