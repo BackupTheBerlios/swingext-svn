@@ -1,5 +1,7 @@
 package net.sarcommand.swingextensions.filechooser;
 
+import net.sarcommand.swingextensions.utilities.ComponentVariation;
+
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -39,7 +41,7 @@ import java.util.HashMap;
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-public abstract class AccessoryManager {
+public abstract class AccessoryManager implements ComponentVariation<JFileChooser> {
     /**
      * The panel used to extend the JFileChooser.
      */
@@ -72,7 +74,7 @@ public abstract class AccessoryManager {
      */
     public AccessoryManager(final JFileChooser chooser) {
         this();
-        installAccessoryPane(chooser);
+        attach(chooser);
     }
 
     /**
@@ -81,7 +83,7 @@ public abstract class AccessoryManager {
      *
      * @param chooser JFileChooser instance on which this manager should be installed
      */
-    public void installAccessoryPane(final JFileChooser chooser) {
+    public void attach(final JFileChooser chooser) {
         _chooser = chooser;
         _accessoryPane = new JPanel();
         _accessoryComponents = new HashMap<Integer, JComponent>(4);
@@ -118,6 +120,14 @@ public abstract class AccessoryManager {
                     selectedFileChanged((File) evt.getNewValue());
             }
         });
+    }
+
+    public void detach() {
+        // todo [sarcan] missing implementation.
+    }
+
+    public JFileChooser getAlteredComponent() {
+        return _chooser;
     }
 
     protected void selectedFileChanged(final File file) {

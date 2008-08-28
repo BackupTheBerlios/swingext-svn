@@ -41,7 +41,7 @@ public class SimpleAccessoryManager extends AccessoryManager {
     public FileChooserAccessory setAccessory(final FileChooserAccessory accessory, final int position) {
         if (_chooser == null)
             throw new IllegalStateException("This manager has not been installed on a file chooser yet." +
-                    "Invoke installAccessoryPane(JFileChooser) before using this instance.");
+                    "Invoke attach(JFileChooser) before using this instance.");
         if (!(position == NORTH || position == SOUTH || position == WEST || position == EAST)) {
             throw new IllegalArgumentException("Illegal position: Expected one of SwingConstants#NORTH, SOUTH," +
                     "WEST or EAST, got " + position);
@@ -69,7 +69,7 @@ public class SimpleAccessoryManager extends AccessoryManager {
     public JComponent setAccessory(final JComponent accessory, final int position) {
         if (_chooser == null)
             throw new IllegalStateException("This manager has not been installed on a file chooser yet." +
-                    "Invoke installAccessoryPane(JFileChooser) before using this instance.");
+                    "Invoke attach(JFileChooser) before using this instance.");
         if (!(position == NORTH || position == SOUTH || position == WEST || position == EAST)) {
             throw new IllegalArgumentException("Illegal position: Expected one of SwingConstants#NORTH, SOUTH," +
                     "WEST or EAST, got " + position);
