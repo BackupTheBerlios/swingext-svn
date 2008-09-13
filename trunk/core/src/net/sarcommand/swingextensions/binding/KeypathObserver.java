@@ -36,6 +36,13 @@ public class KeypathObserver {
 
     protected KeypathObserver(final Object entryPoint, final Keypath keypath,
                               final PropertyChangeListener listenerDelegate) {
+        if (entryPoint == null)
+            throw new IllegalArgumentException("Parameter 'entryPoint' must not be null!");
+        if (listenerDelegate == null)
+            throw new IllegalArgumentException("Parameter 'listenerDelegate' must not be null!");
+        if (keypath == null)
+            throw new IllegalArgumentException("Parameter 'keypath' must not be null!");
+
         _entryPoint = entryPoint;
         _keypath = keypath;
         _listenerDelegate = listenerDelegate;
