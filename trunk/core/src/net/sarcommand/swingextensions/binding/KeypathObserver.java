@@ -158,7 +158,7 @@ public class KeypathObserver {
         }
     }
 
-    public void destroy() {
+    public void dispose() {
         for (int i = 0; i < _values.length - 1; i++) {
             if (_values[i] == null)
                 break;
