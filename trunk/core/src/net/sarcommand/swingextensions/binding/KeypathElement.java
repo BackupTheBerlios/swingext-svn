@@ -1,8 +1,11 @@
 package net.sarcommand.swingextensions.binding;
 
+import net.sarcommand.swingextensions.internal.SwingExtLogger;
+import net.sarcommand.swingextensions.internal.SwingExtLogging;
 import net.sarcommand.swingextensions.utilities.SwingExtUtil;
 
 import java.beans.PropertyChangeListener;
+import static java.lang.String.format;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -27,6 +30,8 @@ import java.lang.reflect.Modifier;
  * specific language governing permissions and limitations under the License.
  */
 public class KeypathElement {
+    private static final SwingExtLogger __log = SwingExtLogging.getLogger(KeypathElement.class);
+
     private Class _entryClass;
     private Class _valueClass;
     private String _property;
@@ -34,15 +39,18 @@ public class KeypathElement {
     private Method _setMethod;
     private Field _getField;
     private Field _setField;
+    private boolean _ignoreAccessControl;
 
     protected KeypathElement() {
     }
 
-    public KeypathElement(final Class entryClass, final String property) throws MalformedKeypathException {
-        initialize(entryClass, property);
+    public KeypathElement(final Class entryClass, final String property,
+                          final boolean ignoreAccessControl) throws MalformedKeypathException {
+        initialize(entryClass, property, ignoreAccessControl);
     }
 
-    protected void initialize(final Class clazz, final String property) throws MalformedKeypathException {
+    protected void initialize(final Class clazz, final String property,
+                              final boolean ignoreAccessControl) throws MalformedKeypathException {
         if (clazz == null)
             throw new IllegalArgumentException("Parameter 'clazz' must not be null!");
         if (property == null)
@@ -52,9 +60,30 @@ public class KeypathElement {
 
         _entryClass = clazz;
         _property = property;
+        _ignoreAccessControl = ignoreAccessControl;
 
         lookUpGetter();
         lookUpSetter();
+
+        if (_getMethod != null) {
+            __log.config(format("Resolved getter for property %s or class %s as method %s",
+                    _property, clazz, _getMethod.getName()));
+        } else if (_getField != null) {
+            __log.config(format("Resolved getter for property %s or class %s as field %s",
+                    _property, clazz, _getField.getName()));
+        } else
+            throw new MalformedKeypathException(format("Failed to obtain a suitable getter for property " +
+                    "%s of class %s", _property, clazz));
+
+        if (_setMethod != null) {
+            __log.config(format("Resolved setter for property %s or class %s as method %s",
+                    _property, clazz, _setMethod.getName()));
+        } else if (_setField != null) {
+            __log.config(format("Resolved getter for property %s or class %s as field %s",
+                    _property, clazz, _setField.getName()));
+        } else
+            __log.info(format("Failed to obtain a suitable setter for property " +
+                    "%s of class %s, bindings will be read-only.", _property, clazz));
     }
 
     protected void lookUpSetter() {
@@ -81,11 +110,15 @@ public class KeypathElement {
         }
 
         if (_setMethod != null) {
-            if (!Modifier.isPublic(_setMethod.getModifiers()))
+            if (!_setMethod.isAccessible() && _ignoreAccessControl)
                 _setMethod.setAccessible(true);
+            if (!_setMethod.isAccessible())
+                _setMethod = null;
         } else if (_setField != null) {
-            if (!Modifier.isPublic(_setField.getModifiers()))
+            if (!_setField.isAccessible() && _ignoreAccessControl)
                 _setField.setAccessible(true);
+            if (!_setField.isAccessible())
+                _setField = null;
         }
     }
 
@@ -114,12 +147,16 @@ public class KeypathElement {
 
         if (_getMethod != null) {
             _valueClass = _getMethod.getReturnType();
-            if (!Modifier.isPublic(_getMethod.getModifiers()))
+            if (!_getMethod.isAccessible() && _ignoreAccessControl)
                 _getMethod.setAccessible(true);
+            if (!_getMethod.isAccessible())
+                _getMethod = null;
         } else if (_getField != null) {
             _valueClass = _getField.getType();
-            if (!Modifier.isPublic(_getField.getModifiers()))
+            if (!getField.isAccessible() && _ignoreAccessControl)
                 _getField.setAccessible(true);
+            if (!_getField.isAccessible())
+                _getField = null;
         }
     }
 
