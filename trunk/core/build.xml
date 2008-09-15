@@ -60,8 +60,9 @@
     </target>
 
     <target name="package" depends="compile" description="Create jar file">
-        <svnrevision dir="." property="revision"/>
-        <echo>Current revision is ${revision}</echo>
+        <!--<svnrevision dir="." property="revision"/>-->
+        <!--<echo>Current revision is ${revision}</echo>-->
+        <property name="revision" value=""/>
         <jar basedir="${build.dir}" destfile="${core.jar}" index="true" manifestencoding="UTF-8">
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
