@@ -57,7 +57,9 @@ public abstract class AbstractTreeTableModel extends DefaultTreeModel implements
     }
 
     public void fireTreeDataChanged() {
-        _treeModelListeners.delegate().treeStructureChanged(new TreeModelEvent(this, new TreePath(getRoot())));
+        final Object root = getRoot();
+        _treeModelListeners.delegate().treeStructureChanged(new TreeModelEvent(this, root == null ?
+                null : new TreePath(root)));
     }
 
     public void setValueAt(final Object value, final TreePath path, final int columnIndex) {
