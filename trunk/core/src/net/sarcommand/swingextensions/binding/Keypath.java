@@ -41,11 +41,17 @@ import java.beans.PropertyChangeListener;
  */
 public class Keypath<T> {
     private String _stringRepresentation;
+    private final boolean _ignoreAccessControl;
     private String[] _properties;
 
-    public Keypath(final String keypath) {
+    public Keypath(final String keypath, final boolean ignoreAccessControl) {
         _stringRepresentation = keypath;
+        _ignoreAccessControl = ignoreAccessControl;
         _properties = keypath.split("\\.");
+    }
+
+    public Keypath(final String keypath) {
+        this(keypath, false);
     }
 
     /**
@@ -67,7 +73,8 @@ public class Keypath<T> {
             return null;
 
         final Class clazz = lastElement.getClass();
-        final KeypathElement accessor = KeypathElementCache.getElement(clazz, _properties[_properties.length - 1]);
+        final KeypathElement accessor = KeypathElementCache.getElement(clazz,
+                _properties[_properties.length - 1], _ignoreAccessControl);
         return (T) accessor.get(lastElement);
     }
 
@@ -90,7 +97,8 @@ public class Keypath<T> {
                     "could not be resolved");
 
         final Class clazz = lastElement.getClass();
-        final KeypathElement accessor = KeypathElementCache.getElement(clazz, _properties[_properties.length - 1]);
+        final KeypathElement accessor = KeypathElementCache.getElement(clazz, _properties[_properties.length - 1],
+                _ignoreAccessControl);
         accessor.set(lastElement, value);
     }
 
@@ -108,6 +116,16 @@ public class Keypath<T> {
         return lastElement != null;
     }
 
+    public boolean canSet(final Object entryPoint) {
+        final Object lastElement = resolve(entryPoint);
+        if (lastElement == null)
+            return false;
+        final Class clazz = lastElement.getClass();
+        final KeypathElement accessor = KeypathElementCache.getElement(clazz, _properties[_properties.length - 1],
+                _ignoreAccessControl);
+        return accessor.canPerformSet();
+    }
+
     /**
      * Resolves the key path to the last KeypathElement.
      *
@@ -121,12 +139,12 @@ public class Keypath<T> {
             throw new IllegalArgumentException("Parameter 'entryPoint' must not be null!");
 
         Class clazz;
-        KeypathElement currentElement = null;
+        KeypathElement currentElement;
         Object runner = entryPoint;
         for (int i = 0; i < _properties.length - 1; i++) {
             final String property = _properties[i];
             clazz = runner.getClass();
-            currentElement = KeypathElementCache.getElement(clazz, property);
+            currentElement = KeypathElementCache.getElement(clazz, property, _ignoreAccessControl);
             runner = currentElement.get(runner);
             if (runner == null)
                 return null;
@@ -143,7 +161,7 @@ public class Keypath<T> {
         final KeypathElement[] elements = new KeypathElement[_properties.length];
         for (int i = 0; i < _properties.length; i++) {
             clazz = runner.getClass();
-            elements[i] = KeypathElementCache.getElement(clazz, _properties[i]);
+            elements[i] = KeypathElementCache.getElement(clazz, _properties[i], _ignoreAccessControl);
             runner = elements[i].get(runner);
             if (runner == null)
                 break;
@@ -162,7 +180,7 @@ public class Keypath<T> {
         values[0] = entryPoint;
         for (int i = 0; i < _properties.length; i++) {
             clazz = runner.getClass();
-            element = KeypathElementCache.getElement(clazz, _properties[i]);
+            element = KeypathElementCache.getElement(clazz, _properties[i], _ignoreAccessControl);
             runner = element.get(runner);
             values[i + 1] = runner;
             if (runner == null)
