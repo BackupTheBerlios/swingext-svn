@@ -1,11 +1,14 @@
 package net.sarcommand.swingextensions.treetable;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
-import javax.swing.tree.*;
+import javax.swing.event.TreeExpansionListener;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.TreeWillExpandListener;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.util.*;
+import java.util.EventObject;
 
 /**
  */
@@ -229,5 +232,25 @@ public abstract class TreeTableDelegate extends JComponent {
 
     public int getRowForPath(TreePath path) {
         return _nestedTree.getRowForPath(path);
+    }
+
+    public void setFillsViewportHeight(final boolean fillsViewportHeight) {
+        _nestedTable.setFillsViewportHeight(fillsViewportHeight);
+    }
+
+    public void setShowGrid(final boolean showGrid) {
+        _nestedTable.setShowGrid(showGrid);
+    }
+
+    public void setShowHorizontalLines(final boolean showHorizontalLines) {
+        _nestedTable.setShowHorizontalLines(showHorizontalLines);
+    }
+
+    public void setShowVerticalLines(final boolean showVerticalLines) {
+        _nestedTable.setShowVerticalLines(showVerticalLines);
+    }
+
+    public void setIntercellSpacing(final Dimension intercellSpacing) {
+        _nestedTable.setIntercellSpacing(intercellSpacing);
     }
 }
