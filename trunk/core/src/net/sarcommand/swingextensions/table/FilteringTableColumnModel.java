@@ -1,5 +1,6 @@
 package net.sarcommand.swingextensions.table;
 
+import javax.swing.*;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import java.util.*;
@@ -44,10 +45,12 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
     private String _preferenceKey;
 
     public FilteringTableColumnModel() {
+        assert SwingUtilities.isEventDispatchThread() : "This method has to be invoked from the EDT";
         initialize();
     }
 
     public FilteringTableColumnModel(final Preferences preferences, final String preferenceKey) {
+        assert SwingUtilities.isEventDispatchThread() : "This method has to be invoked from the EDT";
         initialize();
         setPreferences(preferences);
         setPreferenceKey(preferenceKey);
@@ -60,6 +63,7 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
     }
 
     public void setHideable(final Object identifier, final boolean hideable) {
+        assert SwingUtilities.isEventDispatchThread() : "This method has to be invoked from the EDT";
         if (!hideable)
             _nonHideables.add(identifier);
         else
@@ -77,6 +81,7 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
      * @param visible    Visibility flag.
      */
     public void setColumnVisible(final Object identifier, final boolean visible) {
+        assert SwingUtilities.isEventDispatchThread() : "This method has to be invoked from the EDT";
         if (!visible && _nonHideables.contains(identifier))
             return;
         if (visible) {
@@ -97,6 +102,7 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
     }
 
     public void setPreferences(final Preferences prefs) {
+        assert SwingUtilities.isEventDispatchThread() : "This method has to be invoked from the EDT";
         _preferences = prefs;
         updateFromPreferences();
     }
@@ -110,11 +116,13 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
     }
 
     public void setPreferenceKey(final String preferenceKey) {
+        assert SwingUtilities.isEventDispatchThread() : "This method has to be invoked from the EDT";
         _preferenceKey = preferenceKey;
         updateFromPreferences();
     }
 
     public void removeColumn(final TableColumn column) {
+        assert SwingUtilities.isEventDispatchThread() : "This method has to be invoked from the EDT";
         super.removeColumn(column);
         _originalColumnOrder.remove(column.getIdentifier());
         if (_hiddenColumnMapping.containsKey(column))
@@ -122,6 +130,7 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
     }
 
     public void addColumn(final TableColumn aColumn) {
+        assert SwingUtilities.isEventDispatchThread() : "This method has to be invoked from the EDT";
         super.addColumn(aColumn);
         if (_originalColumnOrder.contains(aColumn.getIdentifier()))
             _originalColumnOrder.remove(aColumn.getIdentifier());
@@ -136,6 +145,7 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
     }
 
     public void moveColumn(final int columnIndex, final int newIndex) {
+        assert SwingUtilities.isEventDispatchThread() : "This method has to be invoked from the EDT";
         super.moveColumn(columnIndex, newIndex);
         _originalColumnOrder.add(newIndex, _originalColumnOrder.remove(columnIndex));
     }
@@ -144,6 +154,7 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
      * Updates the visibility state for all currently installed columns from the preferences, if applicable.
      */
     protected void updateFromPreferences() {
+        assert SwingUtilities.isEventDispatchThread() : "This method has to be invoked from the EDT";
         if (_preferences != null && _preferenceKey != null) {
             final int columnCount = getColumnCount();
             final boolean[] visible = new boolean[columnCount];
@@ -171,6 +182,7 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
      * @return whether the given column is currently visible.
      */
     public boolean isColumnVisible(final Object identifier) {
+        assert SwingUtilities.isEventDispatchThread() : "This method has to be invoked from the EDT";
         return !_hiddenColumnMapping.containsKey(identifier);
     }
 
@@ -180,6 +192,7 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
      * @return an ordered collection of the column identifiers, regardless of whether or not they are visible.
      */
     public Collection<Object> getAllColumnIdentfiers() {
+        assert SwingUtilities.isEventDispatchThread() : "This method has to be invoked from the EDT";
         return Collections.unmodifiableList(_originalColumnOrder);
     }
 
@@ -191,8 +204,7 @@ public class FilteringTableColumnModel extends DefaultTableColumnModel {
      */
     protected int getIndexForHiddenColumn(final TableColumn tableColumn) {
         Object predecessor = null;
-        for (int i = _originalColumnOrder.indexOf(tableColumn.getIdentifier()) - 1; i >= 0 && predecessor == null; i--)
-        {
+        for (int i = _originalColumnOrder.indexOf(tableColumn.getIdentifier()) - 1; i >= 0 && predecessor == null; i--) {
             final Object identifier = _originalColumnOrder.get(i);
             if (!_hiddenColumnMapping.containsKey(identifier))
                 predecessor = identifier;
