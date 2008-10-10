@@ -43,7 +43,7 @@ public class ReflectedTableCellEditor extends AbstractCellEditor implements Tabl
             throw new IllegalArgumentException("Parameter 'keypath' must not be null!");
 
         _cellEditor = cellEditor;
-        _keypath = new Keypath(keypath);
+        _keypath = new Keypath(keypath, true);
         _clickCountToStart = 2;
         _stopEditingCallback = null;
         if (stopEditingMethod != null) {
