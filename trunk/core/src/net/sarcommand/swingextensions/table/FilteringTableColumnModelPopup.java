@@ -1,6 +1,7 @@
 package net.sarcommand.swingextensions.table;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -80,13 +81,13 @@ public class FilteringTableColumnModelPopup extends JPopupMenu {
         _hidingUponSelection = true;
         _actionListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                final JCheckBoxMenuItem item = (JCheckBoxMenuItem) e.getSource();
+                final JCheckBox item = (JCheckBox) e.getSource();
                 if (item.isSelected())
                     _model.setColumnVisible(item.getText(), true);
                 else if (_model.getColumnCount() > 1)
                     _model.setColumnVisible(item.getText(), false);
-                if (!_hidingUponSelection)
-                    setVisible(true);
+                if (_hidingUponSelection)
+                    setVisible(false);
             }
         };
     }
@@ -111,14 +112,19 @@ public class FilteringTableColumnModelPopup extends JPopupMenu {
             if (_model == null)
                 return;
 
+            final Collection<Object> identifiers = _model.getAllColumnIdentfiers();
+
             /* Update the items */
             removeAll();
-            final Collection<Object> identifiers = _model.getAllColumnIdentfiers();
+            final JPanel panel = new JPanel(new GridBagLayout());
             for (Object s : identifiers) {
-                final JCheckBoxMenuItem item = new JCheckBoxMenuItem(s.toString(), _model.isColumnVisible(s));
+                final JCheckBox item = new JCheckBox(s.toString(), _model.isColumnVisible(s));
                 item.addActionListener(_actionListener);
-                add(item);
+                panel.add(item, new GridBagConstraints(0, -1, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
             }
+            add(panel);
+
             revalidate();
         }
         super.setVisible(b);
