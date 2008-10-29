@@ -51,7 +51,7 @@ public class Keypath<T> {
     }
 
     public Keypath(final String keypath) {
-        this(keypath, false);
+        this(keypath, true);
     }
 
     /**
