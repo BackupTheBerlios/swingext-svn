@@ -49,7 +49,7 @@ public class ReflectedTableCellRenderer implements TableCellRenderer {
         } catch (Exception e) {
             throw new RuntimeException("Could not access setter using keypath " + _keypath.toString(), e);
         }
-        _utility.adaptToTable(_renderer, table, isSelected, hasFocus, row, column);
+        CellRendererUtility.adaptToTable(_renderer, table, isSelected, hasFocus, row, column);
 
         return _renderer;
     }
