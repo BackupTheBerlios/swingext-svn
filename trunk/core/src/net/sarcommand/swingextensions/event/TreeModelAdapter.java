@@ -19,14 +19,22 @@ import javax.swing.event.TreeModelListener;
  */
 public abstract class TreeModelAdapter implements TreeModelListener {
     public void treeNodesChanged(final TreeModelEvent e) {
+        treeChanged(e);
     }
 
     public void treeNodesInserted(final TreeModelEvent e) {
+        treeChanged(e);
     }
 
     public void treeNodesRemoved(final TreeModelEvent e) {
+        treeChanged(e);
     }
 
     public void treeStructureChanged(final TreeModelEvent e) {
+        treeChanged(e);
+    }
+
+    protected void treeChanged(final TreeModelEvent e) {
+
     }
 }
