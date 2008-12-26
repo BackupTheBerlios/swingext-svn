@@ -45,8 +45,18 @@ public class BlurringGlassPane extends JPanel {
      */
     protected GlassPaneNotification _notification;
 
+    private JComponent _peerComponent;
+
     public BlurringGlassPane() {
         initialize();
+    }
+
+    public JComponent getPeerComponent() {
+        return _peerComponent;
+    }
+
+    public void setPeerComponent(final JComponent peerComponent) {
+        _peerComponent = peerComponent;
     }
 
     /**
@@ -90,30 +100,37 @@ public class BlurringGlassPane extends JPanel {
      * screensaver turns on or you're switching to fullscreen Direct3d/OpenGL games</li>
      */
     protected void recreateImageBuffer() {
-        if (getWidth() > 0 && getHeight() > 0 && getParent() instanceof JRootPane) {
+        if (getWidth() > 0 && getHeight() > 0) {
             final BufferedImage tempImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
             _imageBuffer = createVolatileImage(getWidth(), getHeight());
 
-            final JMenuBar bar;
-            final Window w = SwingExtUtil.getWindowForComponent(this);
-
-            if (w == null)
-                bar = null;
-            else if (w instanceof JFrame)
-                bar = ((JFrame) w).getJMenuBar();
-            else if (w instanceof JDialog)
-                bar = ((JDialog) w).getJMenuBar();
-            else
-                bar = null;
-
+            final Component contentPane;
             final Graphics2D tempGraphics = tempImage.createGraphics();
-            if (bar != null) {
-                bar.paint(tempGraphics);
-                tempGraphics.translate(0, bar.getHeight());
-            }
 
-            final JRootPane parent = (JRootPane) getParent();
-            parent.getContentPane().paint(tempGraphics);
+            if (_peerComponent == null) {
+                final JMenuBar bar;
+                final Window w = SwingExtUtil.getWindowForComponent(this);
+
+                if (w == null)
+                    bar = null;
+                else if (w instanceof JFrame)
+                    bar = ((JFrame) w).getJMenuBar();
+                else if (w instanceof JDialog)
+                    bar = ((JDialog) w).getJMenuBar();
+                else
+                    bar = null;
+
+                if (bar != null) {
+                    bar.paint(tempGraphics);
+                    tempGraphics.translate(0, bar.getHeight());
+                }
+
+                final JRootPane parent = (JRootPane) getParent();
+                contentPane = parent.getContentPane();
+            } else
+                contentPane = _peerComponent;
+
+            contentPane.paint(tempGraphics);
             tempGraphics.dispose();
 
             final Graphics2D g2 = _imageBuffer.createGraphics();
