@@ -1,12 +1,19 @@
 package net.sarcommand.swingextensions.applicationsupport;
 
-import javax.imageio.*;
+import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.image.*;
-import java.io.*;
-import java.lang.ref.*;
-import java.net.*;
-import java.util.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.ref.SoftReference;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * Creates a static cache for images and icons which should help to reduce an application's loading time.
@@ -75,7 +82,8 @@ public class ImageCache {
      * @return ImageIcon holding the specified image.
      */
     public static synchronized ImageIcon loadIcon(final String iconName) {
-        return new ImageIcon(loadImage(iconName));
+        final BufferedImage image = loadImage(iconName);
+        return image != null ? new ImageIcon(image) : null;
     }
 
     /**
