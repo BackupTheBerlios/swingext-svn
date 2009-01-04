@@ -37,6 +37,7 @@ public class LabelUtilities {
                     textChanged();
                 }
             });
+            textChanged();
         }
 
         protected void textChanged() {
