@@ -18,18 +18,31 @@ import java.awt.*;
  * specific language governing permissions and limitations under the License.
  */
 public class DefaultListCellEditor extends DefaultCellEditor implements ListCellEditor {
+    /**
+     * @see javax.swing.DefaultCellEditor#DefaultCellEditor(javax.swing.JCheckBox)
+     */
     public DefaultListCellEditor(final JCheckBox checkBox) {
         super(checkBox);
     }
 
+    /**
+     * @see javax.swing.DefaultCellEditor#DefaultCellEditor(javax.swing.JComboBox)
+     */
     public DefaultListCellEditor(final JComboBox comboBox) {
         super(comboBox);
     }
 
+    /**
+     * @see net.sarcommand.swingextensions.editablelist.DefaultListCellEditor#DefaultCellEditor(javax.swing.JTextField)
+     */
     public DefaultListCellEditor(final JTextField textField) {
         super(textField);
     }
 
+    /**
+     * @see net.sarcommand.swingextensions.editablelist.ListCellEditor#getListCellEditorComponent(javax.swing.JList,
+     *      Object, boolean, int)
+     */
     public Component getListCellEditorComponent(final JList list, final Object value,
                                                 final boolean isSelected, final int row) {
         delegate.setValue(value);

@@ -17,10 +17,16 @@ import javax.swing.*;
  * specific language governing permissions and limitations under the License.
  */
 public class DefaultEditableListModel extends DefaultListModel implements EditableListModel {
+    /**
+     * @see net.sarcommand.swingextensions.editablelist.EditableListModel#isIndexEditable(int)
+     */
     public boolean isIndexEditable(final int row) {
         return true;
     }
 
+    /**
+     * @see net.sarcommand.swingextensions.editablelist.EditableListModel#setValue(Object, int)
+     */
     public void setValue(final Object value, final int row) {
         setElementAt(value, row);
     }
