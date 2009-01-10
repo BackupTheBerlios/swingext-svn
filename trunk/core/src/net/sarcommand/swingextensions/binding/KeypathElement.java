@@ -147,15 +147,19 @@ public class KeypathElement {
 
         if (_getMethod != null) {
             _valueClass = _getMethod.getReturnType();
-            if (!_getMethod.isAccessible() && _ignoreAccessControl)
+
+            if (_ignoreAccessControl)
                 _getMethod.setAccessible(true);
-            if (!_getMethod.isAccessible())
+
+            if (!Modifier.isPublic(_getMethod.getModifiers()) || _ignoreAccessControl)
                 _getMethod = null;
         } else if (_getField != null) {
             _valueClass = _getField.getType();
-            if (!getField.isAccessible() && _ignoreAccessControl)
-                _getField.setAccessible(true);
-            if (!_getField.isAccessible())
+
+            if (_ignoreAccessControl)
+                getField.setAccessible(true);
+
+            if (!Modifier.isPublic(getField.getModifiers()) || _ignoreAccessControl)
                 _getField = null;
         }
     }
@@ -182,18 +186,38 @@ public class KeypathElement {
 
     public void set(final Object entryObject, final Object value) {
         if (_setMethod != null) {
-            try {
-                _setMethod.invoke(entryObject, value);
-            } catch (Exception e) {
-                throw new KeypathAccessException("Could not access method " + _setMethod.getName() + " on class "
-                        + _entryClass.getName(), e);
+            if (value == null && _setMethod.getParameterTypes()[0].isPrimitive()) {
+                __log.warn("Trying to assign a null value to a primitive type - will use '0' instead");
+                try {
+                    _setMethod.invoke(entryObject, 0);
+                } catch (Exception e) {
+                    throw new KeypathAccessException("Could not access method " + _setMethod.getName() + " on class "
+                            + _entryClass.getName(), e);
+                }
+            } else {
+                try {
+                    _setMethod.invoke(entryObject, value);
+                } catch (Exception e) {
+                    throw new KeypathAccessException("Could not access method " + _setMethod.getName() + " on class "
+                            + _entryClass.getName(), e);
+                }
             }
         } else if (_setField != null) {
-            try {
-                _setField.set(entryObject, value);
-            } catch (IllegalAccessException e) {
-                throw new KeypathAccessException("Could not access field " + _setField.getName() + " on class "
-                        + _entryClass.getName(), e);
+            if (value == null && _setField.getType().isPrimitive()) {
+                __log.warn("Trying to assign a null value to a primitive type - will use '0' instead");
+                try {
+                    _setField.set(entryObject, 0);
+                } catch (Exception e) {
+                    throw new KeypathAccessException("Could not access method " + _setMethod.getName() + " on class "
+                            + _entryClass.getName(), e);
+                }
+            } else {
+                try {
+                    _setField.set(entryObject, value);
+                } catch (IllegalAccessException e) {
+                    throw new KeypathAccessException("Could not access field " + _setField.getName() + " on class "
+                            + _entryClass.getName(), e);
+                }
             }
         } else
             throw new MalformedKeypathException("Can't invoke set for property " + _property + " on objects of type "
