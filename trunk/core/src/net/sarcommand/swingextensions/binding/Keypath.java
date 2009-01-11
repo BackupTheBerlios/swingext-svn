@@ -28,7 +28,7 @@ import java.beans.PropertyChangeListener;
  * almost ui-related applications, the keypath implementation should be fast enough, but there are definitely exceptions
  * (for instance when using keypaths to render large tables). Therefore, keypath should be used with a certain caution.
  * <p/>
- * <hr/> Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2009 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -44,12 +44,23 @@ public class Keypath<T> {
     private final boolean _ignoreAccessControl;
     private String[] _properties;
 
+    /**
+     * Creates a Keypath from the given path string. You can specify whether access control should be ignored.
+     *
+     * @param keypath             A string representation of the keypath being created.
+     * @param ignoreAccessControl Whether the normal java access control should be ignored. Defaults to true.
+     */
     public Keypath(final String keypath, final boolean ignoreAccessControl) {
         _stringRepresentation = keypath;
         _ignoreAccessControl = ignoreAccessControl;
         _properties = keypath.split("\\.");
     }
 
+    /**
+     * Creates a Keypath from the given path string.
+     *
+     * @param keypath A string representation of the keypath being created.
+     */
     public Keypath(final String keypath) {
         this(keypath, true);
     }
@@ -116,6 +127,14 @@ public class Keypath<T> {
         return lastElement != null;
     }
 
+    /**
+     * Returns whether a set(...)-operation can be performed on this Keypath if it is applied to the given entry point.
+     * If this method returns false, a subsequent call to {@link net.sarcommand.swingextensions.binding.Keypath#set(Object,
+     * Object)} will result in an exception.
+     *
+     * @param entryPoint The entry point this keypath would be applied to in a subsequent set operation.
+     * @return whether a set(...)-operation can be performed on this Keypath if it is applied to the given entry point.
+     */
     public boolean canSet(final Object entryPoint) {
         final Object lastElement = resolve(entryPoint);
         if (lastElement == null)
@@ -152,6 +171,12 @@ public class Keypath<T> {
         return runner;
     }
 
+    /**
+     * Returns the KeypathElements that make up this path, starting at a given entry point.
+     *
+     * @param entryPoint the entry point to resolve elements for.
+     * @return the KeypathElements that make up this path, starting at a given entry point.
+     */
     protected KeypathElement[] resolveElements(final Object entryPoint) {
         if (entryPoint == null)
             throw new IllegalArgumentException("Parameter 'entryPoint' must not be null!");
@@ -169,6 +194,13 @@ public class Keypath<T> {
         return elements;
     }
 
+    /**
+     * This method is used internally to resolve the values (the result of get()-calls) of all elements within this
+     * keypath.
+     *
+     * @param entryPoint The entry point this keypath is applied to.
+     * @return an object[] containing the values of all keypath elements within this path.
+     */
     protected Object[] resolveValues(final Object entryPoint) {
         if (entryPoint == null)
             throw new IllegalArgumentException("Parameter 'entryPoint' must not be null!");
@@ -189,6 +221,13 @@ public class Keypath<T> {
         return values;
     }
 
+    /**
+     * Returns whether a KeypathObserver can be added to this path. In order to do so, all elements along the path have
+     * to support PropertyChangeListeners.
+     *
+     * @param entryPoint The entry point which is to observe.
+     * @return whether a KeypathObserver can be added to this path
+     */
     public boolean isObservable(final Object entryPoint) {
         final KeypathElement[] keypathElements = resolveElements(entryPoint);
         for (KeypathElement element : keypathElements)
@@ -197,6 +236,14 @@ public class Keypath<T> {
         return true;
     }
 
+    /**
+     * Creates a KeypathObserver, monitoring the given entry point object and notifying the specified
+     * PropertyChangeListener of changes along the path.
+     *
+     * @param entryPoint The entry point being monitored.
+     * @param delegate   A PropertyChangeListener instance being notified of changes along the path.
+     * @return a KeypathObserver instance monitoring this Keypath.
+     */
     public KeypathObserver createObserver(final Object entryPoint, final PropertyChangeListener delegate) {
         if (entryPoint == null)
             throw new IllegalArgumentException("Parameter 'entryPoint' must not be null!");
@@ -204,7 +251,24 @@ public class Keypath<T> {
         return new KeypathObserver(entryPoint, this, delegate);
     }
 
+    /**
+     * Returns this keypath's hashcode and string representation.
+     *
+     * @return this keypath's hashcode and string representation.
+     */
     public String toString() {
         return "Keypath@" + hashCode() + "[" + _stringRepresentation + "]";
+    }
+
+    /**
+     * Returns the value class of this Keypath's last element. Effectively, this method returns the class of a value
+     * returned by a call to get(Object), or the parameter expected when invoking set(Object, Object).
+     *
+     * @param entryPoint The object to which the keypath is being applied.
+     * @return the value class of this Keypath's last element.
+     */
+    public Class getValueClass(final Object entryPoint) {
+        final KeypathElement[] keypathElements = resolveElements(entryPoint);
+        return keypathElements[keypathElements.length - 1].getValueClass();
     }
 }
