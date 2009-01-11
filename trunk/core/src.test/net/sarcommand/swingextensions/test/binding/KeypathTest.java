@@ -29,7 +29,7 @@ public class KeypathTest extends TestCase {
      * Testing a public getter and no setter.
      */
     public void testKeypathElement0() {
-        final KeypathElement ageElement = new KeypathElement(Person.class, "age");
+        final KeypathElement ageElement = new KeypathElement(Person.class, "age", true);
         assertTrue("Obtained wrong getter for father propery", ageElement.getAccessorForGet() instanceof Method);
         assertTrue("Obtained wrong setter for father propery", ageElement.getAccessorForSet() == null);
         assertTrue("canGet incorrectly returned false", ageElement.canPerformGet());
@@ -41,7 +41,7 @@ public class KeypathTest extends TestCase {
      * Testing an element which can not be accessed in any way.
      */
     public void testKeypathElement1() {
-        final KeypathElement motherElement = new KeypathElement(Person.class, "mother");
+        final KeypathElement motherElement = new KeypathElement(Person.class, "mother", true);
         assertNull("Got a getter for a field which should be unaccessible", motherElement.getAccessorForGet());
         assertNull("Got a setter for a field which should be unaccessible", motherElement.getAccessorForSet());
         assertFalse("canGet incorrectly retuned true", motherElement.canPerformGet());
@@ -65,7 +65,7 @@ public class KeypathTest extends TestCase {
      * Testing a protected accessor method which has priority over a private field
      */
     public void testKeypathElement2() {
-        final KeypathElement fatherElement = new KeypathElement(Person.class, "father");
+        final KeypathElement fatherElement = new KeypathElement(Person.class, "father", true);
         assertTrue("Obtained wrong getter for father propery", fatherElement.getAccessorForGet() instanceof Method);
         assertTrue("Obtained wrong setter for father propery", fatherElement.getAccessorForSet() instanceof Field);
         assertTrue("canGet incorrectly returned false", fatherElement.canPerformGet());
@@ -79,7 +79,7 @@ public class KeypathTest extends TestCase {
      * Testing the priority of a public field over a protected accessor.
      */
     public void testKeypathElement3() {
-        final KeypathElement incomeElement = new KeypathElement(Person.class, "income");
+        final KeypathElement incomeElement = new KeypathElement(Person.class, "income", true);
         assertTrue("Obtained wrong getter for income propery", incomeElement.getAccessorForGet() instanceof Field);
         assertTrue("Obtained wrong setter for income propery", incomeElement.getAccessorForSet() instanceof Field);
         assertTrue("canGet incorrectly returned false", incomeElement.canPerformGet());
@@ -91,10 +91,10 @@ public class KeypathTest extends TestCase {
      * Tests the KeypathElementCache.
      */
     public void testKeypathElementCache() {
-        final KeypathElement element0 = KeypathElementCache.getElement(Person.class, "father");
+        final KeypathElement element0 = KeypathElementCache.getElement(Person.class, "father", true);
         assertNotNull(element0);
         assertTrue(element0.canPerformGet());
-        final KeypathElement element1 = KeypathElementCache.getElement(Person.class, "father");
+        final KeypathElement element1 = KeypathElementCache.getElement(Person.class, "father", true);
         assertTrue(element0 == element1);
     }
 
