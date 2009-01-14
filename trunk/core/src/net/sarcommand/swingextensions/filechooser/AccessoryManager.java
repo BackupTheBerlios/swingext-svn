@@ -48,10 +48,13 @@ public abstract class AccessoryManager implements ComponentVariation<JFileChoose
     protected JPanel _accessoryPane;
 
     /**
-     * A hashmap keeping track of the installed accessories.
+     * A hashmap keeping track of components installed as accessories.
      */
     protected HashMap<Integer, JComponent> _accessoryComponents;
 
+    /**
+     * A hashmap keeping track of installed prebuilt accessories.
+     */
     protected HashMap<Integer, FileChooserAccessory> _fileChooserAccesories;
 
     /**
@@ -122,14 +125,27 @@ public abstract class AccessoryManager implements ComponentVariation<JFileChoose
         });
     }
 
+    /**
+     * Detaches this instance from its file chooser.
+     */
     public void detach() {
         // todo [sarcan] missing implementation.
     }
 
+    /**
+     * Returns the JFileChooser instance which was altered by this manager.
+     *
+     * @return the JFileChooser instance which was altered by this manager.
+     */
     public JFileChooser getAlteredComponent() {
         return _chooser;
     }
 
+    /**
+     * Invoked when the file selection in the JFileChooser changed. Used to notify any installed prebuilt accessory.
+     *
+     * @param file The new selected file.
+     */
     protected void selectedFileChanged(final File file) {
         for (Integer i : _fileChooserAccesories.keySet())
             _fileChooserAccesories.get(i).setFile(file);
