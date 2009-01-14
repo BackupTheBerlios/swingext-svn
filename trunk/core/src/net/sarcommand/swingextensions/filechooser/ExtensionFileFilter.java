@@ -8,9 +8,10 @@ import java.io.File;
  * is a mere conveniance class to keep you the efford from writing an anonymous implementation every time you require an
  * extension-based filter.
  * <p/>
- * todo add demo code
+ * <code> final JFileChooser chooser = new JFileChooser(); chooser.addChoosableFileFilter(new ExtensionFileFilter("PDF
+ * files", ".pdf")); </code>
  * <p/>
- * Copyright 2006 Torsten Heup
+ * Copyright 2006-2009 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -111,6 +112,11 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
         return _acceptDirectories;
     }
 
+    /**
+     * Sets whether this filter should directories.
+     *
+     * @param acceptDirectories whether this filter should directories.
+     */
     public void setAcceptDirectories(final boolean acceptDirectories) {
         _acceptDirectories = acceptDirectories;
     }
