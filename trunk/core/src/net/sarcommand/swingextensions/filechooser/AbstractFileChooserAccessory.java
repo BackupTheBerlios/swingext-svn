@@ -3,7 +3,7 @@ package net.sarcommand.swingextensions.filechooser;
 import javax.swing.*;
 
 /**
- * Abstract conveniance implementation for prebuild file chooser accessories. <hr/> Copyright 2006-2008 Torsten Heup
+ * Abstract conveniance implementation for prebuilt file chooser accessories. <hr/> Copyright 2006-2008 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -26,22 +26,47 @@ public abstract class AbstractFileChooserAccessory implements FileChooserAccesso
         _position = position;
     }
 
+    /**
+     * @see FileChooserAccessory#getAccessoryComponent()
+     */
     public JComponent getAccessoryComponent() {
         return _accessoryComponent;
     }
 
+    /**
+     * Sets the component enclosed by this accessory.
+     *
+     * @param accessoryComponent the component enclosed by this accessory.
+     */
     protected void setAccessoryComponent(final JComponent accessoryComponent) {
         _accessoryComponent = accessoryComponent;
     }
 
+    /**
+     * Returns the position this accessory is installed at. The returned value will be one of the following: <li>{@link
+     * javax.swing.SwingConstants#NORTH}</li> <li>{@link javax.swing.SwingConstants#SOUTH}</li> <li>{@link
+     * javax.swing.SwingConstants#EAST}</li> <li>{@link javax.swing.SwingConstants#WEST}</li>
+     *
+     * @return the position this accessory is installed at.
+     */
     public int getPosition() {
         return _position;
     }
 
+    /**
+     * Sets the position this accessory should appear at. Has to be one of <li>{@link
+     * javax.swing.SwingConstants#NORTH}</li> <li>{@link javax.swing.SwingConstants#SOUTH}</li> <li>{@link
+     * javax.swing.SwingConstants#EAST}</li> <li>{@link javax.swing.SwingConstants#WEST}</li>
+     *
+     * @param position the position this accessory should appear at
+     */
     public void setPosition(final int position) {
         _position = position;
     }
 
+    /**
+     * This method is merely defined as a conveniance and will not actually do anything.
+     */
     public void dispose() {
     }
 }
