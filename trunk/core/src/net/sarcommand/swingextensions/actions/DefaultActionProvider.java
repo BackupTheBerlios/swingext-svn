@@ -19,13 +19,20 @@ import javax.swing.*;
  * specific language governing permissions and limitations under the License.
  */
 public class DefaultActionProvider implements ActionProvider {
+    /**
+     * @see net.sarcommand.swingextensions.actions.ActionProvider#createManagedAction(Object)
+     */
     public ManagedAction createManagedAction(final Object identifier) {
         final ManagedAction action = new ManagedAction(identifier);
         action.putValue(Action.NAME, identifier.toString());
         return action;
     }
 
-    public ReflectedAction createReflectedAction(final Object identifier, final Object target, final String methodName) {
+    /**
+     * @see net.sarcommand.swingextensions.actions.ActionProvider#createReflectedAction(Object, Object, String)
+     */
+    public ReflectedAction createReflectedAction(final Object identifier, final Object target,
+                                                 final String methodName) {
         final ReflectedAction action = new ReflectedAction(identifier, target, methodName);
         action.putValue(Action.NAME, identifier.toString());
         return action;
