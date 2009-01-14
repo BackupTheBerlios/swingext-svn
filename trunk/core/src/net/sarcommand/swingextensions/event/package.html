@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+</head>
+<body bgcolor="white">
+
+<h2>Package Specification</h2>
+
+This package contain generic event related classes.
+
+<h3>Adapter classes</h3>
+
+Swing offers abstract implementations for some of the more complex listener interfaces, such as MouseListener. For most
+event listener interfaces however, no abstract implementation is available even though programmers will usually only use
+a single method. This package will contains those abstract classes for all of swing's listener types. In addition to an
+empty method implementation, some listeners define an additional method which will be invoked if any kind of event
+occurs. For instance, the DocumentAdapter class also provides a method 'documentChanged(DocumentEvent)', which will be
+triggered when the document is altered by an insert, update or remove event.
+
+<h3>EventSupport</h3>
+
+The EventSupport class is a utility for handling listener lists. It is inspired by the PropertyChangeSupport class, but
+works for all listener types. In practice, it is a lot simpler to use than the EventListenerList provided by swing.
+Rather than writing complex count-down loops and having to check for the listener class, you can make use of a proxy to
+implement your fireXXX methods:
+
+<pre>
+    private EventSupport&lt;ActionListener&gt; _actionListeners = EventSupport.create(ActionListener.class);
+    public void fireActionPerformed(final ActionEvent e) {
+        _actionListeners.delegate().actionPerformed(e);
+    }
+</pre>
+
+Note that due to the fact that EventSupport relies on reflection, it can not be instanciated directly. You have to use
+the according factory method to create new instances.
+
+A second implemenation, called WeakEventSupport, mimics the behavior of EventSupport but uses WeakReferences to store
+the listener instance. Which implementation you choose is a matter of modelling
+style.
+
+</body>
+</html>
