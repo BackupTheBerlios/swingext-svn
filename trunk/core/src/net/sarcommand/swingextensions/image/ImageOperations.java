@@ -1,4 +1,4 @@
-package net.sarcommand.swingextensions.utilities;
+package net.sarcommand.swingextensions.image;
 
 import java.awt.*;
 import java.awt.image.*;
@@ -111,13 +111,13 @@ public class ImageOperations {
 
     /**
      * Applies a glow effect to the given image. This is done by first creating a blurred version of the image using
-     * {@link net.sarcommand.swingextensions.utilities.ImageOperations#applyGaussianBlur(java.awt.image.BufferedImage,
+     * {@link ImageOperations#applyGaussianBlur(java.awt.image.BufferedImage,
      * int, float, boolean)}. The result of this operation is then rendered below the original using a LookupTable.
      *
      * @param image                         The image to apply the glow effect to.
      * @param radius                        The radius of the gaussian blur being applied.
      * @param color                         The color of the glow effect.
-     * @param alphaFactor                   the alpha factor as specified in {@link net.sarcommand.swingextensions.utilities.ImageOperations#applyGaussianBlur(java.awt.image.BufferedImage,
+     * @param alphaFactor                   the alpha factor as specified in {@link ImageOperations#applyGaussianBlur(java.awt.image.BufferedImage,
      *                                      int, float, boolean)}
      * @param useOriginalImageAsDestination Whether to render the result into the original image or a newly created
      *                                      image instance. If a new image is created, it will be larger than the

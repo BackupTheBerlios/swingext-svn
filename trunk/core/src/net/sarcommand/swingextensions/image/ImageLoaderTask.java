@@ -1,4 +1,4 @@
-package net.sarcommand.swingextensions.utilities;
+package net.sarcommand.swingextensions.image;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
