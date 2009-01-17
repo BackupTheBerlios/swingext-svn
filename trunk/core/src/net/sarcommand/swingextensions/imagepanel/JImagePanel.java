@@ -234,12 +234,12 @@ public class JImagePanel extends JPanel implements Scrollable {
     /**
      * Horizontal translation.
      */
-    protected double _transX;
+    protected double _translationX;
 
     /**
      * Vertical translation.
      */
-    protected double _transY;
+    protected double _translationY;
 
     /**
      * Rate at which scaling is performed. A rate of 1 is considered scaling by 3% for each mouse wheel event.
@@ -301,8 +301,8 @@ public class JImagePanel extends JPanel implements Scrollable {
 
         /* Initialize internal variables */
         _scaleAmount = 1.;
-        _transX = 0.;
-        _transY = 0.;
+        _translationX = 0.;
+        _translationY = 0.;
         _transform = new AffineTransform();
     }
 
@@ -340,22 +340,22 @@ public class JImagePanel extends JPanel implements Scrollable {
                         final double dy = _lastMousePos.y - p.y;
                         final double scaledWidth = _imageWidth * _scaleAmount;
                         final double scaledHeight = _imageHeight * _scaleAmount;
-                        final double newX = (width - scaledWidth) / 2 + _transX - dx;
-                        final double newY = (height - scaledHeight) / 2 + _transY - dy;
+                        final double newX = (width - scaledWidth) / 2 + _translationX - dx;
+                        final double newY = (height - scaledHeight) / 2 + _translationY - dy;
 
                         if (dx != 0) {
                             if (width > scaledWidth) {
                                 if (dx > 0) {
                                     if (newX > 0)
-                                        _transX -= dx;
+                                        _translationX -= dx;
                                 } else if (newX + scaledWidth < width)
-                                    _transX -= dx;
+                                    _translationX -= dx;
                             } else {
                                 if (dx > 0) {
                                     if (newX + scaledWidth > width)
-                                        _transX -= dx;
+                                        _translationX -= dx;
                                 } else if (newX <= 0)
-                                    _transX -= dx;
+                                    _translationX -= dx;
                             }
                         }
 
@@ -363,15 +363,15 @@ public class JImagePanel extends JPanel implements Scrollable {
                             if (height > scaledHeight) {
                                 if (dy > 0) {
                                     if (newY > 0)
-                                        _transY -= dy;
+                                        _translationY -= dy;
                                 } else if (newY + scaledHeight < height)
-                                    _transY -= dy;
+                                    _translationY -= dy;
                             } else {
                                 if (dy > 0) {
                                     if (newY + scaledHeight > height)
-                                        _transY -= dy;
+                                        _translationY -= dy;
                                 } else if (newY <= 0)
-                                    _transY -= dy;
+                                    _translationY -= dy;
                             }
                         }
                         _lastMousePos = p;
@@ -473,8 +473,8 @@ public class JImagePanel extends JPanel implements Scrollable {
             }
 
             /* find suitable image position */
-            double x = (width - _imageWidth * _scaleAmount) / 2 + _transX;
-            double y = (height - _imageHeight * _scaleAmount) / 2 + _transY;
+            double x = (width - _imageWidth * _scaleAmount) / 2 + _translationX;
+            double y = (height - _imageHeight * _scaleAmount) / 2 + _translationY;
 
             /* Modify transform */
             _transform.setToIdentity();
@@ -567,8 +567,8 @@ public class JImagePanel extends JPanel implements Scrollable {
      * scaling.</li>
      */
     public void setToIdentity() {
-        _transX = 0;
-        _transY = 0;
+        _translationX = 0;
+        _translationY = 0;
         _scaleAmount = 1;
         _scaleMode = SCALE_MANUALLY;
         repaint();
@@ -620,29 +620,29 @@ public class JImagePanel extends JPanel implements Scrollable {
     /**
      * Returns the translation in x-direction.
      */
-    public double getTransX() {
-        return _transX;
+    public double getTranslationX() {
+        return _translationX;
     }
 
     /**
      * Sets the translation in x-direction.
      */
-    public void setTransX(final double transX) {
-        _transX = transX;
+    public void setTranslationX(final double translationX) {
+        _translationX = translationX;
     }
 
     /**
      * Returns the translation in y-direction.
      */
-    public double getTransY() {
-        return _transY;
+    public double getTranslationY() {
+        return _translationY;
     }
 
     /**
      * Sets the translation in y-direction.
      */
-    public void setTransY(final double transY) {
-        _transY = transY;
+    public void setTranslationY(final double translationY) {
+        _translationY = translationY;
     }
 
     public Dimension getPreferredScrollableViewportSize() {
