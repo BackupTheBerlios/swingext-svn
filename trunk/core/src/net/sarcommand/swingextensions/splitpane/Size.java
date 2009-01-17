@@ -1,4 +1,4 @@
-package net.sarcommand.swingextensions.layout;
+package net.sarcommand.swingextensions.splitpane;
 
 /**
  * This class is basically the same as a java.awt.Dimension, only using double precision. It is required

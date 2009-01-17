@@ -1,8 +1,10 @@
-package net.sarcommand.swingextensions.layout;
+package net.sarcommand.swingextensions.splitpane;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
 /**
  * This class realizes one cell inside a MultiCellSplitPane. It is only used internally and you should not have

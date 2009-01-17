@@ -1,4 +1,4 @@
-package net.sarcommand.swingextensions.layout;
+package net.sarcommand.swingextensions.splitpane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -111,7 +111,7 @@ public class MultiCellSplitPane extends JComponent {
      * @param mgr The argument you really should not try to set :-).
      */
     public void setLayout(LayoutManager mgr) {
-        throw new IllegalArgumentException("The layout for this class can not be adjusted.");
+        throw new IllegalArgumentException("The splitpane for this class can not be adjusted.");
     }
 
     public void add(Component comp, Object constraints, int index) {

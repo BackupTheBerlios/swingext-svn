@@ -1,4 +1,4 @@
-package net.sarcommand.swingextensions.layout;
+package net.sarcommand.swingextensions.splitpane;
 
 import javax.swing.*;
 import java.awt.*;
