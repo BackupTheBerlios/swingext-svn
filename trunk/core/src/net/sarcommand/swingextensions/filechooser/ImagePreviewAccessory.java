@@ -1,10 +1,10 @@
 package net.sarcommand.swingextensions.filechooser;
 
+import net.sarcommand.swingextensions.image.ImageLoaderTask;
 import net.sarcommand.swingextensions.imagepanel.JImagePanel;
 import net.sarcommand.swingextensions.internal.SwingExtLogger;
 import net.sarcommand.swingextensions.internal.SwingExtLogging;
 import net.sarcommand.swingextensions.progress.JProgressIndicator;
-import net.sarcommand.swingextensions.utilities.ImageLoaderTask;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
