@@ -154,7 +154,7 @@ public class TextComponentTextBinding extends SwingBinding {
      */
     public TextComponentTextBinding(final JTextComponent targetComponent, final Object targetBean,
                                     final String keypath, final boolean continuousUpdates) {
-        this(targetComponent, targetBean, keypath, continuousUpdates, false);
+        this(targetComponent, targetBean, keypath, continuousUpdates, true);
     }
 
     /**
