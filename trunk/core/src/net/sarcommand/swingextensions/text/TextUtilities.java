@@ -3,6 +3,7 @@ package net.sarcommand.swingextensions.text;
 import net.sarcommand.swingextensions.utilities.SearchTask;
 
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 
 /**
  * This class encapsulates utility methods for dealing with JTextComponents.
@@ -29,6 +30,11 @@ public class TextUtilities {
             ((TextVariation) clientProperty).detach();
         final SearchFieldVariation variation = new SearchFieldVariation(textField, searchTask);
         textField.putClientProperty(TextVariation.CLIENT_PROPERTY, variation);
+    }
+
+    public static TextComponentTextBinding bindValue(final JTextComponent comp, final Object targetBean,
+                                                     final String keypath, final boolean continuousUpdates) {
+        return new TextComponentTextBinding(comp, targetBean, keypath, continuousUpdates);
     }
 
     private TextUtilities() {
