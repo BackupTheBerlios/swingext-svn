@@ -1,6 +1,6 @@
 package net.sarcommand.swingextensions.glasspane;
 
-import net.sarcommand.swingextensions.utilities.ImageOperations;
+import net.sarcommand.swingextensions.image.ImageUtilities;
 import net.sarcommand.swingextensions.utilities.SwingExtUtil;
 
 import javax.swing.*;
@@ -66,7 +66,7 @@ public class BlurringGlassPane extends JPanel {
         setOpaque(false);
         setBackground(new Color(100, 100, 100, 50));
         setLayout(new GridBagLayout());
-        _blurFilter = ImageOperations.createSimpleBoxBlurFilter();
+        _blurFilter = ImageUtilities.createSimpleBoxBlurFilter();
 
         addMouseListener(new MouseAdapter() {
         });
