@@ -8,7 +8,7 @@ import java.lang.ref.SoftReference;
  * This class provides a set of methods aroung image and graphics manipulation. Most of those manipulation are mere
  * gimmicks, but sometimes vanity is virtue.
  */
-public class ImageOperations {
+public class ImageUtilities {
     private static SoftReference<BufferedImage> _buffer0;
     private static SoftReference<BufferedImage> _buffer1;
 
@@ -82,7 +82,7 @@ public class ImageOperations {
         final Kernel horizontalKernel = new Kernel(kernel.length, 1, kernel);
         final Kernel verticalKernel = new Kernel(1, kernel.length, kernel);
 
-        synchronized (ImageOperations.class) {
+        synchronized (ImageUtilities.class) {
             final int blurredWidth = useOriginalImageAsDestination ? image.getWidth() :
                     image.getWidth() + 4 * filterRadius;
             final int blurredHeight = useOriginalImageAsDestination ? image.getHeight() :
@@ -111,13 +111,13 @@ public class ImageOperations {
 
     /**
      * Applies a glow effect to the given image. This is done by first creating a blurred version of the image using
-     * {@link ImageOperations#applyGaussianBlur(java.awt.image.BufferedImage,
+     * {@link ImageUtilities#applyGaussianBlur(java.awt.image.BufferedImage,
      * int, float, boolean)}. The result of this operation is then rendered below the original using a LookupTable.
      *
      * @param image                         The image to apply the glow effect to.
      * @param radius                        The radius of the gaussian blur being applied.
      * @param color                         The color of the glow effect.
-     * @param alphaFactor                   the alpha factor as specified in {@link ImageOperations#applyGaussianBlur(java.awt.image.BufferedImage,
+     * @param alphaFactor                   the alpha factor as specified in {@link ImageUtilities#applyGaussianBlur(java.awt.image.BufferedImage,
      *                                      int, float, boolean)}
      * @param useOriginalImageAsDestination Whether to render the result into the original image or a newly created
      *                                      image instance. If a new image is created, it will be larger than the
