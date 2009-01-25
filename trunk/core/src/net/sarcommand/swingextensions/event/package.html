@@ -3,12 +3,9 @@
 <head>
 </head>
 <body bgcolor="white">
-
-<h2>Package Specification</h2>
-
 This package contain generic event related classes.
 
-<h3>Adapter classes</h3>
+<h2>Adapter classes</h2>
 
 Swing offers abstract implementations for some of the more complex listener interfaces, such as MouseListener. For most
 event listener interfaces however, no abstract implementation is available even though programmers will usually only use
@@ -17,7 +14,9 @@ empty method implementation, some listeners define an additional method which wi
 occurs. For instance, the DocumentAdapter class also provides a method 'documentChanged(DocumentEvent)', which will be
 triggered when the document is altered by an insert, update or remove event.
 
-<h3>EventSupport</h3>
+<h2>Core classes</h2>
+
+<h4>EventSupport</h4>
 
 The EventSupport class is a utility for handling listener lists. It is inspired by the PropertyChangeSupport class, but
 works for all listener types. In practice, it is a lot simpler to use than the EventListenerList provided by swing.

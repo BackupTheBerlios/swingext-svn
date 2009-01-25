@@ -12,7 +12,8 @@ import java.awt.*;
  * Note: This class does not use an image buffer but rather paints the icons directly. Any changes you make to one
  * of your icons after instanciating the CompositeIcon will therefore be taken into account.
  * <p/>
- * Copyright 2006 Torsten Heup
+ * <hr/>
+ * Copyright 2006-2008 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
