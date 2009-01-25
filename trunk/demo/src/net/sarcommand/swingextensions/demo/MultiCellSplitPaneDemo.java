@@ -1,6 +1,6 @@
 package net.sarcommand.swingextensions.demo;
 
-import net.sarcommand.swingextensions.layout.MultiCellSplitPane;
+import net.sarcommand.swingextensions.splitpane.MultiCellSplitPane;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
