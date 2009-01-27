@@ -28,7 +28,8 @@ public class SwingExtensionsDemo {
             TypedInputFieldDemo.class,
             GlassPaneDemo.class,
             AccessoryManagerDemo.class,
-            MultiCellSplitPaneDemo.class
+            MultiCellSplitPaneDemo.class,
+            JTreeTableDemo.class
     };
 
     private JTabbedPane _demoPanel;
