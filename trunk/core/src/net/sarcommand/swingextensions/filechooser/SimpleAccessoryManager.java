@@ -48,7 +48,7 @@ public class SimpleAccessoryManager extends AccessoryManager {
         }
 
         final FileChooserAccessory previousAccessory = _fileChooserAccesories.get(position);
-        setAccessory(accessory.getAccessoryComponent(), position);
+        setAccessory(accessory == null ? null : accessory.getAccessoryComponent(), position);
         _fileChooserAccesories.put(position, accessory);
 
         if (previousAccessory != null)
