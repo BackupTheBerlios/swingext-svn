@@ -1,73 +1,35 @@
 <?xml version="1.0"?>
-<project name="SwingExtensions core" basedir="." default="clean-dist">
-    <taskdef name="svnrevision" classname="org.sarcommand.svntask.SVNTask">
-        <classpath>
-            <pathelement location="../tools/svnkit.jar"/>
-            <pathelement location="../tools/svntask.jar"/>
-        </classpath>
-    </taskdef>
+<project name="SwingExtensions core" basedir="." default="release">
 
-    <property name="dist.dir" location="dist"
-              description="Destination directory. Only used when running as standalone script"/>
-    <property name="docs.dir" location="${dist.dir}/docs"
-              description="Documentation directory. Only used when running as standalone script"/>
-    <property name="lib.dir" location="../libraries" description="Library path"/>
-    <property name="src.dir" location="src" description="Source path"/>
-    <property name="resources.dir" location="resources" description="Additional resources"/>
-    <property name="src.test.dir" location="src.test" description="Test source path"/>
-    <property name="build.dir" location="_build" description="Temporary build path"/>
+    <property name="buildDir" location="_build"/>
+    <property name="docsDir" location="${buildDir}/docs"/>
+    <property name="classesDir" location="${buildDir}/classes"/>
+    <property name="srcDir" location="src"/>
+    <property name="resourcesDir" location="resources"/>
+    <property name="distDir" location="dist"/>
 
-    <property file="../local.build.properties"/>
     <property file="../build.properties"/>
 
-    <property name="core.jar" location="${dist.dir}/swingExtensions.jar"
-              description="Destination jar. Only used when running as standalone script"/>
+    <target name="release">
+        <property name="revision" value="-1"/>
+        <input message="Enter the current svn revision" addproperty="revision"/>
+        <antcall target="setup"/>
 
-    <path id="classpath.compile"/>
-    <path id="classpath.test">
-        <path refid="classpath.compile"/>
-        <!--<pathelement location="${lib.dir}/${junit.lib}"/>-->
-        <pathelement location="/Users/heup/dev/swingextensions/libraries/junit-4.1.jar"/>
-    </path>
-
-    <target name="clean" description="Clean output directories">
-        <delete dir="${build.dir}"/>
-        <mkdir dir="${build.dir}"/>
-        <delete dir="${dist.dir}"/>
-        <mkdir dir="${dist.dir}"/>
+        <parallel threadCount="4">
+            <antcall target="createBinaryJar"/>
+            <antcall target="createDocsJar"/>
+            <antcall target="createSourceJar"/>
+        </parallel>
     </target>
 
-    <target name="compile" depends="clean" description="Compile source files">
-        <javac srcdir="${src.dir}" destdir="${build.dir}"/>
-        <copy todir="${build.dir}">
-            <fileset dir="${resources.dir}"/>
-        </copy>
-    </target>
-
-    <target name="compile.tests" depends="clean">
-        <javac destdir="${build.dir}">
-            <classpath>
-                <pathelement location="${lib.dir}/${junit.lib}"/>
-            </classpath>
-            <src location="${src.dir}"/>
-            <src location="${src.test.dir}"/>
-        </javac>
-    </target>
-
-    <target name="create-docs" description="Generate javadoc">
-        <mkdir dir="${docs.dir}"/>
-        <javadoc destdir="${docs.dir}" sourcepath="${src.dir}"/>
-    </target>
-
-    <target name="package" depends="compile" description="Create jar file">
-        <!--<svnrevision dir="." property="revision"/>-->
-        <!--<echo>Current revision is ${revision}</echo>-->
-        <property name="revision" value=""/>
-        <jar basedir="${build.dir}" destfile="${core.jar}" index="true" manifestencoding="UTF-8">
+    <target name="createDocsJar">
+        <javadoc sourcepath="${srcDir}" destdir="${docsDir}" author="true"/>
+        <jar basedir="${docsDir}" destfile="${distDir}/swingextensions-docs-${version.id}.${revision}.jar"
+             index="true" manifestencoding="UTF-8">
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Created-By" value="www.sarcommand.net"/>
-                <attribute name="Implementation-Version" value="${version.id}r${revision}"/>
+                <attribute name="Implementation-Version" value="${version.id}.${revision}"/>
                 <attribute name="Implementation-Vendor" value="www.sarcommand.net"/>
                 <attribute name="Implementation-URL" value="swingext.berlios.de"/>
                 <attribute name="Implementation-Title" value="Sarcommand SwingExtensions"/>
@@ -75,26 +37,44 @@
         </jar>
     </target>
 
-    <target name="test" description="Run automated test cases">
-        <!--<antcall target="clean"/>-->
-        <!--<antcall target="compile.tests"/>-->
-        <!--<junit fork="true" dir="."  showoutput="true" errorproperty="test.error" failureproperty="test.fail">-->
-        <!--<classpath refid="classpath.test"/>-->
-        <!--<batchtest>-->
-        <!--<fileset dir="${src.test.dir}"/>-->
-        <!--</batchtest>-->
-        <!--</junit>-->
-        <!--<fail if="test.error"/>-->
-        <!--<fail if="test.fail"/>-->
+    <target name="createSourceJar">
+        <jar basedir="${srcDir}" destfile="${distDir}/swingextensions-src-${version.id}.${revision}.jar"
+             index="true" manifestencoding="UTF-8">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Created-By" value="www.sarcommand.net"/>
+                <attribute name="Implementation-Version" value="${version.id}.${revision}"/>
+                <attribute name="Implementation-Vendor" value="www.sarcommand.net"/>
+                <attribute name="Implementation-URL" value="swingext.berlios.de"/>
+                <attribute name="Implementation-Title" value="Sarcommand SwingExtensions"/>
+            </manifest>
+        </jar>
     </target>
 
-    <target name="clean-dist" description="Create a new dist from scratch">
-        <antcall target="test"/>
-        <fail if="test.failed"/>
+    <target name="createBinaryJar">
+        <javac srcdir="${srcDir}" destdir="${classesDir}"/>
+        <copy todir="${classesDir}">
+            <fileset dir="${resourcesDir}"/>
+        </copy>
+        <jar basedir="${classesDir}" destfile="${distDir}/swingextensions-${version.id}.${revision}.jar"
+             index="true" manifestencoding="UTF-8">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Created-By" value="www.sarcommand.net"/>
+                <attribute name="Implementation-Version" value="${version.id}.${revision}"/>
+                <attribute name="Implementation-Vendor" value="www.sarcommand.net"/>
+                <attribute name="Implementation-URL" value="swingext.berlios.de"/>
+                <attribute name="Implementation-Title" value="Sarcommand SwingExtensions"/>
+            </manifest>
+        </jar>
+    </target>
 
-        <antcall target="clean"/>
-        <antcall target="compile"/>
-        <antcall target="create-docs"/>
-        <antcall target="package"/>
+    <target name="setup">
+        <delete dir="${buildDir}"/>
+        <delete dir="${distDir}"/>
+        <mkdir dir="${buildDir}"/>
+        <mkdir dir="${classesDir}"/>
+        <mkdir dir="${docsDir}"/>
+        <mkdir dir="${distDir}"/>
     </target>
 </project>
