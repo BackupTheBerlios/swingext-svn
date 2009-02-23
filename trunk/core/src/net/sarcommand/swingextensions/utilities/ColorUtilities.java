@@ -5,20 +5,16 @@ import java.awt.*;
 /**
  * This class offers a few utility methods useful when handling Colors.
  * <p/>
- * <hr/>
- * Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2008 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class ColorUtilities {
     /**
@@ -31,18 +27,7 @@ public class ColorUtilities {
         if (color == null)
             throw new IllegalArgumentException("Parameter 'color' must not be null!");
 
-        final StringBuilder builder = new StringBuilder(6);
-        builder.append(Integer.toHexString(color.getRed()));
-        if (builder.length() < 2)
-            builder.insert(0, '0');
-        builder.append(Integer.toHexString(color.getGreen()));
-        if (builder.length() < 4)
-            builder.insert(2, '0');
-        builder.append(Integer.toHexString(color.getBlue()));
-        if (builder.length() < 6)
-            builder.insert(4, '0');
-
-        return builder.toString();
+        return String.format("%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
     }
 
     /**
