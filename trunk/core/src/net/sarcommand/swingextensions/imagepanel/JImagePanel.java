@@ -33,22 +33,28 @@ import java.awt.image.VolatileImage;
  * specific language governing permissions and limitations under the License.
  */
 public class JImagePanel extends JPanel implements Scrollable {
-    /**
-     * Constant used to tell the JImagePanel to scale the image horizontally.
-     */
-    public static final int SCALE_HORIZONTAL = 100;
-    /**
-     * Constant used to tell the JImagePanel to scale the image vertically.
-     */
-    public static final int SCALE_VERTICAL = 101;
-    /**
-     * Constant used to tell the JImagePanel to attempt to find the best fit for the image.
-     */
-    public static final int SCALE_BOTH = 102;
-    /**
-     * Constant used to tell the JImagePanel to scale according to the value specified by the user's input.
-     */
-    public static final int SCALE_MANUALLY = 103;
+
+    public static enum ScaleMode {
+        /**
+         * Constant used to tell the JImagePanel to attempt to find the best fit for the image.
+         */
+        SCALE_BEST_FIT,
+
+        /**
+         * Constant used to tell the JImagePanel to scale the image horizontally.
+         */
+        SCALE_HORIZONTAL_FIT,
+
+        /**
+         * Constant used to tell the JImagePanel to scale the image vertically.
+         */
+        SCALE_VERTICAL_FIT,
+
+        /**
+         * Constant used to tell the JImagePanel to scale according to the value specified by the user's input.
+         */
+        SCALE_MANUALLY
+    }
 
     /**
      * Returns a JFrame instance wrapping a JImagePanel. The JImagePanel itself can be accessed using the {@link
@@ -101,7 +107,8 @@ public class JImagePanel extends JPanel implements Scrollable {
      * @param draggable Determines whether or not the image should be draggable.
      * @return JFrame instance.
      */
-    public static JDialog getDialogInstance(final Frame parent, final boolean modal, final Image image, final boolean scalable, final boolean draggable) {
+    public static JDialog getDialogInstance(final Frame parent, final boolean modal, final Image image,
+                                            final boolean scalable, final boolean draggable) {
         final JImagePanel panel = new JImagePanel();
         panel.setImage(image);
         panel.setScalable(scalable);
@@ -234,7 +241,7 @@ public class JImagePanel extends JPanel implements Scrollable {
     /**
      * Determines whether the image should be scaled manually or accordant to a rule.
      */
-    protected int _scaleMode;
+    protected ScaleMode _scaleMode;
 
     /**
      * Creates a new JImagePanel instance.
@@ -289,7 +296,7 @@ public class JImagePanel extends JPanel implements Scrollable {
         _mouseWheelListener = new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 if (_scalable) {
-                    _scaleMode = SCALE_MANUALLY;
+                    _scaleMode = ScaleMode.SCALE_MANUALLY;
                     _scaleFactor *= e.getUnitsToScroll() > 0 ? 1 + 0.03 * _scaleRate : 1 - 0.03 * _scaleRate;
                     if (_scaleFactor < 0)
                         _scaleFactor = 0.01;
@@ -376,7 +383,8 @@ public class JImagePanel extends JPanel implements Scrollable {
             if (graphicsConfiguration != null)
                 _buffer = graphicsConfiguration.createCompatibleVolatileImage(_imageWidth, _imageHeight, transparency);
             else
-                _buffer = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleVolatileImage(_imageWidth, _imageHeight, transparency);
+                _buffer = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleVolatileImage(
+                        _imageWidth, _imageHeight, transparency);
             final Graphics g2 = _buffer.createGraphics();
             g2.drawImage(image, 0, 0, null);
 
@@ -415,7 +423,8 @@ public class JImagePanel extends JPanel implements Scrollable {
             switch (_buffer.validate(getGraphicsConfiguration())) {
                 case VolatileImage.IMAGE_INCOMPATIBLE:
                     final int transparency = (_image instanceof Transparency) ? ((Transparency) _image).getTransparency() : Transparency.TRANSLUCENT;
-                    _buffer = getGraphicsConfiguration().createCompatibleVolatileImage(_image.getWidth(null), _image.getHeight(null), transparency);
+                    _buffer = getGraphicsConfiguration().createCompatibleVolatileImage(_image.getWidth(null),
+                            _image.getHeight(null), transparency);
                     /* intended fall-through, we need to restore the image anyway */
                 case VolatileImage.IMAGE_RESTORED:
                     do {
@@ -445,19 +454,19 @@ public class JImagePanel extends JPanel implements Scrollable {
     /**
      * If the set scale mode indicates that the image size should adapt automatically following a given rule, this
      * method adapts the scale factor to the current canvas size. If the current scale mode is set to
-     * {@link net.sarcommand.swingextensions.imagepanel.JImagePanel#SCALE_MANUALLY}, this method has no effect.
-     *
+     * {@link net.sarcommand.swingextensions.imagepanel.JImagePanel.ScaleMode#SCALE_MANUALLY}, this method has no effect.
+     * <p/>
      * This method will be invoked whenever the scale mode is modified or the component size changes.
      */
     private void updateScaleFactor() {
         switch (_scaleMode) {
-            case SCALE_VERTICAL:
+            case SCALE_VERTICAL_FIT:
                 _scaleFactor = ((double) getHeight()) / _imageHeight;
                 break;
-            case SCALE_HORIZONTAL:
+            case SCALE_HORIZONTAL_FIT:
                 _scaleFactor = ((double) getWidth()) / _imageWidth;
                 break;
-            case SCALE_BOTH:
+            case SCALE_BEST_FIT:
                 final double scaleX = ((double) getHeight()) / _imageHeight;
                 final double scaleY = ((double) getWidth()) / _imageWidth;
                 _scaleFactor = Math.min(scaleX, scaleY);
@@ -555,26 +564,30 @@ public class JImagePanel extends JPanel implements Scrollable {
         _translationX = 0;
         _translationY = 0;
         _scaleFactor = 1;
-        _scaleMode = SCALE_MANUALLY;
+        _scaleMode = ScaleMode.SCALE_MANUALLY;
         repaint();
     }
 
     /**
      * Returns the current scale mode.
      *
-     * @see JImagePanel#setScaleMode
      * @return the current scale mode.
+     * @see JImagePanel#setScaleMode
      */
-    public int getScaleMode() {
+    public ScaleMode getScaleMode() {
         return _scaleMode;
     }
 
     /**
      * Sets the scale mode property. The scale mode determines in which way the JImagePanel will try to fit the image to
-     * the panels size: <li>{@link JImagePanel#SCALE_MANUALLY} scales the image according to the user's mouse wheel
-     * interaction</li> <li>{@link JImagePanel#SCALE_HORIZONTAL} attempts to fit the image horizontally, regardless of
-     * it's height</li> <li>{@link JImagePanel#SCALE_VERTICAL} attempts to fit the image vertically, regardless of it's
-     * width. <li>{@link JImagePanel#SCALE_BOTH} tries to find the best fit for the image in both dimensions</li>
+     * the panels size:
+     * <li>{@link JImagePanel.ScaleMode#SCALE_MANUALLY} scales the image according to the user's mouse wheel
+     * interaction</li>
+     * <li>{@link JImagePanel.ScaleMode#SCALE_HORIZONTAL_FIT} attempts to fit the image horizontally, regardless of it's
+     * height</li>
+     * <li>{@link JImagePanel.ScaleMode#SCALE_VERTICAL_FIT} attempts to fit the image vertically, regardless of it's
+     * width.</li>
+     * <li>{@link JImagePanel.ScaleMode#SCALE_BEST_FIT} tries to find the best fit for the image in both dimensions</li>
      * <p/>
      * Note that as long as scaling is allowed, the user will still be able to change the scale factor using the mouse
      * wheel. The scale mode will then be reset to SCALE_MANUALLY. If you want to 'lock' one of the three automatic
@@ -582,7 +595,7 @@ public class JImagePanel extends JPanel implements Scrollable {
      *
      * @param scaleMode new scale mode.
      */
-    public void setScaleMode(final int scaleMode) {
+    public void setScaleMode(final ScaleMode scaleMode) {
         _scaleMode = scaleMode;
         updateScaleFactor();
         repaint();
