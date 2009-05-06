@@ -9,7 +9,7 @@ import java.awt.image.VolatileImage;
 /**
  * A JImagePanel is a component which allows you to display images with swing. Other than the JLabel class, which is
  * more suitable for displaying icons or small gifs, the JImagePanel is meant to be used for larger images. It also
- * offers a basic shared interaction as it allows to scale and translate the image directly (these options can of course
+ * offers a basic user interaction as it allows to scale and translate the image directly (these options can of course
  * be disabled). By default, the image can be rescaled usig the mouse wheel and translated by dragging the mouse with
  * the first mouse button pressed.<br><br>
  * <p/>
@@ -46,7 +46,7 @@ public class JImagePanel extends JPanel implements Scrollable {
      */
     public static final int SCALE_BOTH = 102;
     /**
-     * Constant used to tell the JImagePanel to scale according to the value specified by the shared's input.
+     * Constant used to tell the JImagePanel to scale according to the value specified by the user's input.
      */
     public static final int SCALE_MANUALLY = 103;
 
@@ -78,26 +78,12 @@ public class JImagePanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Displays a JFrame wrapping a JImagePanel. The displayed image will not be manually scalable or translatable and
-     * will be scaled to fit the frame.
-     *
-     * @param title Title for the new frame.
-     * @param image Image to display.
-     */
-    public static void showStaticImageFrame(final String title, final Image image) {
-        final JFrame frame = getFrameInstance(image, false, false);
-        frame.setTitle(title);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setVisible(true);
-    }
-
-    /**
-     * Displays a JFrame wrapping a JImagePanel. The shared will be able to scale and translate the image manually.
+     * Displays a JFrame wrapping a JImagePanel. The user will be able to scale and translate the image manually.
      *
      * @param title Title fo the new frame.
      * @param image Image to display.
      */
-    public static void showDynamicImageFrame(final String title, final Image image) {
+    public static void showInFrame(final String title, final Image image) {
         final JFrame frame = getFrameInstance(image, true, true);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setTitle(title);
@@ -142,23 +128,7 @@ public class JImagePanel extends JPanel implements Scrollable {
      * @param title  Titel for the new dialog.
      * @param image  Image to display.
      */
-    public static void showStaticDialog(final Frame parent, final boolean modal, final String title, final Image image) {
-        final JDialog dlg = getDialogInstance(parent, modal, image, false, false);
-        dlg.setTitle(title);
-        dlg.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        dlg.setVisible(true);
-    }
-
-    /**
-     * Displays a JDialog wrapping a JImagePanel. The displayed image will not be manually scalable or translatable and
-     * will be scaled to fit the dialog.
-     *
-     * @param parent Parent frame for the dialog. May be null.
-     * @param modal  Whether or not the dialog should be modal
-     * @param title  Titel for the new dialog.
-     * @param image  Image to display.
-     */
-    public static void showDynamicDialog(final Frame parent, final boolean modal, final String title, final Image image) {
+    public static void showInDialog(final Frame parent, final boolean modal, final String title, final Image image) {
         final JDialog dlg = getDialogInstance(parent, modal, image, true, true);
         dlg.setTitle(title);
         dlg.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -166,7 +136,7 @@ public class JImagePanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Returns a new 'static' JImagePanel instance, meaning the shared will not be allowed to translate or rescale the
+     * Returns a new 'static' JImagePanel instance, meaning the user will not be allowed to translate or rescale the
      * image by mouse interaction. This is a mere conveniance method.
      *
      * @param image Image to display.
@@ -229,7 +199,7 @@ public class JImagePanel extends JPanel implements Scrollable {
     /**
      * Scale factor.
      */
-    protected double _scaleAmount;
+    protected double _scaleFactor;
 
     /**
      * Horizontal translation.
@@ -257,7 +227,7 @@ public class JImagePanel extends JPanel implements Scrollable {
     protected boolean _scalable;
 
     /**
-     * Determines whether the image can be translated manually by the shared.
+     * Determines whether the image can be translated manually by the user.
      */
     protected boolean _draggable;
 
@@ -300,7 +270,7 @@ public class JImagePanel extends JPanel implements Scrollable {
         setScalable(true);
 
         /* Initialize internal variables */
-        _scaleAmount = 1.;
+        _scaleFactor = 1.;
         _translationX = 0.;
         _translationY = 0.;
         _transform = new AffineTransform();
@@ -320,9 +290,9 @@ public class JImagePanel extends JPanel implements Scrollable {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 if (_scalable) {
                     _scaleMode = SCALE_MANUALLY;
-                    _scaleAmount *= e.getUnitsToScroll() > 0 ? 1 + 0.03 * _scaleRate : 1 - 0.03 * _scaleRate;
-                    if (_scaleAmount < 0)
-                        _scaleAmount = 0.01;
+                    _scaleFactor *= e.getUnitsToScroll() > 0 ? 1 + 0.03 * _scaleRate : 1 - 0.03 * _scaleRate;
+                    if (_scaleFactor < 0)
+                        _scaleFactor = 0.01;
                     repaint();
                 }
             }
@@ -338,8 +308,8 @@ public class JImagePanel extends JPanel implements Scrollable {
 
                         final double dx = _lastMousePos.x - p.x;
                         final double dy = _lastMousePos.y - p.y;
-                        final double scaledWidth = _imageWidth * _scaleAmount;
-                        final double scaledHeight = _imageHeight * _scaleAmount;
+                        final double scaledWidth = _imageWidth * _scaleFactor;
+                        final double scaledHeight = _imageHeight * _scaleFactor;
                         final double newX = (width - scaledWidth) / 2 + _translationX - dx;
                         final double newY = (height - scaledHeight) / 2 + _translationY - dy;
 
@@ -458,28 +428,14 @@ public class JImagePanel extends JPanel implements Scrollable {
             final int width = getWidth();
             final int height = getHeight();
 
-            switch (_scaleMode) {
-                case SCALE_VERTICAL:
-                    _scaleAmount = ((double) getHeight()) / _imageHeight;
-                    break;
-                case SCALE_HORIZONTAL:
-                    _scaleAmount = ((double) getWidth()) / _imageWidth;
-                    break;
-                case SCALE_BOTH:
-                    final double scaleX = ((double) getHeight()) / _imageHeight;
-                    final double scaleY = ((double) getWidth()) / _imageWidth;
-                    _scaleAmount = Math.min(scaleX, scaleY);
-                    break;
-            }
-
             /* find suitable image position */
-            double x = (width - _imageWidth * _scaleAmount) / 2 + _translationX;
-            double y = (height - _imageHeight * _scaleAmount) / 2 + _translationY;
+            double x = (width - _imageWidth * _scaleFactor) / 2 + _translationX;
+            double y = (height - _imageHeight * _scaleFactor) / 2 + _translationY;
 
             /* Modify transform */
             _transform.setToIdentity();
             _transform.translate(x, y);
-            _transform.scale(_scaleAmount, _scaleAmount);
+            _transform.scale(_scaleFactor, _scaleFactor);
 
             /* Draw the image buffer */
             g2.drawImage(_buffer, _transform, null);
@@ -487,7 +443,30 @@ public class JImagePanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Returns the rate at which the scale factor changes when the shared moved the mouse wheel. A rate of 1 is
+     * If the set scale mode indicates that the image size should adapt automatically following a given rule, this
+     * method adapts the scale factor to the current canvas size. If the current scale mode is set to
+     * {@link net.sarcommand.swingextensions.imagepanel.JImagePanel#SCALE_MANUALLY}, this method has no effect.
+     *
+     * This method will be invoked whenever the scale mode is modified or the component size changes.
+     */
+    private void updateScaleFactor() {
+        switch (_scaleMode) {
+            case SCALE_VERTICAL:
+                _scaleFactor = ((double) getHeight()) / _imageHeight;
+                break;
+            case SCALE_HORIZONTAL:
+                _scaleFactor = ((double) getWidth()) / _imageWidth;
+                break;
+            case SCALE_BOTH:
+                final double scaleX = ((double) getHeight()) / _imageHeight;
+                final double scaleY = ((double) getWidth()) / _imageWidth;
+                _scaleFactor = Math.min(scaleX, scaleY);
+                break;
+        }
+    }
+
+    /**
+     * Returns the rate at which the scale factor changes when the user moves the mouse wheel. A rate of 1 is
      * considered a change of 3% per wheel event.
      *
      * @return Rate at which scale factor changes.
@@ -497,8 +476,10 @@ public class JImagePanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Sets the rate at which the scale factor changes when the shared moved the mouse wheel. A rate of 1 is considered
+     * Sets the rate at which the scale factor changes when the user moved the mouse wheel. A rate of 1 is considered
      * a change of 3% per wheel event.
+     *
+     * @param scaleRate the rate at which the scale factor changes when the user moves the mouse wheel
      */
     public void setScaleRate(final double scaleRate) {
         _scaleRate = scaleRate;
@@ -516,7 +497,7 @@ public class JImagePanel extends JPanel implements Scrollable {
 
     /**
      * Sets the event mask used to determine whether the image should be tanslated when receiving a mouseDragged event.
-     * The default mask is {@link MouseEvent#BUTTON1_MASK}, which means the image will be translated when the shared
+     * The default mask is {@link MouseEvent#BUTTON1_MASK}, which means the image will be translated when the user
      * drags the mouse with the first mouse button pressed. You could for example change this behaviour to {@link
      * KeyEvent#CTRL_MASK} & {@link MouseEvent#BUTTON1_MASK} if you wanted the image to translate only if the control
      * key was pressed.
@@ -529,6 +510,8 @@ public class JImagePanel extends JPanel implements Scrollable {
 
     /**
      * Returns true if the image may be scaled manually, false otherwise.
+     *
+     * @return whether the image may be scaled manually.
      */
     public boolean isScalable() {
         return _scalable;
@@ -545,6 +528,8 @@ public class JImagePanel extends JPanel implements Scrollable {
 
     /**
      * Returns true if the image may be dragged using the mouse, false otherwise.
+     *
+     * @return whether the image may be dragged.
      */
     public boolean isDraggable() {
         return _draggable;
@@ -569,7 +554,7 @@ public class JImagePanel extends JPanel implements Scrollable {
     public void setToIdentity() {
         _translationX = 0;
         _translationY = 0;
-        _scaleAmount = 1;
+        _scaleFactor = 1;
         _scaleMode = SCALE_MANUALLY;
         repaint();
     }
@@ -578,6 +563,7 @@ public class JImagePanel extends JPanel implements Scrollable {
      * Returns the current scale mode.
      *
      * @see JImagePanel#setScaleMode
+     * @return the current scale mode.
      */
     public int getScaleMode() {
         return _scaleMode;
@@ -585,12 +571,12 @@ public class JImagePanel extends JPanel implements Scrollable {
 
     /**
      * Sets the scale mode property. The scale mode determines in which way the JImagePanel will try to fit the image to
-     * the panels size: <li>{@link JImagePanel#SCALE_MANUALLY} scales the image according to the shared's mouse wheel
+     * the panels size: <li>{@link JImagePanel#SCALE_MANUALLY} scales the image according to the user's mouse wheel
      * interaction</li> <li>{@link JImagePanel#SCALE_HORIZONTAL} attempts to fit the image horizontally, regardless of
      * it's height</li> <li>{@link JImagePanel#SCALE_VERTICAL} attempts to fit the image vertically, regardless of it's
      * width. <li>{@link JImagePanel#SCALE_BOTH} tries to find the best fit for the image in both dimensions</li>
      * <p/>
-     * Note that as long as scaling is allowed, the shared will still be able to change the scale factor using the mouse
+     * Note that as long as scaling is allowed, the user will still be able to change the scale factor using the mouse
      * wheel. The scale mode will then be reset to SCALE_MANUALLY. If you want to 'lock' one of the three automatic
      * scale modes you will have to invoke {@link JImagePanel#setScalable(boolean)} with a 'false' argument.
      *
@@ -598,27 +584,33 @@ public class JImagePanel extends JPanel implements Scrollable {
      */
     public void setScaleMode(final int scaleMode) {
         _scaleMode = scaleMode;
+        updateScaleFactor();
         repaint();
     }
 
     /**
      * Returns the current scale factor.
+     *
+     * @return the current scale factor.
      */
-    public double getScaleAmount() {
-        return _scaleAmount;
+    public double getScaleFactor() {
+        return _scaleFactor;
     }
 
     /**
      * Set's the scale factor to be used by this image panel.
      *
-     * @param scaleAmount new scale factor
+     * @param scaleFactor new scale factor
      */
-    public void setScaleAmount(final double scaleAmount) {
-        _scaleAmount = scaleAmount;
+    public void setScaleFactor(final double scaleFactor) {
+        _scaleFactor = scaleFactor;
+        repaint();
     }
 
     /**
      * Returns the translation in x-direction.
+     *
+     * @return the translation in x-direction.
      */
     public double getTranslationX() {
         return _translationX;
@@ -626,6 +618,8 @@ public class JImagePanel extends JPanel implements Scrollable {
 
     /**
      * Sets the translation in x-direction.
+     *
+     * @param translationX the translation in x-direction.
      */
     public void setTranslationX(final double translationX) {
         _translationX = translationX;
@@ -633,6 +627,8 @@ public class JImagePanel extends JPanel implements Scrollable {
 
     /**
      * Returns the translation in y-direction.
+     *
+     * @return the translation in y-direction.
      */
     public double getTranslationY() {
         return _translationY;
@@ -640,28 +636,54 @@ public class JImagePanel extends JPanel implements Scrollable {
 
     /**
      * Sets the translation in y-direction.
+     *
+     * @param translationY the translation in y-direction.
      */
     public void setTranslationY(final double translationY) {
         _translationY = translationY;
     }
 
+    /**
+     * @see javax.swing.Scrollable#getPreferredScrollableViewportSize()
+     */
     public Dimension getPreferredScrollableViewportSize() {
         return _image == null ? new Dimension(20, 20) : new Dimension(_imageWidth, _imageHeight);
     }
 
+    /**
+     * @see javax.swing.Scrollable#getScrollableBlockIncrement(java.awt.Rectangle, int, int)
+     */
     public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
         return 20;
     }
 
+    /**
+     * @see javax.swing.Scrollable#getScrollableTracksViewportHeight()
+     */
     public boolean getScrollableTracksViewportHeight() {
         return true;
     }
 
+    /**
+     * @see javax.swing.Scrollable#getScrollableTracksViewportWidth()
+     */
     public boolean getScrollableTracksViewportWidth() {
         return true;
     }
 
+    /**
+     * @see Scrollable#getScrollableUnitIncrement(java.awt.Rectangle, int, int)
+     */
     public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
         return 20;
+    }
+
+    /**
+     * @see Component#setBounds(int, int, int, int)
+     */
+    @Override
+    public void setBounds(final int x, final int y, final int width, final int height) {
+        super.setBounds(x, y, width, height);
+        updateScaleFactor();
     }
 }
