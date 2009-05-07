@@ -52,7 +52,7 @@ public class ImagePreviewAccessory extends AbstractFileChooserAccessory {
 
     private void initialize() {
         _imagePanel = new JImagePanel();
-        _imagePanel.setScaleMode(JImagePanel.SCALE_BOTH);
+        _imagePanel.setScaleMode(JImagePanel.ScaleMode.SCALE_BEST_FIT);
 
         _loadIndicator = new JProgressIndicator();
         _loadIndicator.setIndicatingProgress(true);
@@ -112,7 +112,7 @@ public class ImagePreviewAccessory extends AbstractFileChooserAccessory {
                     public void imageLoaded(final BufferedImage image) {
                         if (image != null) {
                             _imagePanel.setImage(image);
-                            _imagePanel.setScaleMode(JImagePanel.SCALE_BOTH);
+                            _imagePanel.setScaleMode(JImagePanel.ScaleMode.SCALE_BEST_FIT);
                             _cardLayout.show(_accessoryPanel, IMAGE_PANEL_LAYOUT_KEY);
                         } else
                             _cardLayout.show(_accessoryPanel, NO_IMAGE_LABEL_LAYOUT_KEY);
