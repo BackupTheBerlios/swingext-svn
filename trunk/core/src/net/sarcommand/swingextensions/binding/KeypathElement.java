@@ -151,7 +151,7 @@ public class KeypathElement {
             if (_ignoreAccessControl)
                 _getMethod.setAccessible(true);
 
-            if (!Modifier.isPublic(_getMethod.getModifiers()) || _ignoreAccessControl)
+            if (!(Modifier.isPublic(_getMethod.getModifiers()) || _ignoreAccessControl))
                 _getMethod = null;
         } else if (_getField != null) {
             _valueClass = _getField.getType();
@@ -159,7 +159,7 @@ public class KeypathElement {
             if (_ignoreAccessControl)
                 getField.setAccessible(true);
 
-            if (!Modifier.isPublic(getField.getModifiers()) || _ignoreAccessControl)
+            if (!(Modifier.isPublic(getField.getModifiers()) || _ignoreAccessControl))
                 _getField = null;
         }
     }
