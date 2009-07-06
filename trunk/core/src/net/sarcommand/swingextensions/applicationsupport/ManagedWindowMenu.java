@@ -12,7 +12,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
- * <hr/> Copyright 2006-2008 Torsten Heup
+ * Creates a JMenu which will hold an item for every element in a given WindowGroup. The menu items will automatically
+ * bring a window to front when it is clicked. The menu will update itself when items are added to or removed from the
+ * group automatically. You can add additional items to the menu, which will be preserved during updates.
+ * <p/>
+ * <hr/> Copyright 2006-2009 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -71,7 +75,7 @@ public class ManagedWindowMenu extends JMenu {
     protected void focusChanged() {
         for (WindowGroup g : _windowGroups) {
             final Window window = g.getCurrentFocusOwner();
-            final String windowTitle = g.getWindowName(window);
+            final String windowTitle = g.getWindowID(window);
             if (window != null) {
                 for (Item t : _items) {
                     if (t.getText().equals(windowTitle) && t.getGroup().equals(g)) {
@@ -91,7 +95,7 @@ public class ManagedWindowMenu extends JMenu {
         ButtonGroup buttonGroup = new ButtonGroup();
         for (Iterator<WindowGroup> it = _windowGroups.iterator(); it.hasNext();) {
             final WindowGroup group = it.next();
-            for (String w : group.getWindowNames()) {
+            for (String w : group.getWindowIDs()) {
                 final Item item = new Item(w, group);
                 add(item);
                 item.addActionListener(_actionListener);
