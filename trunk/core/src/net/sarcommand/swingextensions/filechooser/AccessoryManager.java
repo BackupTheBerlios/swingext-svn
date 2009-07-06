@@ -77,7 +77,7 @@ public abstract class AccessoryManager implements ComponentVariation<JFileChoose
      */
     public AccessoryManager(final JFileChooser chooser) {
         this();
-        attach(chooser);
+        attachTo(chooser);
     }
 
     /**
@@ -86,7 +86,7 @@ public abstract class AccessoryManager implements ComponentVariation<JFileChoose
      *
      * @param chooser JFileChooser instance on which this manager should be installed
      */
-    public void attach(final JFileChooser chooser) {
+    public void attachTo(final JFileChooser chooser) {
         _chooser = chooser;
         _accessoryPane = new JPanel();
         _accessoryComponents = new HashMap<Integer, JComponent>(4);
