@@ -38,6 +38,15 @@ public abstract class SwingBinding {
             SwingUtilities.invokeLater(runnable);
     }
 
+    protected void setClientPropertyOnTarget(final JComponent target) {
+        final SwingBinding previous = (SwingBinding) target.getClientProperty(getClientProperty());
+        if (previous != null)
+            previous.detach();
+        target.putClientProperty(getClientProperty(), this);
+    }
+
+    protected abstract String getClientProperty();
+
     protected abstract void targetBeanChanged();
 
     public abstract void componentChanged();
