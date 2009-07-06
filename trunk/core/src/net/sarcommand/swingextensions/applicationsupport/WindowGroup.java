@@ -1,12 +1,17 @@
 package net.sarcommand.swingextensions.applicationsupport;
 
-import net.sarcommand.swingextensions.utilities.*;
-import org.w3c.dom.*;
+import net.sarcommand.swingextensions.utilities.XMLExternalizable;
+import net.sarcommand.swingextensions.utilities.XMLFormatException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.beans.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.*;
 import java.util.List;
 
@@ -169,7 +174,7 @@ public class WindowGroup implements XMLExternalizable {
      * @param window the window being queried.
      * @return the name under which the given window was registered, or null if 'window' is not member of this group.
      */
-    public String getWindowName(final Window window) {
+    public String getWindowID(final Window window) {
         return _windowToIdMapping.get(window);
     }
 
@@ -200,7 +205,7 @@ public class WindowGroup implements XMLExternalizable {
      *
      * @return the names for the windows in this group.
      */
-    public Collection<String> getWindowNames() {
+    public Collection<String> getWindowIDs() {
         return new ArrayList<String>(_idToWindowMapping.keySet());
     }
 
@@ -332,4 +337,4 @@ public class WindowGroup implements XMLExternalizable {
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         _pcs.removePropertyChangeListener(listener);
     }
-}                                                                            
+}
