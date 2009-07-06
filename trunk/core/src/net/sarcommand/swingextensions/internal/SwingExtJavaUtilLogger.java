@@ -133,4 +133,20 @@ public class SwingExtJavaUtilLogger implements SwingExtLogger {
         if (SwingExtLogging.isLoggingEnabled())
             _delegate.warning(convertMessage(msg, t));
     }
+
+    public boolean isTraceEnabled() {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean isDebugEnabled() {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean isInfoEnabled() {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean isWarnEnabled() {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

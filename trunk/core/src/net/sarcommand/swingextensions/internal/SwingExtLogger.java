@@ -23,6 +23,14 @@ package net.sarcommand.swingextensions.internal;
 public interface SwingExtLogger {
     public void init(final Class clazz);
 
+    public boolean isTraceEnabled();
+
+    public boolean isDebugEnabled();
+
+    public boolean isInfoEnabled();
+
+    public boolean isWarnEnabled();
+
     public void trace(final String msg);
 
     public void trace(final String msg, final Throwable t);

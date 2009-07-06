@@ -80,4 +80,20 @@ public class SwingExtDummyLogger implements SwingExtLogger {
     public void warn(final String msg, final Throwable t) {
 
     }
+
+    public boolean isTraceEnabled() {
+        return false;
+    }
+
+    public boolean isDebugEnabled() {
+        return false;
+    }
+
+    public boolean isInfoEnabled() {
+        return false;
+    }
+
+    public boolean isWarnEnabled() {
+        return false;
+    }
 }
