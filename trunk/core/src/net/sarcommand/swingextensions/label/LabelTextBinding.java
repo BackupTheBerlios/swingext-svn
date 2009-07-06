@@ -38,11 +38,11 @@ public class LabelTextBinding extends SwingBinding {
         _path = new Keypath<String>(keypath, ignoreAccessControl);
         _observer = _path.createObserver(targetBean, getPropertyChangeListener());
 
-        _targetLabel.putClientProperty(CLIENT_PROPERTY, this);
+        setClientPropertyOnTarget(targetLabel);
     }
 
     public LabelTextBinding(final JLabel targetLabel, final Object targetBean, final String keypath) {
-        this(targetLabel, targetLabel, keypath, false);
+        this(targetLabel, targetBean, keypath, true);
     }
 
     public void componentChanged() {
@@ -61,5 +61,9 @@ public class LabelTextBinding extends SwingBinding {
             }
         };
         dispatchOnEDT(runnable);
+    }
+
+    protected String getClientProperty() {
+        return CLIENT_PROPERTY;
     }
 }
