@@ -29,12 +29,9 @@ public class DefaultActionProvider implements ActionProvider {
     }
 
     /**
-     * @see net.sarcommand.swingextensions.actions.ActionProvider#createReflectedAction(Object, Object, String)
+     * @see ActionProvider#setPropertiesForAction(Object, javax.swing.Action)
      */
-    public ReflectedAction createReflectedAction(final Object identifier, final Object target,
-                                                 final String methodName) {
-        final ReflectedAction action = new ReflectedAction(identifier, target, methodName);
+    public void setPropertiesForAction(Object identifier, Action action) {
         action.putValue(Action.NAME, identifier.toString());
-        return action;
     }
 }

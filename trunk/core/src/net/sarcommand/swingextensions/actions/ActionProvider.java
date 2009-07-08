@@ -1,5 +1,7 @@
 package net.sarcommand.swingextensions.actions;
 
+import javax.swing.*;
+
 /**
  * Interface for classes used to instanciate Actions. Instances of this class will mainly be used by the ActionManager,
  * but can be employed by themselves as well.
@@ -26,13 +28,11 @@ public interface ActionProvider {
     public ManagedAction createManagedAction(final Object identifier);
 
     /**
-     * Used to obtain a ReflectedAction, using the given target object and method name.
+     * Sets the properties this provider associates with the specified identifier to the given action. This method does
+     * not guarantee any specific properties to be set.
      *
-     * @param identifier The unique action identifier to use
-     * @param target     The target object on which the specified method will be invoked
-     * @param methodName The name of the method to invoke when the action is perfomed
-     * @return a ReflectedAction, using the given target object and method name.
-     * @see ReflectedAction
+     * @param identifier The unique identifier of the action to be mapped.
+     * @param action     The action being mapped.
      */
-    public ReflectedAction createReflectedAction(final Object identifier, final Object target, final String methodName);
+    public void setPropertiesForAction(Object identifier, Action action);
 }

@@ -1,11 +1,11 @@
 package net.sarcommand.swingextensions.actions;
 
-import net.sarcommand.swingextensions.applicationsupport.*;
-import net.sarcommand.swingextensions.utilities.*;
+import net.sarcommand.swingextensions.applicationsupport.ImageCache;
+import net.sarcommand.swingextensions.utilities.KeyUtilities;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
+import java.util.ResourceBundle;
 
 /**
  * An ActionProvider instance using a resource bundle to create Action instances. It will use the toString() method on
@@ -74,9 +74,10 @@ public class ResourceBundleActionProvider implements ActionProvider {
      * @return a ReflectedAction from the resource bundle, using the given target object and method name.
      * @see ReflectedAction
      */
-    public ReflectedAction createReflectedAction(final Object identifier, final Object target, final String methodName) {
+    public ReflectedAction createReflectedAction(final Object identifier, final Object target,
+                                                 final String methodName) {
         final ReflectedAction action = new ReflectedAction(identifier, target, methodName);
-        map(identifier, action);
+        setPropertiesForAction(identifier, action);
 
         return action;
     }
@@ -89,7 +90,7 @@ public class ResourceBundleActionProvider implements ActionProvider {
      */
     public ManagedAction createManagedAction(final Object identifier) {
         final ManagedAction action = new ManagedAction(identifier);
-        map(identifier, action);
+        setPropertiesForAction(identifier, action);
 
         return action;
     }
@@ -101,7 +102,7 @@ public class ResourceBundleActionProvider implements ActionProvider {
      * @param identifier Unique action identifier used to look up properties in the resource bundle.
      * @param action     The action to which the looked up properties will be mapped.
      */
-    public void map(Object identifier, Action action) {
+    public void setPropertiesForAction(Object identifier, Action action) {
         final String prefix = identifier.toString() + '.';
         final int length = prefix.length();
 
