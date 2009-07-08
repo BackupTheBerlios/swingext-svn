@@ -57,7 +57,7 @@ import java.util.LinkedList;
  * been set, the ActionManager will assume that the action is a focus action since this should apply in the majority of
  * cases.
  * <p/>
- * <hr/> Copyright 2006 Torsten Heup
+ * <hr/> Copyright 2006-2009 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -67,54 +67,56 @@ import java.util.LinkedList;
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- *
- * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
  */
 public class ActionManager {
     /**
      * The ActionProvider being used to create new Action instances.
      */
-    private static ActionProvider __actionProvider;
+    private ActionProvider __actionProvider;
 
     /**
      * The default handler to which all actions will be passed if no suitable ActionHandler could be found in the
      * ResponderChain.
      */
-    private static ActionHandler __defaultActionHandler;
+    private ActionHandler __defaultActionHandler;
 
     /**
      * This map is being used to cache loaded actions, making sure that each action identifier resolves to a singleton
      * action.
      */
-    private static HashMap<Object, Action> __actionMap;
+    private HashMap<Object, Action> __actionMap;
 
     /**
      * This map will be used to keep track of action groups.
      */
-    private static HashMap<Object, Collection<Action>> __groups;
+    private HashMap<Object, Collection<Action>> __groups;
 
     /**
      * Flag determining whether the ActionManager has been properly initialized.
      */
-    protected static boolean __initialized;
+    protected boolean __initialized;
 
     /**
      * This field will be used to track the last permanent focus owner for actions which should origin in the focued
      * component.
      */
-    protected static Component __lastFocusOwner;
+    protected Component __lastFocusOwner;
 
     /**
      * This field implements a weak references stack of the last focused windows. If an action is declared to origin in
      * the currently focued component, the ActionManager will use this list to make sure that the enclosing window of
      * the focused component is still visible.
      */
-    protected static LinkedList<WeakReference<Window>> __focusedWindows;
+    protected LinkedList<WeakReference<Window>> __focusedWindows;
+
+    public ActionManager() {
+        initialize();
+    }
 
     /**
      * Initializes the ActionManager. This method will automatically be triggered by getAction.
      */
-    public static void initialize() {
+    protected void initialize() {
         if (__initialized)
             return;
         __focusedWindows = new LinkedList<WeakReference<Window>>();
@@ -154,7 +156,7 @@ public class ActionManager {
      *
      * @param provider a factory used to create new actions.
      */
-    public static void setActionProvider(final ActionProvider provider) {
+    public void setActionProvider(final ActionProvider provider) {
         __actionProvider = provider;
     }
 
@@ -165,7 +167,7 @@ public class ActionManager {
      * @param identifier Identifier of the action being requested, non-null.
      * @return action for the given identifier.
      */
-    public static Action getAction(final Object identifier) {
+    public Action getAction(final Object identifier) {
         if (!__initialized)
             initialize();
 
@@ -207,7 +209,7 @@ public class ActionManager {
      * @param object Object to check.
      * @return whether the specified object is an action control
      */
-    protected static boolean isActionControl(final Object object) {
+    protected boolean isActionControl(final Object object) {
         if (object == null)
             return false;
         if (object instanceof JMenuItem)
@@ -224,7 +226,7 @@ public class ActionManager {
      * @param source        source of the ActionEvent fired
      * @param actionCommand action command to be passed to the ActionEvent
      */
-    public static void invoke(final Object actionID, final Object source, final String actionCommand) {
+    public void invoke(final Object actionID, final Object source, final String actionCommand) {
         final Action action = getAction(actionID);
         if (action == null)
             throw new IllegalArgumentException("Illegal actionID: " + action);
@@ -238,7 +240,7 @@ public class ActionManager {
      * @param actionIdentifier Identifier of the action that has been fired.
      * @param event            The generated action event.
      */
-    public static void actionPerformed(final Object actionIdentifier, final ActionEvent event) {
+    public void actionPerformed(final Object actionIdentifier, final ActionEvent event) {
         if (actionIdentifier == null)
             throw new IllegalArgumentException("Parameter 'actionIdentifier' must not be null!");
         if (event == null)
@@ -341,7 +343,7 @@ public class ActionManager {
      *
      * @return the provider instance responsible for creating new actions.
      */
-    public static ActionProvider getActionProvider() {
+    public ActionProvider getActionProvider() {
         return __actionProvider;
     }
 
@@ -352,7 +354,7 @@ public class ActionManager {
      * @return action handler instance which will be used when no suitable responder for an action could be found, may
      *         be null.
      */
-    public static ActionHandler getDefaultActionHandler() {
+    public ActionHandler getDefaultActionHandler() {
         return __defaultActionHandler;
     }
 
@@ -362,13 +364,7 @@ public class ActionManager {
      * @param defaultActionHandler action handler which is being used when no suitable responder for an action can be
      *                             found, may be null.
      */
-    public static void setDefaultActionHandler(ActionHandler defaultActionHandler) {
+    public void setDefaultActionHandler(ActionHandler defaultActionHandler) {
         __defaultActionHandler = defaultActionHandler;
-    }
-
-    /**
-     * This class can not be instanciated
-     */
-    private ActionManager() {
     }
 }
