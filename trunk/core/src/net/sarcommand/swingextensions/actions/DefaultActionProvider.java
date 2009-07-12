@@ -20,18 +20,9 @@ import javax.swing.*;
  */
 public class DefaultActionProvider implements ActionProvider {
     /**
-     * @see net.sarcommand.swingextensions.actions.ActionProvider#createManagedAction(Object)
+     * @see ActionProvider#configurePropertiesForAction(Object, javax.swing.Action)
      */
-    public ManagedAction createManagedAction(final Object identifier) {
-        final ManagedAction action = new ManagedAction(identifier);
-        action.putValue(Action.NAME, identifier.toString());
-        return action;
-    }
-
-    /**
-     * @see ActionProvider#setPropertiesForAction(Object, javax.swing.Action)
-     */
-    public void setPropertiesForAction(Object identifier, Action action) {
+    public void configurePropertiesForAction(Object identifier, Action action) {
         action.putValue(Action.NAME, identifier.toString());
     }
 }

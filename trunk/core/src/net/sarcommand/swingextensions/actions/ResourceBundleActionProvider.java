@@ -8,8 +8,8 @@ import java.awt.*;
 import java.util.ResourceBundle;
 
 /**
- * An ActionProvider instance using a resource bundle to create Action instances. It will use the toString() method on
- * the Action's identifier and use it to locate the according properties. By default, it will look for the pattern
+ * An ActionProvider instance using a resource bundle to configure Action instances. It will use the toString() method
+ * on the Action's identifier and use it to locate the according properties. By default, it will look for the pattern
  * <code><actionIdentifier.toString()>.<actionProperty></code>. The 'actionProperty' element is the property of the
  * Action instance you want to set. <code>myAction.Name</code> would set the 'name' property for an Action identified by
  * the string 'myAction'. Apart from the obvious string properties (Name, ShortDescription etc) you can also set image
@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
  * while you use command+c on the mac. To circumvent this issue, you can use the token 'menu' in your property files to
  * define the correct accelerator. The action provider will replace it with the correct platform-specific key for you.
  * <p/>
- * <hr/> Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2009 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -66,43 +66,13 @@ public class ResourceBundleActionProvider implements ActionProvider {
     }
 
     /**
-     * Used to obtain a ReflectedAction from the resource bundle, using the given target object and method name.
-     *
-     * @param identifier The unique action identifier to use
-     * @param target     The target object on which the specified method will be invoked
-     * @param methodName The name of the method to invoke when the action is perfomed
-     * @return a ReflectedAction from the resource bundle, using the given target object and method name.
-     * @see ReflectedAction
-     */
-    public ReflectedAction createReflectedAction(final Object identifier, final Object target,
-                                                 final String methodName) {
-        final ReflectedAction action = new ReflectedAction(identifier, target, methodName);
-        setPropertiesForAction(identifier, action);
-
-        return action;
-    }
-
-    /**
-     * Creates a ManagedAction from the ResourceBundle.
-     *
-     * @param identifier The unique action identifier to use
-     * @return a ManagedAction from the resource bundle
-     */
-    public ManagedAction createManagedAction(final Object identifier) {
-        final ManagedAction action = new ManagedAction(identifier);
-        setPropertiesForAction(identifier, action);
-
-        return action;
-    }
-
-    /**
      * This method will map all properties found in the resource bundle for the action identifier to the given action
      * instance. Subclasses which provide their own action implementation may want to reuse this method.
      *
      * @param identifier Unique action identifier used to look up properties in the resource bundle.
      * @param action     The action to which the looked up properties will be mapped.
      */
-    public void setPropertiesForAction(Object identifier, Action action) {
+    public void configurePropertiesForAction(Object identifier, Action action) {
         final String prefix = identifier.toString() + '.';
         final int length = prefix.length();
 

@@ -2,6 +2,7 @@ package net.sarcommand.swingextensions.actions;
 
 import net.sarcommand.swingextensions.utilities.SwingExtUtil;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Method;
 
@@ -23,7 +24,7 @@ import java.lang.reflect.Method;
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-public class ReflectedAction extends ManagedAction {
+public class ReflectedAction extends AbstractAction {
     /**
      * The target object on which the declared method will be invoked.
      */
@@ -32,6 +33,7 @@ public class ReflectedAction extends ManagedAction {
      * The name of the method to invoke.
      */
     protected String _methodName;
+    private final Object _identifier;
 
     /**
      * Creates a new ReflectedAction instance.
@@ -41,7 +43,8 @@ public class ReflectedAction extends ManagedAction {
      * @param methodName The name of the method to invoke when the action is performed.
      */
     public ReflectedAction(final Object identifier, final Object target, final String methodName) {
-        super(identifier);
+        super();
+        _identifier = identifier;
         if (target == null)
             throw new IllegalArgumentException("Parameter 'target' must not be null!");
         if (methodName == null)
@@ -61,7 +64,7 @@ public class ReflectedAction extends ManagedAction {
         Method method = SwingExtUtil.getMethod(_target, _methodName, Object.class, ActionEvent.class);
         if (method != null) {
             try {
-                method.invoke(_target, getIdentifier(), e);
+                method.invoke(_target, _identifier, e);
                 return;
             } catch (Exception e1) {
                 throw new RuntimeException("Could not access method " + _methodName + " on target " + _target, e1);

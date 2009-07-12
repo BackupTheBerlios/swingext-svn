@@ -3,7 +3,7 @@ package net.sarcommand.swingextensions.actions;
 import javax.swing.*;
 
 /**
- * Interface for classes used to instanciate Actions. Instances of this class will mainly be used by the ActionManager,
+ * Interface for classes used to configure Actions. Instances of this class will mainly be used by the ActionManager,
  * but can be employed by themselves as well.
  * <p/>
  * <hr/> Copyright 2006-2008 Torsten Heup
@@ -19,20 +19,11 @@ import javax.swing.*;
  */
 public interface ActionProvider {
     /**
-     * Creates an ManagedAction instance for the given identifier. How the action is being created has to be determined
-     * by the implementing class.
-     *
-     * @param identifier Unique identifier for an Action
-     * @return the Action corresponding to the specified identifier.
-     */
-    public ManagedAction createManagedAction(final Object identifier);
-
-    /**
      * Sets the properties this provider associates with the specified identifier to the given action. This method does
      * not guarantee any specific properties to be set.
      *
      * @param identifier The unique identifier of the action to be mapped.
      * @param action     The action being mapped.
      */
-    public void setPropertiesForAction(Object identifier, Action action);
+    public void configurePropertiesForAction(Object identifier, Action action);
 }

@@ -72,42 +72,42 @@ public class ActionManager {
     /**
      * The ActionProvider being used to create new Action instances.
      */
-    private ActionProvider __actionProvider;
+    private ActionProvider _actionProvider;
 
     /**
      * The default handler to which all actions will be passed if no suitable ActionHandler could be found in the
      * ResponderChain.
      */
-    private ActionHandler __defaultActionHandler;
+    private ActionHandler _defaultActionHandler;
 
     /**
      * This map is being used to cache loaded actions, making sure that each action identifier resolves to a singleton
      * action.
      */
-    private HashMap<Object, Action> __actionMap;
+    private HashMap<Object, Action> _actionMap;
 
     /**
      * This map will be used to keep track of action groups.
      */
-    private HashMap<Object, Collection<Action>> __groups;
+    private HashMap<Object, Collection<Action>> _groups;
 
     /**
      * Flag determining whether the ActionManager has been properly initialized.
      */
-    protected boolean __initialized;
+    protected boolean _initialized;
 
     /**
      * This field will be used to track the last permanent focus owner for actions which should origin in the focued
      * component.
      */
-    protected Component __lastFocusOwner;
+    protected Component _lastFocusOwner;
 
     /**
      * This field implements a weak references stack of the last focused windows. If an action is declared to origin in
      * the currently focued component, the ActionManager will use this list to make sure that the enclosing window of
      * the focused component is still visible.
      */
-    protected LinkedList<WeakReference<Window>> __focusedWindows;
+    protected LinkedList<WeakReference<Window>> _focusedWindows;
 
     public ActionManager() {
         initialize();
@@ -117,29 +117,29 @@ public class ActionManager {
      * Initializes the ActionManager. This method will automatically be triggered by getAction.
      */
     protected void initialize() {
-        if (__initialized)
+        if (_initialized)
             return;
-        __focusedWindows = new LinkedList<WeakReference<Window>>();
+        _focusedWindows = new LinkedList<WeakReference<Window>>();
 
         final PropertyChangeListener listener = new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 final Object newValue = evt.getNewValue();
                 if (evt.getPropertyName().equals("permanentFocusOwner") && newValue != null
                         && !isActionControl(newValue)) {
-                    __lastFocusOwner = (Component) newValue;
+                    _lastFocusOwner = (Component) newValue;
                 } else if (evt.getPropertyName().equals("focusedWindow")) {
                     if (newValue != null) {
                         /* Check if the window is already part of the stack */
                         WeakReference<Window> wref;
                         Window w;
                         synchronized (ActionManager.class) {
-                            for (Iterator<WeakReference<Window>> it = __focusedWindows.iterator(); it.hasNext();) {
+                            for (Iterator<WeakReference<Window>> it = _focusedWindows.iterator(); it.hasNext();) {
                                 wref = it.next();
                                 w = wref.get();
                                 if (w == null || w.equals(newValue))
                                     it.remove();
                             }
-                            __focusedWindows.add(new WeakReference<Window>((Window) newValue));
+                            _focusedWindows.add(new WeakReference<Window>((Window) newValue));
                         }
                     }
                 }
@@ -148,7 +148,7 @@ public class ActionManager {
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener(listener);
 
-        __initialized = true;
+        _initialized = true;
     }
 
     /**
@@ -157,7 +157,7 @@ public class ActionManager {
      * @param provider a factory used to create new actions.
      */
     public void setActionProvider(final ActionProvider provider) {
-        __actionProvider = provider;
+        _actionProvider = provider;
     }
 
     /**
@@ -168,39 +168,37 @@ public class ActionManager {
      * @return action for the given identifier.
      */
     public Action getAction(final Object identifier) {
-        if (!__initialized)
+        if (!_initialized)
             initialize();
 
         if (identifier == null)
             throw new IllegalArgumentException("Parameter 'identifier' must not be null!");
 
-        if (__actionMap == null)
-            __actionMap = new HashMap<Object, Action>(32);
+        if (_actionMap == null)
+            _actionMap = new HashMap<Object, Action>(32);
 
-        if (__actionProvider == null)
-            __actionProvider = new DefaultActionProvider();
+        if (_actionProvider == null)
+            _actionProvider = new DefaultActionProvider();
 
-        if (!__actionMap.containsKey(identifier)) {
-            final Action action = __actionProvider.createManagedAction(identifier);
-            if (action == null)
-                throw new RuntimeException("Could not obtain action " + identifier + ", the current action " +
-                        "provider is " + __actionProvider);
-            __actionMap.put(identifier, action);
+        if (!_actionMap.containsKey(identifier)) {
+            final ManagedAction action = new ManagedAction(identifier, this);
+            _actionProvider.configurePropertiesForAction(identifier, action);
+            _actionMap.put(identifier, action);
 
             final Object group = action.getValue(ManagedAction.GROUP_KEY);
             if (group != null) {
-                if (__groups == null)
-                    __groups = new HashMap<Object, Collection<Action>>(4);
-                Collection<Action> col = __groups.get(group);
+                if (_groups == null)
+                    _groups = new HashMap<Object, Collection<Action>>(4);
+                Collection<Action> col = _groups.get(group);
                 if (col == null) {
                     col = new LinkedList<Action>();
-                    __groups.put(group, col);
+                    _groups.put(group, col);
                 }
                 col.add(action);
             }
         }
 
-        return __actionMap.get(identifier);
+        return _actionMap.get(identifier);
     }
 
     /**
@@ -237,16 +235,16 @@ public class ActionManager {
      * Invoked by ManagedActions when they have been invoked. The ActionManager will search the responder chain for a
      * suitable action handle to process the triggered action.
      *
-     * @param actionIdentifier Identifier of the action that has been fired.
-     * @param event            The generated action event.
+     * @param action The ManagedAction instance that was triggered.
+     * @param event  The generated action event.
      */
-    public void actionPerformed(final Object actionIdentifier, final ActionEvent event) {
-        if (actionIdentifier == null)
-            throw new IllegalArgumentException("Parameter 'actionIdentifier' must not be null!");
+    public void actionPerformed(final ManagedAction action, final ActionEvent event) {
+        if (action == null)
+            throw new IllegalArgumentException("Parameter 'action' must not be null!");
         if (event == null)
             throw new IllegalArgumentException("Parameter 'event' must not be null!");
 
-
+        final Object actionIdentifier = action.getIdentifier();
         boolean eventWasConsumed = false;
 
         /* Get the action for the given identifier */
@@ -259,7 +257,7 @@ public class ActionManager {
 
         /* Check if this action is marked as a focus action */
         final Object focusActionProperty = a.getValue(ManagedAction.RESPONDER_CHAIN_ROOT);
-        final boolean isComponentAction = __lastFocusOwner == null || (focusActionProperty != null &&
+        final boolean isComponentAction = _lastFocusOwner == null || (focusActionProperty != null &&
                 focusActionProperty.equals(ManagedAction.RESPONDER_CHAIN_ROOT_COMPONENT));
 
         /* Check if a direct delegate has been installed */
@@ -268,27 +266,27 @@ public class ActionManager {
 
         /* Try to find a proper handler for the action */
         Object runner = directDelegate != null ? directDelegate :
-                isComponentAction ? (Component) source : __lastFocusOwner;
+                isComponentAction ? (Component) source : _lastFocusOwner;
 
         /* If the last focused component is installed in a non-visible window, find a visible window and redispatch */
         if (!isComponentAction && runner instanceof JComponent) {
             final Window w = SwingExtUtil.getWindowForComponent((Component) runner);
             if (w == null || !w.isVisible()) {
-                synchronized (ActionManager.class) {
+                synchronized (this) {
                     WeakReference<Window> wref;
                     Window window;
                     while (true) {
-                        wref = __focusedWindows.getLast();
+                        wref = _focusedWindows.getLast();
                         window = wref.get();
                         if (window == null || !window.isVisible())
-                            __focusedWindows.removeLast();
+                            _focusedWindows.removeLast();
                         else {
                             final Window newFocus = window;
                             SwingUtilities.invokeLater(new Runnable() {
                                 public void run() {
                                     newFocus.requestFocus();
                                     event.setSource(newFocus.getFocusOwner());
-                                    actionPerformed(actionIdentifier, event);
+                                    actionPerformed(action, event);
                                 }
                             });
                             return;
@@ -322,15 +320,14 @@ public class ActionManager {
         }
 
         /* Forward the action to the default action consumer */
-        if (!eventWasConsumed && __defaultActionHandler != null)
-            __defaultActionHandler.handleAction(actionIdentifier, event);
+        if (!eventWasConsumed && _defaultActionHandler != null)
+            _defaultActionHandler.handleAction(actionIdentifier, event);
 
         /* Check if the action was a toggle action (got a group). If so, toggle the other actions' selection state */
-        final Action action = getAction(actionIdentifier);
         final Object group = action.getValue(ManagedAction.GROUP_KEY);
-        if (__groups != null && group != null && __groups.containsKey(group)) {
+        if (_groups != null && group != null && _groups.containsKey(group)) {
             action.putValue(Action.SELECTED_KEY, true);
-            final Collection<Action> actions = __groups.get(group);
+            final Collection<Action> actions = _groups.get(group);
             for (Action groupAction : actions) {
                 if (!action.equals(groupAction))
                     groupAction.putValue(Action.SELECTED_KEY, false);
@@ -344,7 +341,7 @@ public class ActionManager {
      * @return the provider instance responsible for creating new actions.
      */
     public ActionProvider getActionProvider() {
-        return __actionProvider;
+        return _actionProvider;
     }
 
     /**
@@ -355,7 +352,7 @@ public class ActionManager {
      *         be null.
      */
     public ActionHandler getDefaultActionHandler() {
-        return __defaultActionHandler;
+        return _defaultActionHandler;
     }
 
     /**
@@ -365,6 +362,6 @@ public class ActionManager {
      *                             found, may be null.
      */
     public void setDefaultActionHandler(ActionHandler defaultActionHandler) {
-        __defaultActionHandler = defaultActionHandler;
+        _defaultActionHandler = defaultActionHandler;
     }
 }
