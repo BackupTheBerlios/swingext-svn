@@ -266,6 +266,8 @@ public class JImagePanel extends JPanel implements Scrollable {
      * Initializes the image panel. All constructors should (really) invoke this method.
      */
     protected void initialize() {
+        _scaleMode = ScaleMode.SCALE_BEST_FIT;
+        
         setupEventHandlers();
 
         _lastMousePos = new Point();
