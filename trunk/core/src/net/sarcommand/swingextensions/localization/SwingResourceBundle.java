@@ -110,4 +110,8 @@ public class SwingResourceBundle extends ResourceBundle {
     public Enumeration<String> getKeys() {
         return _bundle.getKeys();
     }
+
+    public String getString(final Object key) {
+        return _bundle.getString(key.toString());
+    }
 }
