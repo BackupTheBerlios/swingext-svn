@@ -1,5 +1,6 @@
 package net.sarcommand.swingextensions.text;
 
+import net.sarcommand.swingextensions.binding.UpdatePolicy;
 import net.sarcommand.swingextensions.utilities.SearchTask;
 
 import javax.swing.*;
@@ -32,9 +33,19 @@ public class TextUtilities {
         textField.putClientProperty(TextVariation.CLIENT_PROPERTY, variation);
     }
 
-    public static TextComponentTextBinding bindValue(final JTextComponent comp, final Object targetBean,
-                                                     final String keypath, final boolean continuousUpdates) {
-        return new TextComponentTextBinding(comp, targetBean, keypath, continuousUpdates);
+
+    public static TextComponentTextBinding bindTextProperty(final JTextComponent comp, final Object targetBean,
+                                                            final String keypath, final UpdatePolicy updatePolicy) {
+        return new TextComponentTextBinding(comp, targetBean, keypath, updatePolicy);
+    }
+
+    public static PasswordFieldBinding bindPasswordProperty(final JPasswordField comp, final Object targetBean,
+                                                            final String keypath, final UpdatePolicy updatePolicy) {
+        return new PasswordFieldBinding(comp, targetBean, keypath, updatePolicy);
+    }
+
+    public static TextVariation turnIntoMultilineLabel(final JTextPane textPane) {
+        return new MultilineLabelVariation(textPane);
     }
 
     private TextUtilities() {
