@@ -65,7 +65,8 @@ public class ManagedAction extends AbstractAction {
     /**
      * Creates a new ManagedAction using the given identifier.
      *
-     * @param identifier identifier of this action.
+     * @param identifier    identifier of this action.
+     * @param actionManager The ActionManager instance which created this instance.
      */
     public ManagedAction(final Object identifier, final ActionManager actionManager) {
         _identifier = identifier;
