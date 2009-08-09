@@ -30,11 +30,12 @@ public class SatelliteView extends JComponent {
     protected ChangeListener _peerChangeListener;
     protected Paint _viewRectPaint;
 
-    protected Point _dragStart;
+    protected Point _lastDrag;
 
     protected BufferedImage _backBuffer;
     private volatile boolean _contentsUpdated;
     private MouseInputAdapter _mouseInputAdapter;
+    private Rectangle _viewHighlightRectangle;
 
     public SatelliteView(final JScrollPane scrollPane) {
         initialize();
@@ -64,28 +65,64 @@ public class SatelliteView extends JComponent {
         _mouseInputAdapter = new MouseInputAdapter() {
             @Override
             public void mousePressed(final MouseEvent e) {
-                _dragStart = e.getPoint();
+                processClick(e.getPoint());
             }
 
             @Override
             public void mouseDragged(final MouseEvent e) {
-                if (_dragStart == null)
-                    _dragStart = e.getPoint();
-                else {
-                    final Point p = e.getPoint();
-                    //todo [sarcan] add mouse navigation 
-                }
+                final Point p = e.getPoint();
+                if (_lastDrag == null)
+                    processClick(e.getPoint());
+                else
+                    processDrag(_lastDrag, p);
             }
 
             @Override
             public void mouseReleased(final MouseEvent e) {
-                _dragStart = null;
+                _lastDrag = null;
             }
         };
         addMouseListener(_mouseInputAdapter);
         addMouseMotionListener(_mouseInputAdapter);
 
         _viewRectPaint = Color.BLACK;
+    }
+
+    protected void processClick(final Point p) {
+        _lastDrag = p;
+    }
+
+    protected void processDrag(final Point from, final Point to) {
+        final Dimension viewSize = _peer.getViewSize();
+        final Dimension visibleRect = _peer.getExtentSize();
+
+        final double viewWidth = viewSize.getWidth();
+        final double viewHeight = viewSize.getHeight();
+
+        final int width = getWidth();
+        final int height = getHeight();
+
+        final double scale = Math.min(width / viewWidth, height / viewHeight);
+        final double scaledViewWidth = viewSize.getWidth() * scale;
+        final double scaledViewHeight = viewSize.getHeight() * scale;
+
+        final int viewX = (int) Math.round((width - scaledViewWidth) / 2);
+        final int viewY = (int) Math.round((height - scaledViewHeight) / 2);
+
+        final double distanceX = ((to.x - from.x) / scaledViewWidth) * viewWidth;
+        final double distanceY = ((to.y - from.y) / scaledViewHeight) * viewHeight;
+
+        final Point position = _peer.getViewPosition();
+
+        final Point newPosition = new Point();
+        newPosition.x = Math.min(Math.max(0, (int) (position.x + distanceX)),
+                (int) (viewSize.getWidth() - visibleRect.getWidth()));
+        newPosition.y = Math.min(Math.max(0, (int) (position.y + distanceY)),
+                (int) (viewSize.getHeight() - visibleRect.getHeight()));
+
+        _peer.setViewPosition(newPosition);
+
+        _lastDrag = to;
     }
 
     public Paint getViewRectPaint() {
@@ -144,11 +181,11 @@ public class SatelliteView extends JComponent {
         final int w = (int) Math.min(scaledViewWidth, ((visibleRect.getWidth() / viewWidth)) * scaledViewWidth);
         final int h = (int) Math.min(scaledViewHeight, ((visibleRect.getHeight() / viewHeight)) * scaledViewHeight);
 
-        final Rectangle clip = new Rectangle(x, y, w, h);
+        _viewHighlightRectangle = new Rectangle(x, y, w, h);
 
         g2.setPaint(new Color(200, 200, 200, 150));
         final Area area = new Area(getBounds());
-        area.subtract(new Area(clip));
+        area.subtract(new Area(_viewHighlightRectangle));
         g2.fill(area);
 
         g2.setPaint(_viewRectPaint);
