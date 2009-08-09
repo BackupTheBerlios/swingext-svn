@@ -75,8 +75,8 @@ public abstract class Application {
      */
     protected String _displayName;
 
-    protected HashMap<String, ApplicationParameter> _parameters;
-    protected HashMap<String, ApplicationParameter> _parameterKeyMap;
+    protected final HashMap<String, ApplicationParameter> _parameters;
+    protected final HashMap<String, ApplicationParameter> _parameterKeyMap;
 
     /**
      * Creates a new Application instance. It will initialize the application name with the actual implementing class's
