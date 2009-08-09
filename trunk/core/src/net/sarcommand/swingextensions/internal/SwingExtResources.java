@@ -1,5 +1,6 @@
 package net.sarcommand.swingextensions.internal;
 
+import net.sarcommand.swingextensions.actions.ReflectedAction;
 import net.sarcommand.swingextensions.actions.ResourceBundleActionProvider;
 import net.sarcommand.swingextensions.applicationsupport.ImageCache;
 
@@ -64,7 +65,9 @@ public class SwingExtResources {
     public static Action getActionResource(final String key, final Object target, final String methodName) {
         if (!__bundlesLoaded)
             loadBundles();
-        return __actionProvider.createReflectedAction(key, target, methodName);
+        final Action result = new ReflectedAction(key, target, methodName);
+        __actionProvider.configurePropertiesForAction(key, result);
+        return result;
     }
 
     private static void loadBundles() {
