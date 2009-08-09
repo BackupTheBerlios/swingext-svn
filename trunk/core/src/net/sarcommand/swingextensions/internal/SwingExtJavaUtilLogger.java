@@ -135,18 +135,18 @@ public class SwingExtJavaUtilLogger implements SwingExtLogger {
     }
 
     public boolean isTraceEnabled() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     public boolean isDebugEnabled() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     public boolean isInfoEnabled() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     public boolean isWarnEnabled() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 }
