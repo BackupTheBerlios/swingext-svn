@@ -1,6 +1,5 @@
 package net.sarcommand.swingextensions.scrollpane;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -9,10 +8,12 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 /**
+ * Implements a satellite view for a given JViewPort (or its enclosing JScrollPane). A satellite view is basically a
+ * small 'thumbnail' of the viewports contents, highlighting the current view rectangle. One can use the satellite view
+ * to navigate the JViewPort's current view rect using the mouse.
+ * <p/>
  * <hr/> Copyright 2006-2009 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -72,7 +73,7 @@ public class SatelliteView extends JComponent {
                     _dragStart = e.getPoint();
                 else {
                     final Point p = e.getPoint();
-                    System.err.println("moved");
+                    //todo [sarcan] add mouse navigation 
                 }
             }
 
@@ -157,28 +158,4 @@ public class SatelliteView extends JComponent {
     public void contentsUpdated() {
         _contentsUpdated = true;
     }
-
-    public static void main(String[] args) {
-        try {
-            final JLabel panel = new JLabel(new ImageIcon(ImageIO.read(new File("C:\\Documents and Settings\\sarcan\\Desktop\\unf-unf-picdump-nr-26---lustige-zeitungsausschnitte-1213088146.jpg"))));
-            final JScrollPane scrollPane = new JScrollPane(panel);
-
-            final JFrame frame1 = new JFrame();
-            frame1.setContentPane(scrollPane);
-            frame1.setSize(300, 300);
-            frame1.setLocationRelativeTo(null);
-            frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame1.setVisible(true);
-
-            final JFrame frame = new JFrame();
-            frame.setContentPane(new SatelliteView(scrollPane));
-            frame.setSize(300, 300);
-            frame.setLocationRelativeTo(null);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setVisible(true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 }
