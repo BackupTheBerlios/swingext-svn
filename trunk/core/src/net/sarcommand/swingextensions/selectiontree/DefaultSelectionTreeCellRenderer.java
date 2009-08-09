@@ -3,7 +3,6 @@ package net.sarcommand.swingextensions.selectiontree;
 
 import net.sarcommand.swingextensions.internal.SwingExtResources;
 import static net.sarcommand.swingextensions.internal.SwingExtResources.getIconResource;
-import net.sarcommand.swingextensions.misc.CellRendererUtility;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -38,14 +37,11 @@ public class DefaultSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
     private Icon _iconSomeSelected;
     private Icon _iconAllSelected;
 
-    private CellRendererUtility _rendererUtility;
-
     public DefaultSelectionTreeCellRenderer() {
         initialize();
     }
 
     public void initialize() {
-        _rendererUtility = new CellRendererUtility();
         _iconNoneSelected = getIconResource(ICON_NONE_SELECTED);
         _iconSomeSelected = getIconResource(ICON_SOME_SELECTED);
         _iconAllSelected = getIconResource(ICON_ALL_SELECTED);
