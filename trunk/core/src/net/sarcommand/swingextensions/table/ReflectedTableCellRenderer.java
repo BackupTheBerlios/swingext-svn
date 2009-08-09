@@ -25,7 +25,6 @@ import java.awt.*;
 public class ReflectedTableCellRenderer implements TableCellRenderer {
     protected JComponent _renderer;
     protected Keypath _keypath;
-    private CellRendererUtility _utility;
 
     public ReflectedTableCellRenderer(final JComponent renderer, final String keypath) {
         initialize(renderer, keypath);
@@ -38,7 +37,6 @@ public class ReflectedTableCellRenderer implements TableCellRenderer {
             throw new IllegalArgumentException("Parameter 'keypath' must not be null!");
 
         _renderer = renderer;
-        _utility = new CellRendererUtility();
         _keypath = new Keypath(keypath);
     }
 
