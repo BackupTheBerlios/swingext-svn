@@ -13,29 +13,23 @@ import java.util.EventObject;
 /**
  * A TableCellEditor implementation backed by a JTextPane. The editor will support two types of values, Strings and
  * instances of the Document interface. The type which was set originally will be returned by getCellEditorValue(...).
- * The editor will automatically adapt the row height for the cell being edited, so while you are typing the cell
- * will expand (and shrink, if appropriate) according to your needs.
+ * The editor will automatically adapt the row height for the cell being edited, so while you are typing the cell will
+ * expand (and shrink, if appropriate) according to your needs.
  * <p/>
- * <hr/>
- * Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2008 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class TextPaneTableCellEditor extends AbstractTableCellEditor {
     protected boolean _valueIsDocument;
     protected JTextPane _textPane;
-
-    protected CellRendererUtility _rendererUtility;
 
     protected JTable _owner;
     protected int _row;
@@ -53,7 +47,6 @@ public class TextPaneTableCellEditor extends AbstractTableCellEditor {
                 cancelCellEditing();
             }
         };
-        _rendererUtility = new CellRendererUtility();
 
         /* Adjust the row height whenever the editor content changes */
         _textPane.addCaretListener(new CaretListener() {
@@ -64,7 +57,8 @@ public class TextPaneTableCellEditor extends AbstractTableCellEditor {
         });
     }
 
-    public Component getTableCellEditorComponent(final JTable table, Object value, boolean isSelected, int row, int column) {
+    public Component getTableCellEditorComponent(final JTable table, Object value, boolean isSelected, int row,
+                                                 int column) {
         /* Make sure the value is of the required type */
         final Class clazz;
         if (value == null)
@@ -85,7 +79,7 @@ public class TextPaneTableCellEditor extends AbstractTableCellEditor {
         else
             _textPane.setText((String) value);
 
-        _rendererUtility.adaptToTable(_textPane, table, false, false, row, column);
+        CellRendererUtility.adaptToTable(_textPane, table, false, false, row, column);
 
         /* Need those values to adapt the row size when required */
         _owner = table;
