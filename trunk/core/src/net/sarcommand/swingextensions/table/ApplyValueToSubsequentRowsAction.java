@@ -4,6 +4,7 @@ import net.sarcommand.swingextensions.internal.SwingExtLogger;
 import net.sarcommand.swingextensions.internal.SwingExtLogging;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 import java.awt.event.ActionEvent;
@@ -29,7 +30,7 @@ import java.awt.event.ActionEvent;
  */
 public class ApplyValueToSubsequentRowsAction extends AbstractAction {
     private static final SwingExtLogger __log = SwingExtLogging.getLogger(ApplyValueToSubsequentRowsAction.class);
-    private JTable _table;
+    private final JTable _table;
 
     public ApplyValueToSubsequentRowsAction(final JTable table) {
         _table = table;
@@ -67,5 +68,16 @@ public class ApplyValueToSubsequentRowsAction extends AbstractAction {
             }
             mdl.setValueAt(value, nextRow, modelColumn);
         }
+    }
+
+    public static void main(String[] args) {
+        final JTable table = new JTable(new DefaultTableModel(5, 5));
+        final JFrame frame = new JFrame();
+        frame.setContentPane(new JScrollPane(table));
+        frame.setSize(300, 300);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
     }
 }
