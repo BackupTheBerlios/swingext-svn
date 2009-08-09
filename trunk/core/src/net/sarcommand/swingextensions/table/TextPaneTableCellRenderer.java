@@ -13,31 +13,25 @@ import javax.swing.text.Document;
 import java.awt.*;
 
 /**
- * <hr/>
- * Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2008 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class TextPaneTableCellRenderer implements TableCellRenderer {
     protected JTextPane _renderer;
-    protected CellRendererUtility _utility;
     protected ColumnModelAdapter _listener;
 
     protected boolean _shouldUpdateRowHeights;
 
     public TextPaneTableCellRenderer() {
         _renderer = new JTextPane();
-        _utility = new CellRendererUtility();
     }
 
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
@@ -58,7 +52,7 @@ public class TextPaneTableCellRenderer implements TableCellRenderer {
             throw new RuntimeException("Illegal value type: This implementation can only display values of type " +
                     "String and Document, but found: " + value.getClass());
 
-        _utility.adaptToTable(_renderer, table, isSelected, hasFocus, row, column);
+        CellRendererUtility.adaptToTable(_renderer, table, isSelected, hasFocus, row, column);
 
         return _renderer;
     }
