@@ -32,7 +32,6 @@ public class ExceptionDialog {
     protected static final String RESOURCE_ACTION_SHUTDOWN = "ExceptionDialog.actionShutdown";
 
     private JDialog _dialog;
-    private ExceptionDialogPane _pane;
 
     private Action _actionContinue;
     private Action _actionShutdown;
@@ -57,9 +56,9 @@ public class ExceptionDialog {
 
         setActions(_actionShutdown, _actionContinue);
 
-        _pane = new ExceptionDialogPane(this);
+        final ExceptionDialogPane pane = new ExceptionDialogPane(this);
         _dialog = new JDialog();
-        _dialog.setContentPane(_pane);
+        _dialog.setContentPane(pane);
         _dialog.setModal(true);
     }
 
