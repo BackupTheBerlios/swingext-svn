@@ -125,6 +125,7 @@ public class BasicExceptionDialogPaneUI extends ComponentUI {
         });
     }
 
+    @SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
     protected void exceptionPropertyChanged() {
         final Throwable e = _target.getDialog().getException();
         _errorPane.setText("");
@@ -144,6 +145,7 @@ public class BasicExceptionDialogPaneUI extends ComponentUI {
 
     }
 
+    @SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
     protected void messagePropertyChanged() {
         String message = _target.getDialog().getMessage();
         if (message == null) {
