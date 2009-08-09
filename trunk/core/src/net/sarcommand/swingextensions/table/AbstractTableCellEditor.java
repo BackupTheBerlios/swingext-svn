@@ -1,10 +1,10 @@
 package net.sarcommand.swingextensions.table;
 
+import net.sarcommand.swingextensions.event.EventSupport;
+
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.TableCellEditor;
-import java.util.LinkedList;
-import java.util.Vector;
 
 /**
  * Abstract class for TableCellEditor implementations which handles the required event infrastructure.
@@ -21,19 +21,19 @@ import java.util.Vector;
  * specific language governing permissions and limitations under the License.
  */
 public abstract class AbstractTableCellEditor implements TableCellEditor {
-    private final Vector<CellEditorListener> _listeners;
+    protected final EventSupport<CellEditorListener> _listeners;
 
     public AbstractTableCellEditor() {
-        _listeners = new Vector<CellEditorListener>(2);
+        _listeners = EventSupport.create(CellEditorListener.class);
     }
 
     public void addCellEditorListener(CellEditorListener l) {
-        _listeners.add(l);
+        _listeners.addListener(l);
     }
 
 
     public void removeCellEditorListener(CellEditorListener l) {
-        _listeners.remove(l);
+        _listeners.removeListener(l);
     }
 
     /**
@@ -42,9 +42,8 @@ public abstract class AbstractTableCellEditor implements TableCellEditor {
      * @param source The cell editor component.
      */
     protected void fireEditingCancelled(final Object source) {
-        final LinkedList<CellEditorListener> copy = new LinkedList<CellEditorListener>(_listeners);
-        for (CellEditorListener l : copy)
-            l.editingCanceled(new ChangeEvent(source));
+        final ChangeEvent event = new ChangeEvent(source);
+        _listeners.delegate().editingCanceled(event);
     }
 
     /**
@@ -53,8 +52,7 @@ public abstract class AbstractTableCellEditor implements TableCellEditor {
      * @param source The cell editor component.
      */
     protected void fireEditingStopped(final Object source) {
-        final LinkedList<CellEditorListener> copy = new LinkedList<CellEditorListener>(_listeners);
-        for (CellEditorListener l : copy)
-            l.editingStopped(new ChangeEvent(source));
+        final ChangeEvent event = new ChangeEvent(source);
+        _listeners.delegate().editingStopped(event);
     }
 }
