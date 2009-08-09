@@ -1,30 +1,30 @@
 package net.sarcommand.swingextensions.recentitems;
 
-import net.sarcommand.swingextensions.internal.*;
+import net.sarcommand.swingextensions.internal.SwingExtLogger;
+import net.sarcommand.swingextensions.internal.SwingExtLogging;
 
-import java.beans.*;
-import java.text.*;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.text.Format;
+import java.text.ParseException;
 import java.util.*;
-import java.util.prefs.*;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 /**
  * <b>This class used to observe the preferences for changes. Because of some random bug where the preferences would
  * keep firing events, this has been removed.</b>
  * <p/>
- * <hr/>
- * Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2008 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class RecentItemsList<T> {
     private static final SwingExtLogger __log = SwingExtLogging.getLogger(RecentItemsList.class);
@@ -143,7 +143,7 @@ public class RecentItemsList<T> {
      * @return the list of recent items on this list (unmodifiable).
      */
     public List<T> getRecentItems() {
-        synchronized (_recentItems) {
+        synchronized (this) {
             return Collections.unmodifiableList(new ArrayList<T>(_recentItems));
         }
     }
@@ -159,7 +159,7 @@ public class RecentItemsList<T> {
 
         __log.debug(this + "removing item " + item);
         final LinkedList<T> copy;
-        synchronized (_recentItems) {
+        synchronized (this) {
             copy = new LinkedList<T>(_recentItems);
             _recentItems.remove(item);
         }
@@ -168,14 +168,14 @@ public class RecentItemsList<T> {
 
     /**
      * Adds an item to the recent list. If the list already contained the item, it will move to the top position.
-     * Otherwise, it will be added at position 0 and the list will be truncated if its new length exceeds the
-     * length property.
+     * Otherwise, it will be added at position 0 and the list will be truncated if its new length exceeds the length
+     * property.
      *
      * @param item item to add to the recent list.
      */
     public void addToRecentList(final T item) {
         final LinkedList<T> copy;
-        synchronized (_recentItems) {
+        synchronized (this) {
             copy = new LinkedList<T>(_recentItems);
 
             if (_recentItems.contains(item)) {
@@ -200,7 +200,7 @@ public class RecentItemsList<T> {
     protected void recentListUpdated(final LinkedList<T> previousList) {
         if (_internalUpdateFlag)
             return;
-        synchronized (_recentItems) {
+        synchronized (this) {
             final Preferences node = getPreferenceNode();
             if (node != null) {
                 _internalUpdateFlag = true;
@@ -244,7 +244,7 @@ public class RecentItemsList<T> {
             return;
         __log.debug("Preferences have been updated, will adapt recent list");
         final LinkedList<T> copy;
-        synchronized (_recentItems) {
+        synchronized (this) {
             copy = new LinkedList<T>(_recentItems);
             _recentItems.clear();
 

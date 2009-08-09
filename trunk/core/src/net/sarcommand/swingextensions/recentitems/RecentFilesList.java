@@ -47,7 +47,7 @@ public class RecentFilesList extends RecentItemsList<File> {
         if (_internalUpdateFlag)
             return;
         final LinkedList<File> copy;
-        synchronized (_recentItems) {
+        synchronized (this) {
             copy = new LinkedList<File>(_recentItems);
 
             for (Iterator<File> iter = _recentItems.iterator(); iter.hasNext();)
