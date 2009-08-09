@@ -20,7 +20,7 @@ import java.util.Collection;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public interface CompletionModel {
+public interface CompletionModel<T> {
     /**
      * Returns a list of possible completions for incomplete shared input.
      *
@@ -29,5 +29,5 @@ public interface CompletionModel {
      * @param token  The incomplete shared input for which completions have to be found.
      * @return A list of possible completions for incomplete shared input.
      */
-    public Collection<String> getPossibleCompletions(final Object target, final String token);
+    public Collection<String> getPossibleCompletions(final T target, final String token);
 }
