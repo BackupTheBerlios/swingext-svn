@@ -122,8 +122,8 @@ public abstract class SearchTask<T, V> implements Runnable {
      * This method has to be implemented with the actual search code, depending on the context. It will be invoked on
      * the background search thread with the token passed to search(T).
      *
-     * @param searchToken
-     * @return
+     * @param searchToken The token being searched.
+     * @return The search result.
      */
     protected abstract V performSearch(final T searchToken);
 }
