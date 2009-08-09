@@ -40,9 +40,9 @@ import java.beans.PropertyChangeListener;
  * specific language governing permissions and limitations under the License.
  */
 public class Keypath<T> {
-    private String _stringRepresentation;
+    private final String _stringRepresentation;
     private final boolean _ignoreAccessControl;
-    private String[] _properties;
+    private final String[] _properties;
 
     /**
      * Creates a Keypath from the given path string. You can specify whether access control should be ignored.
