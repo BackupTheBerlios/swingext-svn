@@ -1,7 +1,5 @@
 package net.sarcommand.swingextensions.misc;
 
-import net.sarcommand.swingextensions.treetable.JTreeTable;
-
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -93,54 +91,54 @@ public class CellRendererUtility {
             renderer.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
     }
 
-    /**
-     * Adapts the given component to the specified treetable instance, making it look just as a
-     * DefaultTreeTableCellRenderer would.
-     *
-     * @param renderer   Your renderer component.
-     * @param table      Table this renderer is used by.
-     * @param isSelected see TreeTableCellRenderer.
-     * @param hasFocus   see TreeTableCellRenderer.
-     * @param row        see TreeTableCellRenderer.
-     * @param column     see TreeTableCellRenderer.
-     */
-    public static void adaptToTreeTable(final JComponent renderer, final JTreeTable table, boolean isSelected,
-                                        final boolean hasFocus, final int row, final int column) {
-        if (isSelected) {
-            renderer.setForeground(table.getSelectionForeground());
-            renderer.setBackground(table.getSelectionBackground());
-        } else {
-            renderer.setForeground(table.getForeground());
-            renderer.setBackground(table.getBackground());
-        }
-
-        renderer.setFont(table.getFont());
-
-        if (hasFocus) {
-            Border border = null;
-            if (isSelected) {
-                border = UIManager.getBorder("Table.focusSelectedCellHighlightBorder");
-            }
-            if (border == null) {
-                border = UIManager.getBorder("Table.focusCellHighlightBorder");
-            }
-            renderer.setBorder(border);
-
-            if (!isSelected && table.isCellEditable(row, column)) {
-                Color col;
-                col = UIManager.getColor("Table.focusCellForeground");
-                if (col != null) {
-                    renderer.setForeground(col);
-                }
-                col = UIManager.getColor("Table.focusCellBackground");
-                if (col != null) {
-                    renderer.setBackground(col);
-                }
-            }
-        } else {
-            renderer.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        }
-    }
+//    /**
+//     * Adapts the given component to the specified treetable instance, making it look just as a
+//     * DefaultTreeTableCellRenderer would.
+//     *
+//     * @param renderer   Your renderer component.
+//     * @param table      Table this renderer is used by.
+//     * @param isSelected see TreeTableCellRenderer.
+//     * @param hasFocus   see TreeTableCellRenderer.
+//     * @param row        see TreeTableCellRenderer.
+//     * @param column     see TreeTableCellRenderer.
+//     */
+//    public static void adaptToTreeTable(final JComponent renderer, final JTreeTable table, boolean isSelected,
+//                                        final boolean hasFocus, final int row, final int column) {
+//        if (isSelected) {
+//            renderer.setForeground(table.getSelectionForeground());
+//            renderer.setBackground(table.getSelectionBackground());
+//        } else {
+//            renderer.setForeground(table.getForeground());
+//            renderer.setBackground(table.getBackground());
+//        }
+//
+//        renderer.setFont(table.getFont());
+//
+//        if (hasFocus) {
+//            Border border = null;
+//            if (isSelected) {
+//                border = UIManager.getBorder("Table.focusSelectedCellHighlightBorder");
+//            }
+//            if (border == null) {
+//                border = UIManager.getBorder("Table.focusCellHighlightBorder");
+//            }
+//            renderer.setBorder(border);
+//
+//            if (!isSelected && table.isCellEditable(row, column)) {
+//                Color col;
+//                col = UIManager.getColor("Table.focusCellForeground");
+//                if (col != null) {
+//                    renderer.setForeground(col);
+//                }
+//                col = UIManager.getColor("Table.focusCellBackground");
+//                if (col != null) {
+//                    renderer.setBackground(col);
+//                }
+//            }
+//        } else {
+//            renderer.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+//        }
+//    }
 
     /**
      * Adapts the given component to the specified table instance, making it look just as a DefaultTableCellRenderer
