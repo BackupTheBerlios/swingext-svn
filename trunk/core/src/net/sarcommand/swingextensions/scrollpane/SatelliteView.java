@@ -37,6 +37,10 @@ public class SatelliteView extends JComponent {
     private MouseInputAdapter _mouseInputAdapter;
     private Rectangle _viewHighlightRectangle;
 
+    public SatelliteView() {
+        initialize();
+    }
+
     public SatelliteView(final JScrollPane scrollPane) {
         initialize();
         setPeer(scrollPane.getViewport());
@@ -52,7 +56,7 @@ public class SatelliteView extends JComponent {
 
         _peer = viewport;
         _peer.addChangeListener(_peerChangeListener);
-        repaint();
+        contentsUpdated();
     }
 
     protected void initialize() {
@@ -143,56 +147,64 @@ public class SatelliteView extends JComponent {
     protected void paintComponent(final Graphics g) {
         super.paintComponent(g);
 
-        final JViewport peer = _peer;
-        final Component view = peer.getView();
-        final Graphics2D g2 = (Graphics2D) g;
-        final int width = getWidth();
-        final int height = getHeight();
+        if (_peer != null) {
+            final JViewport peer = _peer;
+            final Component view = peer.getView();
+            final Graphics2D g2 = (Graphics2D) g;
+            final int width = getWidth();
+            final int height = getHeight();
 
-        final Rectangle visibleRect = peer.getViewRect();
+            final Rectangle visibleRect = peer.getViewRect();
 
-        final Dimension viewSize = peer.getViewSize();
-        final double viewWidth = viewSize.getWidth();
-        final double viewHeight = viewSize.getHeight();
+            final Dimension viewSize = peer.getViewSize();
+            final double viewWidth = viewSize.getWidth();
+            final double viewHeight = viewSize.getHeight();
 
-        final double scale = Math.min(width / viewWidth, height / viewHeight);
-        final double scaledViewWidth = viewWidth * scale;
-        final double scaledViewHeight = viewHeight * scale;
+            if (viewWidth <= 0 || viewHeight <= 0)
+                return;
 
-        final int viewX = (int) Math.round((width - scaledViewWidth) / 2);
-        final int viewY = (int) Math.round((height - scaledViewHeight) / 2);
+            final double scale = Math.min(width / viewWidth, height / viewHeight);
+            final double scaledViewWidth = viewWidth * scale;
+            final double scaledViewHeight = viewHeight * scale;
 
-        if (_contentsUpdated || _backBuffer == null || _backBuffer.getWidth() != scaledViewWidth ||
-                _backBuffer.getHeight() != scaledViewHeight) {
-            _backBuffer = getGraphicsConfiguration().createCompatibleImage((int) Math.ceil(scaledViewWidth),
-                    (int) Math.ceil(scaledViewHeight));
-            final Graphics2D d = _backBuffer.createGraphics();
-            d.scale(scale, scale);
-            view.paint(d);
-            d.scale(1 / scale, 1 / scale);
-            d.dispose();
+            final int viewX = (int) Math.round((width - scaledViewWidth) / 2);
+            final int viewY = (int) Math.round((height - scaledViewHeight) / 2);
+
+            if (_contentsUpdated || _backBuffer == null || _backBuffer.getWidth() != scaledViewWidth ||
+                    _backBuffer.getHeight() != scaledViewHeight) {
+
+                _backBuffer = getGraphicsConfiguration().createCompatibleImage((int) Math.ceil(scaledViewWidth),
+                        (int) Math.ceil(scaledViewHeight));
+                final Graphics2D d = _backBuffer.createGraphics();
+                d.scale(scale, scale);
+                view.paint(d);
+                d.scale(1 / scale, 1 / scale);
+                d.dispose();
+            }
+
+            g2.drawImage(_backBuffer, viewX, viewY, null);
+
+            final int x = Math.max(viewX, viewX + (int) Math.round(scaledViewWidth * (visibleRect.getX() / viewWidth)));
+            final int y = Math.max(viewY,
+                    viewY + (int) Math.round(scaledViewHeight * (visibleRect.getY() / viewHeight)));
+
+            final int w = (int) Math.min(scaledViewWidth, ((visibleRect.getWidth() / viewWidth)) * scaledViewWidth);
+            final int h = (int) Math.min(scaledViewHeight, ((visibleRect.getHeight() / viewHeight)) * scaledViewHeight);
+
+            _viewHighlightRectangle = new Rectangle(x, y, w, h);
+
+            g2.setPaint(new Color(200, 200, 200, 150));
+            final Area area = new Area(getBounds());
+            area.subtract(new Area(_viewHighlightRectangle));
+            g2.fill(area);
+
+            g2.setPaint(_viewRectPaint);
+            g2.drawRect(x, y, w, h);
         }
-
-        g2.drawImage(_backBuffer, viewX, viewY, null);
-
-        final int x = Math.max(viewX, viewX + (int) Math.round(scaledViewWidth * (visibleRect.getX() / viewWidth)));
-        final int y = Math.max(viewY, viewY + (int) Math.round(scaledViewHeight * (visibleRect.getY() / viewHeight)));
-
-        final int w = (int) Math.min(scaledViewWidth, ((visibleRect.getWidth() / viewWidth)) * scaledViewWidth);
-        final int h = (int) Math.min(scaledViewHeight, ((visibleRect.getHeight() / viewHeight)) * scaledViewHeight);
-
-        _viewHighlightRectangle = new Rectangle(x, y, w, h);
-
-        g2.setPaint(new Color(200, 200, 200, 150));
-        final Area area = new Area(getBounds());
-        area.subtract(new Area(_viewHighlightRectangle));
-        g2.fill(area);
-
-        g2.setPaint(_viewRectPaint);
-        g2.drawRect(x, y, w, h);
     }
 
     public void contentsUpdated() {
         _contentsUpdated = true;
+        repaint();
     }
 }
