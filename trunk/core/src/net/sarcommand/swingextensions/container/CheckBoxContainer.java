@@ -165,6 +165,15 @@ public class CheckBoxContainer extends JPanel implements ItemSelectable {
     }
 
     /**
+     * Toggles whether the embedded JCheckBox is selected.
+     *
+     * @param selected whether the embedded JCheckBox is selected.
+     */
+    public void setSelected(final boolean selected) {
+        _checkBox.setSelected(selected);
+    }
+
+    /**
      * @see java.awt.ItemSelectable#getSelectedObjects()
      */
     public Object[] getSelectedObjects() {
