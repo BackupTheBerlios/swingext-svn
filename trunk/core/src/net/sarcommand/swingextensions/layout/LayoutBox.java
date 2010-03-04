@@ -32,19 +32,19 @@ public class LayoutBox extends JPanel {
     }
 
 
-    public LayoutBox add(final JComponent component, final double weight) {
+    public LayoutBox add(final Component component, final double weight) {
         return add(component, weight, new Insets(3, 3, 3, 3), GridBagConstraints.CENTER, GridBagConstraints.BOTH);
     }
 
-    public LayoutBox add(final JComponent component, final double weight, final Insets insets) {
+    public LayoutBox add(final Component component, final double weight, final Insets insets) {
         return add(component, weight, insets, GridBagConstraints.CENTER, GridBagConstraints.BOTH);
     }
 
-    public LayoutBox add(final JComponent component, final double weight, final int anchor, final int fill) {
+    public LayoutBox add(final Component component, final double weight, final int anchor, final int fill) {
         return add(component, weight, new Insets(3, 3, 3, 3), anchor, fill);
     }
 
-    public LayoutBox add(final JComponent component, final double weight, final Insets insets,
+    public LayoutBox add(final Component component, final double weight, final Insets insets,
                          final int anchor, final int fill) {
         add(component, new GridBagConstraints(_horizontal ? -1 : 0, _horizontal ? 0 : -1, 1, 1,
                 _horizontal ? weight : 1.0, _horizontal ? 1.0 : weight, anchor, fill, insets, 0, 0));
