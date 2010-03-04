@@ -193,8 +193,8 @@ public class SatelliteView extends JComponent {
 
             _viewHighlightRectangle = new Rectangle(x, y, w, h);
 
-            g2.setPaint(new Color(200, 200, 200, 150));
-            final Area area = new Area(getBounds());
+            g2.setPaint(new Color(200, 200, 200, 100));
+            final Area area = new Area(new Rectangle(0, 0, getWidth(), getHeight()));
             area.subtract(new Area(_viewHighlightRectangle));
             g2.fill(area);
 
