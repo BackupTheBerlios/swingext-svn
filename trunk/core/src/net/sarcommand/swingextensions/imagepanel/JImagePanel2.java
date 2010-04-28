@@ -24,7 +24,6 @@ public class JImagePanel2 extends JViewport {
             public void mouseWheelMoved(final MouseWheelEvent e) {
                 final double increment = e.getUnitsToScroll() > 0 ? 1.05 : 0.95;
                 final double newScale = _imagePanel.getScaleFactor() * increment;
-                System.out.println("increment:" + increment + " newScale:" + newScale);
                 setScale(newScale);
             }
         });
