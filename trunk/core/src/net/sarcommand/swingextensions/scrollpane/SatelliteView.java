@@ -170,12 +170,12 @@ public class SatelliteView extends JComponent {
             final int viewX = (int) Math.round((width - scaledViewWidth) / 2);
             final int viewY = (int) Math.round((height - scaledViewHeight) / 2);
 
-            if (_contentsUpdated || _backBuffer == null || _backBuffer.getWidth() != scaledViewWidth ||
-                    _backBuffer.getHeight() != scaledViewHeight) {
-
+            if (_contentsUpdated || _backBuffer == null) {
                 _backBuffer = getGraphicsConfiguration().createCompatibleImage((int) Math.ceil(scaledViewWidth),
                         (int) Math.ceil(scaledViewHeight));
                 final Graphics2D d = _backBuffer.createGraphics();
+                d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                        RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
                 d.scale(scale, scale);
                 view.paint(d);
                 d.scale(1 / scale, 1 / scale);
@@ -200,6 +200,8 @@ public class SatelliteView extends JComponent {
 
             g2.setPaint(_viewRectPaint);
             g2.drawRect(x, y, w, h);
+
+            _contentsUpdated = false;
         }
     }
 
