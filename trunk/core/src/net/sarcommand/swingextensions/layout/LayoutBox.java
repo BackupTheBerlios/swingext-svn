@@ -11,9 +11,15 @@ import java.awt.*;
  */
 public class LayoutBox extends JPanel {
     private final boolean _horizontal;
+    private Insets _insets;
 
     public LayoutBox() {
         this(SwingConstants.HORIZONTAL, (Border) null);
+    }
+
+    public LayoutBox(final Insets insets) {
+        this();
+        _insets = insets;
     }
 
     public LayoutBox(final int alignment) {
@@ -26,6 +32,7 @@ public class LayoutBox extends JPanel {
 
     public LayoutBox(final int alignment, final Border border) {
         _horizontal = alignment == SwingConstants.HORIZONTAL;
+        _insets = new Insets(3, 3, 3, 3);
         if (border != null)
             setBorder(border);
         setLayout(new GridBagLayout());
@@ -33,7 +40,7 @@ public class LayoutBox extends JPanel {
 
 
     public LayoutBox add(final Component component, final double weight) {
-        return add(component, weight, new Insets(3, 3, 3, 3), GridBagConstraints.CENTER, GridBagConstraints.BOTH);
+        return add(component, weight, _insets, GridBagConstraints.CENTER, GridBagConstraints.BOTH);
     }
 
     public LayoutBox add(final Component component, final double weight, final Insets insets) {
@@ -41,7 +48,7 @@ public class LayoutBox extends JPanel {
     }
 
     public LayoutBox add(final Component component, final double weight, final int anchor, final int fill) {
-        return add(component, weight, new Insets(3, 3, 3, 3), anchor, fill);
+        return add(component, weight, _insets, anchor, fill);
     }
 
     public LayoutBox add(final Component component, final double weight, final Insets insets,
@@ -52,12 +59,12 @@ public class LayoutBox extends JPanel {
     }
 
     public LayoutBox add(final String text) {
-        return add(new JLabel(text), 0, new Insets(3, 3, 3, 3),
+        return add(new JLabel(text), 0, _insets,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH);
     }
 
     public LayoutBox add(final String text, final double weight) {
-        return add(new JLabel(text), weight, new Insets(3, 3, 3, 3),
+        return add(new JLabel(text), weight, _insets,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH);
     }
 
@@ -66,11 +73,19 @@ public class LayoutBox extends JPanel {
     }
 
     public LayoutBox add(final String text, final double weight, final int anchor, final int fill) {
-        return add(new JLabel(text), weight, new Insets(3, 3, 3, 3), anchor, fill);
+        return add(new JLabel(text), weight, _insets, anchor, fill);
     }
 
     public LayoutBox add(final String text, final double weight, final Insets insets,
                          final int anchor, final int fill) {
         return add(new JLabel(text), weight, insets, anchor, fill);
+    }
+
+    public Insets getInsets() {
+        return _insets;
+    }
+
+    public void setInsets(final Insets insets) {
+        _insets = insets;
     }
 }
