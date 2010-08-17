@@ -302,8 +302,9 @@ public class SwingExtUtil {
             types[i] = args[i].getClass();
         final Method m = getMethod(target, methodName, types);
         if (m == null)
-            throw new RuntimeException("No such method: " + methodName + '(' + Arrays.toString(types) + ") found for target" +
-                    "class " + target.getClass().getName());
+            throw new RuntimeException(
+                    "No such method: " + methodName + '(' + Arrays.toString(types) + ") found for target" +
+                            "class " + target.getClass().getName());
         if (!m.isAccessible())
             m.setAccessible(true);
         return invokeAsWorker(new Callable() {
@@ -345,8 +346,9 @@ public class SwingExtUtil {
             types[i] = args[i].getClass();
         final Method m = getMethod(target, methodName, types);
         if (m == null)
-            throw new RuntimeException("No such method: " + methodName + '(' + Arrays.toString(types) + ") found for target" +
-                    "class " + target.getClass().getName());
+            throw new RuntimeException(
+                    "No such method: " + methodName + '(' + Arrays.toString(types) + ") found for target" +
+                            "class " + target.getClass().getName());
         if (!m.isAccessible())
             m.setAccessible(true);
         SwingUtilities.invokeLater(new Runnable() {
@@ -453,11 +455,11 @@ public class SwingExtUtil {
      * @param filter    The filter to apply to the list of child components. May be null.
      * @return All descendants of the given container. The results may optionally be filtered by the 'filter' array.
      */
-    public static Collection<Component> getChildComponents(final Container container,
-                                                           final Class... filter) {
+    public static <T extends Component> Collection<T> getChildComponents(final Container container,
+                                                                         final Class<T>... filter) {
         if (container == null)
             throw new IllegalArgumentException("Parameter 'parent' must not be null!");
-        final LinkedList<Component> children = new LinkedList<Component>();
+        final LinkedList<T> children = new LinkedList<T>();
         getChildComponents(container, filter, children);
         return children;
     }
