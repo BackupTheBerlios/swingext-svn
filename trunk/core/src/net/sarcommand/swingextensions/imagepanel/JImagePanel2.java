@@ -2,11 +2,10 @@ package net.sarcommand.swingextensions.imagepanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import java.awt.event.*;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 /**
  * Feb 22, 2010
@@ -15,10 +14,28 @@ import java.awt.image.BufferedImage;
  */
 public class JImagePanel2 extends JViewport {
     private ImagePanel _imagePanel;
+    private JLayeredPane _layeredPane;
+    private BufferedImage _image;
+
+    private ArrayList<JComponent> _overlays;
 
     public JImagePanel2() {
+        _overlays = new ArrayList<JComponent>();
+
         _imagePanel = new ImagePanel();
-        setView(_imagePanel);
+
+        _layeredPane = new JLayeredPane();
+        _layeredPane.add(_imagePanel, JLayeredPane.DEFAULT_LAYER);
+        _layeredPane.addComponentListener(new ComponentAdapter() {
+            @Override public void componentResized(final ComponentEvent e) {
+                final Dimension newSize = _layeredPane.getSize();
+                _imagePanel.setSize(newSize);
+                for (JComponent overlay : _overlays)
+                    overlay.setSize(newSize);
+            }
+        });
+
+        setView(_layeredPane);
 
         addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(final MouseWheelEvent e) {
@@ -46,13 +63,27 @@ public class JImagePanel2 extends JViewport {
     }
 
     public void setImage(final BufferedImage image) {
+        _image = image;
         _imagePanel.setImage(image);
+        contentUpdated();
         repaint();
     }
 
     @Override
     protected void paintComponent(final Graphics g) {
         super.paintComponent(g);
+    }
+
+    private void contentUpdated() {
+        if (_image != null) {
+            final double scaleFactor = _imagePanel.getScaleFactor();
+            final Dimension dim = new Dimension((int) (_image.getWidth() * scaleFactor),
+                    (int) (_image.getHeight() * scaleFactor));
+            _layeredPane.setSize(dim);
+            _layeredPane.setMinimumSize(dim);
+            _layeredPane.setPreferredSize(dim);
+            repaint();
+        }
     }
 
     public void setScale(final double scale) {
@@ -72,6 +103,61 @@ public class JImagePanel2 extends JViewport {
         final Dimension size1 = getViewSize();
         setViewPosition(new Point((int) (Math.max(0, (relX * size1.width) - halfWidth)),
                 (int) (Math.max(0, (relY * size1.getHeight()) - halfHeight))));
+
+        contentUpdated();
+    }
+
+    public Point2D pixelToJava2D(final Point2D source) {
+        return pixelToJava2D(source.getX(), source.getY(), null);
+    }
+
+    public Point2D pixelToJava2D(final Point2D source, Point2D dest) {
+        return pixelToJava2D(source.getX(), source.getY(), dest);
+    }
+
+    public Point2D pixelToJava2D(final double sourceX, final double sourceY) {
+        return pixelToJava2D(sourceX, sourceY, null);
+    }
+
+    public Point2D pixelToJava2D(final double sourceX, final double sourceY, Point2D dest) {
+        if (dest == null)
+            dest = new Point2D.Double();
+        final double v = _imagePanel.getScaleFactor();
+        dest.setLocation(sourceX * v, sourceY * v);
+        return dest;
+    }
+
+    public Point2D java2DToPixel(final Point2D source) {
+        return java2DToPixel(source, null);
+    }
+
+    public Point2D java2DToPixel(final Point2D source, Point2D dest) {
+        return java2DToPixel(source.getX(), source.getY(), dest);
+    }
+
+    public Point2D java2DToPixel(final double sourceX, final double sourceY) {
+        return java2DToPixel(sourceX, sourceY, null);
+    }
+
+    public Point2D java2DToPixel(final double sourceX, final double sourceY, Point2D dest) {
+        if (dest == null)
+            dest = new Point2D.Double();
+        final double v = _imagePanel.getScaleFactor();
+        dest.setLocation(sourceX / v, sourceY / v);
+        return dest;
+    }
+
+    public Dimension getImageSize() {
+        return new Dimension(_image.getWidth(), _image.getHeight());
+    }
+
+    public Dimension getScaledImageSize() {
+        final double v = _imagePanel.getScaleFactor();
+        return new Dimension((int) (_image.getWidth() * v), (int) (_image.getHeight() * v));
+    }
+
+    public void removeAllOverlays() {
+        removeAllOverlays(JLayeredPane.PALETTE_LAYER);
     }
 
     protected static class ImagePanel extends JPanel {
@@ -84,7 +170,6 @@ public class JImagePanel2 extends JViewport {
 
         public void setScaleFactor(final double scaleFactor) {
             _scaleFactor = scaleFactor;
-            contentUpdated();
         }
 
         public double getScaleFactor() {
@@ -93,18 +178,6 @@ public class JImagePanel2 extends JViewport {
 
         public void setImage(final BufferedImage image) {
             _image = image;
-            contentUpdated();
-        }
-
-        private void contentUpdated() {
-            if (_image != null) {
-                final Dimension dim = new Dimension((int) (_image.getWidth() * _scaleFactor),
-                        (int) (_image.getHeight() * _scaleFactor));
-                setSize(dim);
-                setMinimumSize(dim);
-                setPreferredSize(dim);
-                repaint();
-            }
         }
 
         @Override
@@ -117,5 +190,30 @@ public class JImagePanel2 extends JViewport {
                 g2.scale(1 / _scaleFactor, 1 / _scaleFactor);
             }
         }
+    }
+
+    public void addOverlay(final JComponent overlay) {
+        addOverlay(overlay, JLayeredPane.PALETTE_LAYER);
+    }
+
+    public void addOverlay(final JComponent overlay, final Integer layer) {
+        _overlays.add(overlay);
+        _layeredPane.add(overlay, layer);
+        overlay.setSize(_layeredPane.getSize());
+    }
+
+    public void removeOverlay(final JComponent overlay) {
+        _overlays.remove(overlay);
+        _layeredPane.remove(overlay);
+    }
+
+    public void removeAllOverlays(final Integer layer) {
+        final Component[] componentsInLayer = _layeredPane.getComponentsInLayer(layer);
+        for (Component c : componentsInLayer)
+            _layeredPane.remove(c);
+    }
+
+    public BufferedImage getImage() {
+        return _image;
     }
 }
