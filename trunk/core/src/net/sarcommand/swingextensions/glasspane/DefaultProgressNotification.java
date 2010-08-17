@@ -36,6 +36,7 @@ public class DefaultProgressNotification extends GlassPaneNotification {
     protected void initComponents() {
         _label = new JLabel("", JLabel.CENTER);
         _label.setFont(_label.getFont().deriveFont(Font.BOLD));
+        _label.setForeground(getForeground());
 
         _progressbar = new JProgressBar();
         _progressbar.setIndeterminate(true);
@@ -74,5 +75,12 @@ public class DefaultProgressNotification extends GlassPaneNotification {
             _progressbar.setIndeterminate(false);
             _progressbar.setValue((int) (percentage * 100));
         }
+    }
+
+    @Override
+    public void setForeground(final Color fg) {
+        super.setForeground(fg);
+        if (_label != null)
+            _label.setForeground(fg);
     }
 }
