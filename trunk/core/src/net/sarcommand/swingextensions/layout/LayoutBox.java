@@ -81,6 +81,14 @@ public class LayoutBox extends JPanel {
         return add(new JLabel(text), weight, insets, anchor, fill);
     }
 
+    public LayoutBox addGlue(final double weight) {
+        return add(Box.createGlue(), weight);
+    }
+
+    public LayoutBox addStrut(final int extent) {
+        return add(_horizontal ? Box.createHorizontalStrut(extent) : Box.createVerticalStrut(extent), 0d);
+    }
+
     public Insets getComponentInsets() {
         return _componentInsets;
     }
