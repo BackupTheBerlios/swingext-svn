@@ -6,10 +6,27 @@ import java.awt.*;
 
 /**
  * Feb 10, 2010
- *
- * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
+ * <p/>
+ * <hr/> Copyright 2006-2009 Torsten Heup
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class LayoutBox extends JPanel {
+    public static LayoutBox horizontalLayoutBox() {
+        return new LayoutBox(SwingConstants.HORIZONTAL);
+    }
+
+    public static LayoutBox verticalLayoutBox() {
+        return new LayoutBox(SwingConstants.VERTICAL);
+    }
+
     private final boolean _horizontal;
     private Insets _componentInsets;
 
@@ -37,7 +54,6 @@ public class LayoutBox extends JPanel {
         setLayout(new GridBagLayout());
         _componentInsets = new Insets(3, 3, 3, 3);
     }
-
 
     public LayoutBox add(final Component component, final double weight) {
         return add(component, weight, _componentInsets, GridBagConstraints.CENTER, GridBagConstraints.BOTH);
@@ -89,11 +105,29 @@ public class LayoutBox extends JPanel {
         return add(_horizontal ? Box.createHorizontalStrut(extent) : Box.createVerticalStrut(extent), 0d);
     }
 
+    public LayoutBox addSeparator() {
+        return add(new JSeparator(_horizontal ? JSeparator.VERTICAL : JSeparator.HORIZONTAL), 0d);
+    }
+
     public Insets getComponentInsets() {
         return _componentInsets;
     }
 
-    public void setComponentInsets(final Insets insets) {
+    public LayoutBox setComponentInsets(final Insets insets) {
         _componentInsets = insets;
+        return this;
+    }
+
+    public LayoutBox withTitledBorder(final String title) {
+        if (title == null)
+            throw new IllegalArgumentException("Parameter 'title' must not be null!");
+
+        setBorder(BorderFactory.createTitledBorder(title));
+        return this;
+    }
+
+    public LayoutBox withBorder(final Border border) {
+        setBorder(border);
+        return this;
     }
 }
