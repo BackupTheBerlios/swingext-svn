@@ -46,6 +46,12 @@ public class AutowiringConditions {
         return action;
     }
 
+    public static EnableComponentAction enableComponent(final JComponent component) {
+        final EnableComponentAction action = new EnableComponentAction(component);
+        component.putClientProperty(EnableComponentAction.class.getName(), action);
+        return action;
+    }
+
     private AutowiringConditions() {
     }
 }
