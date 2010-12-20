@@ -23,6 +23,7 @@ public class DocumentListenerGlue extends ListenerGlue<Document> {
     public DocumentListenerGlue(final JTextComponent target, final DocumentListener listener) {
         _listener = listener;
         initialize(target, "document");
+        attachNestedListener(target.getDocument());
     }
 
     @Override
