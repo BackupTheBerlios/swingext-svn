@@ -50,4 +50,8 @@ public class EnableComponentAction implements AutowiringAction {
         _condition.addConditions(conditions);
         _condition.addNegatedConditions(negatedConditions);
     }
+
+    public void whenever(final BooleanCondition... conditions) {
+        _condition.addConditions(conditions);
+    }
 }
