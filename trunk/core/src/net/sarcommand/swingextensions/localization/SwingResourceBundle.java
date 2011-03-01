@@ -6,6 +6,7 @@ import net.sarcommand.swingextensions.internal.SwingExtLogger;
 import net.sarcommand.swingextensions.internal.SwingExtLogging;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
@@ -14,7 +15,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * todo [heup] Add javadoc <hr/> Copyright 2006-2009 Torsten Heup
+ * Copyright 2006-2009 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -42,7 +43,7 @@ public class SwingResourceBundle extends ResourceBundle {
         _bundle = ResourceBundle.getBundle(bundleName, locale);
     }
 
-    public void localizeComponent(final JComponent target, final String key) {
+    public void localizeComponent(final Component target, final String key) {
         for (String s : _bundle.keySet()) {
             if (s.startsWith(key)) {
                 applyProperty(target, s);
@@ -56,8 +57,8 @@ public class SwingResourceBundle extends ResourceBundle {
         return label;
     }
 
-    private void applyProperty(final JComponent target, final String property) {
-        final int dotIndex = property.indexOf('.');
+    private void applyProperty(final Component target, final String property) {
+        final int dotIndex = property.lastIndexOf('.');
         if (dotIndex < 0)
             return;
 
