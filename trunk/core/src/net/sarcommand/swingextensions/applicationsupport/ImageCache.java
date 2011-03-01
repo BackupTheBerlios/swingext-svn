@@ -177,7 +177,8 @@ public class ImageCache {
                 final StringBuilder searchPathBuffer = new StringBuilder(256);
                 for (URI path : searchPath)
                     searchPathBuffer.append(path.toString()).append(' ');
-                throw new RuntimeException("Could not access resource " + imageName + ", searchpath is " + searchPathBuffer);
+                throw new RuntimeException(
+                        "Could not access resource " + imageName + ", searchpath is " + searchPathBuffer);
             default:
                 return null;
         }
@@ -190,6 +191,21 @@ public class ImageCache {
      */
     public static synchronized void addAdditionalSearchPath(final URI searchPath) {
         __additionalSearchPaths.add(searchPath);
+    }
+
+    /**
+     * Adds another location which should be searched for images upon lookup. This is a conveniance method that will
+     * simply wrap the supplied string in an URI object and convert the possible URISyntaxException to a runtime
+     * exception to improve readability.
+     *
+     * @param searchPath URL string pointing to a location which should be searched for images.
+     */
+    public static synchronized void addAdditionalSearchPath(final String searchPath) {
+        try {
+            __additionalSearchPaths.add(new URI(searchPath));
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Malformed URI syntax: ", e);
+        }
     }
 
     /**
