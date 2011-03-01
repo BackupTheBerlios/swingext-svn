@@ -43,16 +43,14 @@ public class FileMenuItemFactory implements MenuItemFactory<File> {
             throw new IllegalArgumentException("Parameter 'value' must not be null!");
 
         final JMenuItem item = new JMenuItem(value.getName());
-        Icon icon;
         try {
             final FileSystemView fileSystemView = FileSystemView.getFileSystemView();
-            icon = fileSystemView.getSystemIcon(value);
+            item.setIcon(fileSystemView.getSystemIcon(value));
         } catch (Exception e) {
             /* Workaround for yet another swing bug */
             __log.warn("Could not obtain icon for file " + value, e);
-            icon = null;
         }
-        item.setIcon(icon);
+
         item.setToolTipText(value.getAbsolutePath());
 
         return item;
