@@ -5,6 +5,8 @@ import net.sarcommand.swingextensions.internal.SwingExtLogging;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -488,5 +490,77 @@ public class SwingExtUtil {
             if (c instanceof Container)
                 getChildComponents((Container) c, filter, resultList);
         }
+    }
+
+    public static Point arrangeWithin(final Shape shapeToArrange, final Rectangle window,
+                                      final int arrangement, final int padding) {
+        return arrangeWithin(shapeToArrange, window, arrangement, new Insets(padding, padding, padding, padding));
+    }
+
+    public static Point arrangeWithin(final Shape shapeToArrange, final Rectangle window,
+                                      final int arrangement, Insets padding) {
+        if (shapeToArrange == null)
+            throw new IllegalArgumentException("Parameter 'shapeToArrange' must not be null!");
+        if (window == null)
+            throw new IllegalArgumentException("Parameter 'window' must not be null!");
+        if (padding == null)
+            padding = new Insets(0, 0, 0, 0);
+
+        final Rectangle bounds = shapeToArrange.getBounds();
+
+        switch (arrangement) {
+            case SwingConstants.NORTH:
+                return new Point((window.width - bounds.width) / 2, padding.top);
+            case SwingConstants.NORTH_EAST:
+                return new Point(window.width - padding.right, padding.top);
+            case SwingConstants.EAST:
+                return new Point(window.width - padding.right, (window.height - bounds.height) / 2);
+            case SwingConstants.SOUTH_EAST:
+                return new Point(window.width - padding.right, window.height - padding.bottom);
+            case SwingConstants.SOUTH:
+                return new Point((window.width - bounds.width) / 2, window.height - padding.bottom);
+            case SwingConstants.SOUTH_WEST:
+                return new Point(padding.left, window.height - padding.bottom);
+            case SwingConstants.WEST:
+                return new Point(padding.left, (window.height - bounds.height) / 2);
+            case SwingConstants.NORTH_WEST:
+                return new Point(padding.left, padding.top);
+            case SwingConstants.CENTER:
+                return new Point((window.width - bounds.width) / 2, (window.height - bounds.height) / 2);
+            default:
+                throw new IllegalArgumentException("Illegal arrangement key, expected one of the SwingConstants keys");
+        }
+    }
+
+    public static void onShowingChanged(final JComponent component, final Runnable callback) {
+        component.addHierarchyListener(new HierarchyListener() {
+            public void hierarchyChanged(final HierarchyEvent e) {
+                if (e.getComponent() == component && (e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) > 0) {
+                    callback.run();
+                }
+            }
+        });
+    }
+
+    public static void onShown(final JComponent component, final Runnable action) {
+        component.addHierarchyListener(new HierarchyListener() {
+            public void hierarchyChanged(final HierarchyEvent e) {
+                if (e.getComponent() == component && (e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) > 0) {
+                    if (component.isShowing())
+                        action.run();
+                }
+            }
+        });
+    }
+
+    public static void onHidden(final JComponent component, final Runnable action) {
+        component.addHierarchyListener(new HierarchyListener() {
+            public void hierarchyChanged(final HierarchyEvent e) {
+                if (e.getComponent() == component && (e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) > 0) {
+                    if (!component.isShowing())
+                        action.run();
+                }
+            }
+        });
     }
 }
