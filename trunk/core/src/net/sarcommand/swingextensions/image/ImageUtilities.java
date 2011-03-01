@@ -175,6 +175,52 @@ public class ImageUtilities {
         return dest;
     }
 
+    /**
+     * Changes the color saturation of the given RGB image.
+     *
+     * @param image image expected to contain a 4 band rgba color model.
+     * @param s     The factor with which the saturation value should be multiplied.
+     */
+    public static void changeRGBSaturation(final BufferedImage image, final double s) {
+        double RW = 0.3086;
+        double RG = 0.6084;
+        double RB = 0.0820;
+
+        final double a = (1 - s) * RW + s;
+        final double b = (1 - s) * RW;
+        final double c = (1 - s) * RW;
+        final double d = (1 - s) * RG;
+        final double e = (1 - s) * RG + s;
+        final double f = (1 - s) * RG;
+        final double g = (1 - s) * RB;
+        final double h = (1 - s) * RB;
+        final double i = (1 - s) * RB + s;
+
+        final int width = image.getWidth();
+        final int height = image.getHeight();
+        final double[] red = new double[width * height];
+        final double[] green = new double[width * height];
+        final double[] blue = new double[width * height];
+
+        final WritableRaster raster = image.getRaster();
+        raster.getSamples(0, 0, width, height, 0, red);
+        raster.getSamples(0, 0, width, height, 1, green);
+        raster.getSamples(0, 0, width, height, 2, blue);
+
+        for (int x = 0; x < red.length; x++) {
+            final double r0 = red[x];
+            final double g0 = green[x];
+            final double b0 = blue[x];
+            red[x] = a * r0 + d * g0 + g * b0;
+            green[x] = b * r0 + e * g0 + h * b0;
+            blue[x] = c * r0 + f * g0 + i * b0;
+        }
+
+        raster.setSamples(0, 0, width, height, 0, red);
+        raster.setSamples(0, 0, width, height, 1, green);
+        raster.setSamples(0, 0, width, height, 2, blue);
+    }
+
     private static BufferedImage ensureBuffer0Capacity(final int width, final int height) {
         BufferedImage img0 = _buffer0 != null ? _buffer0.get() : null;
         img0 = ensureBufferCapacity(width, height, img0);
