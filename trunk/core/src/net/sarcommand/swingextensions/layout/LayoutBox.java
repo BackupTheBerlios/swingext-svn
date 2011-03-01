@@ -5,9 +5,18 @@ import javax.swing.border.Border;
 import java.awt.*;
 
 /**
+ * A utility class for laying out components in a horizontal or vertical line. This class encapsulates a GridBagLayout
+ * instance and will arrange components with a given weight along the main axis while maximizing the other axis.
+ *
+ * Several shortcut methods exist for adding JLabels, glues, struts etc. The class is intended to be used for
+ * method chaining.
+ *
+ * Example:
+ * <code>LayoutBox.horizontalLayoutBox().add("First name:",0d).addStrut(6).add(nameTF,1d);</code>
+ *
  * Feb 10, 2010
  * <p/>
- * <hr/> Copyright 2006-2009 Torsten Heup
+ * <hr/> Copyright 2006-2011 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
