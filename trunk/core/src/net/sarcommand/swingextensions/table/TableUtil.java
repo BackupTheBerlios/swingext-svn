@@ -1,7 +1,9 @@
 package net.sarcommand.swingextensions.table;
 
 import javax.swing.*;
-import javax.swing.table.*;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
 
 /**
@@ -33,6 +35,62 @@ public class TableUtil {
      */
     public static void setPreferredColumnWidths(final JTable table) {
         setPreferredColumnWidths(table, true);
+    }
+
+    /**
+     * This method will iterate over the given table's columns and attempt to find the optimal width for each. You
+     * might want to do so after displaying a table for the first time or after updating the underlying model to
+     * ensure that as much information as possible is shown.
+     *
+     * @param table         The JTable to adapt, non-null.
+     * @param includeHeader whether or not the header should be included.
+     */
+    public static void setPreferredColumnWidths(final JTable table, final float[] columnWeigths,
+                                                final boolean includeHeader) {
+        if (table == null)
+            throw new IllegalArgumentException("Parameter 'table' must not be null!");
+        if (columnWeigths == null)
+            throw new IllegalArgumentException("Parameter 'columnWeigths' must not be null!");
+
+
+        final int columnCount = table.getColumnCount();
+        final int rowCount = table.getRowCount();
+
+        if (columnWeigths != null && columnWeigths.length != columnCount)
+            throw new IllegalArgumentException("Illegal number of column weights, has to be equal to column count.");
+
+
+        final TableColumnModel columnModel = table.getColumnModel();
+
+        float totalWeight = 0;
+        for (float weight : columnWeigths)
+            totalWeight += weight;
+        if (totalWeight == 0)
+            totalWeight = 1;
+
+        for (int col = 0; col < columnCount; col++) {
+            int max = 0;
+            if (includeHeader && table.getTableHeader() != null) {
+                final TableColumn column = columnModel.getColumn(col);
+                final TableCellRenderer columnRenderer = column.getCellRenderer();
+                final TableCellRenderer renderer = columnRenderer != null ? columnRenderer :
+                        table.getTableHeader().getDefaultRenderer();
+                final int width = renderer.getTableCellRendererComponent(table,
+                        column.getHeaderValue(), false, table.hasFocus(), -1, col).getMinimumSize().width;
+                if (width > max)
+                    max = width;
+            }
+            for (int row = 0; row < rowCount; row++) {
+                final int width = table.getCellRenderer(row, col).getTableCellRendererComponent(table,
+                        table.getValueAt(row, col), table.isCellSelected(row, col), table.hasFocus(),
+                        row, col).getMinimumSize().width;
+                if (width > max)
+                    max = width;
+            }
+            final TableColumn column = columnModel.getColumn(col);
+            column.setMinWidth(max);
+            column.setPreferredWidth(Math.round(Integer.MAX_VALUE * (columnWeigths[col] / totalWeight)));
+        }
     }
 
     /**
