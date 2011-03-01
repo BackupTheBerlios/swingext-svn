@@ -100,6 +100,14 @@ public class JEditableList extends JList {
             public void mouseClicked(final MouseEvent e) {
                 checkForEdit(e);
             }
+
+            public void mousePressed(final MouseEvent e) {
+                checkForEdit(e);
+            }
+
+            public void mouseReleased(final MouseEvent e) {
+                checkForEdit(e);
+            }
         };
 
         _cellEditorListener = new CellEditorListener() {
@@ -175,6 +183,7 @@ public class JEditableList extends JList {
      * @param e Event which might trigger a new edit.
      */
     protected void checkForEdit(final EventObject e) {
+
         final ListCellEditor listCellEditor = getCellEditor();
         if (listCellEditor == null)
             return;
@@ -182,6 +191,15 @@ public class JEditableList extends JList {
         int row = e instanceof MouseEvent ? locationToIndex(((MouseEvent) e).getPoint()) : getSelectedIndex();
         if (row < 0)
             return;
+
+        if (isEditing() && getEditingIndex() == row) {
+            if (e instanceof MouseEvent) {
+                final Component editor = getEditorComponent();
+                final MouseEvent eventInEditor = SwingUtilities.convertMouseEvent(JEditableList.this,
+                        (MouseEvent) e, editor);
+                editor.dispatchEvent(eventInEditor);
+            }
+        }
 
         if (!(getModel() instanceof EditableListModel && ((EditableListModel) getModel()).isIndexEditable(row)))
             return;
@@ -272,15 +290,18 @@ public class JEditableList extends JList {
         _editingIndex = index;
         _editorComponent = editor;
 
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                editor.setBounds(getCellBounds(index, index));
-                add(editor);
-                revalidate();
-                editor.requestFocusInWindow();
-                if (e != null && e instanceof MouseEvent)
-                    editor.dispatchEvent(SwingUtilities.convertMouseEvent(JEditableList.this, (MouseEvent) e, editor));
-            }
-        });
+//        SwingUtilities.invokeLater(new Runnable() {
+//            public void run() {
+        editor.setBounds(getCellBounds(index, index));
+        add(editor);
+        revalidate();
+        editor.requestFocusInWindow();
+        if (e != null && e instanceof MouseEvent) {
+            final MouseEvent eventInEditor = SwingUtilities.convertMouseEvent(JEditableList.this, (MouseEvent) e,
+                    editor);
+            editor.dispatchEvent(eventInEditor);
+        }
+//            }
+//        });
     }
 }
