@@ -169,6 +169,8 @@ public class RecentListMenu extends JMenu {
      */
     public void setAction(final Action action) {
         _action = action;
+        setText((String) action.getValue(Action.NAME));
+        setToolTipText((String) action.getValue(Action.SHORT_DESCRIPTION));
         rebuildMenu();
     }
 
