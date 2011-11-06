@@ -1,7 +1,10 @@
 package net.sarcommand.swingextensions.test.binding;
 
 import junit.framework.TestCase;
-import net.sarcommand.swingextensions.binding.*;
+import net.sarcommand.swingextensions.binding.Keypath;
+import net.sarcommand.swingextensions.binding.KeypathAccessException;
+import net.sarcommand.swingextensions.binding.KeypathElement;
+import net.sarcommand.swingextensions.binding.KeypathElementCache;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -35,30 +38,6 @@ public class KeypathTest extends TestCase {
         assertTrue("canGet incorrectly returned false", ageElement.canPerformGet());
         assertFalse("canSet incorrectly returned true", ageElement.canPerformSet());
         assertEquals("Could not invoke getter for age propery", ageElement.get(_doreen), 84);
-    }
-
-    /**
-     * Testing an element which can not be accessed in any way.
-     */
-    public void testKeypathElement1() {
-        final KeypathElement motherElement = new KeypathElement(Person.class, "mother", true);
-        assertNull("Got a getter for a field which should be unaccessible", motherElement.getAccessorForGet());
-        assertNull("Got a setter for a field which should be unaccessible", motherElement.getAccessorForSet());
-        assertFalse("canGet incorrectly retuned true", motherElement.canPerformGet());
-        assertFalse("canSet incorrectly retuned true", motherElement.canPerformSet());
-        try {
-            motherElement.get(_charlie);
-            fail("Performing get on an unaccessible property did not result in an exception");
-        } catch (MalformedKeypathException e) {
-            /* expected */
-
-        }
-        try {
-            motherElement.set(_charlie, _bob);
-            fail("Performing set on an unaccessible property did not result in an exception");
-        } catch (MalformedKeypathException e) {
-            /* expected */
-        }
     }
 
     /**
