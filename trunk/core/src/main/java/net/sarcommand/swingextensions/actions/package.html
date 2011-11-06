@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+</head>
+<body bgcolor="white">
+This package contains utility class for creating and managing actions. It offers different action implementations,
+based on Reflection or a responder chain concept and means to create localized actions using resource bundles.
+
+<h2>Core classes</h2>
+
+<h4>ActionManager</h4>
+
+The ActionManager is a static utility class handling the lifecycle of Action instances. It uses an ActionProvider to
+create Actions, caches their instances while the application is active and follows responder chains when an action is
+executed. See the class documentation for further information on the responder chain concept.
+
+<h4>ActionProvider</h4>
+
+An ActionProvider realizes the factory pattern in order to instanciate Actions. Actions can be created from external
+representations, e.g. the ResourceBundleActionProvider will use the standard properties localization concept.
+
+<h4>ActionHandler</h4>
+
+A callback interface used by the ActionManager to find a suitable responder for an action. See the documentation for the
+ActionManager class for information on the responder chain concept.
+
+<h2>Related Documentation</h2>
+
+For overviews, tutorials, examples, guides, and tool documentation, please see:
+<a href="http://www.sarcommand.org/en/index.php?title=Action_Management">SwingExt action framework</a>
+@since 0.1
+</body>
+</html>
