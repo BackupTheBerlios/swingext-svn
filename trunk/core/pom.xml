@@ -23,4 +23,14 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
         </license>
     </licenses>
+
+    <dependencies>
+        <dependency>
+            <artifactId>junit</artifactId>
+            <groupId>junit</groupId>
+            <version>3.8.2</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
 </project>
