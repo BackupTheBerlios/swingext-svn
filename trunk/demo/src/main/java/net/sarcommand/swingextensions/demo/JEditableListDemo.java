@@ -115,7 +115,8 @@ public class JEditableListDemo extends DemoClass {
             super();
         }
 
-        public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
+        public Component getListCellRendererComponent(final JList list, final Object value, final int index,
+                                                      final boolean isSelected, final boolean cellHasFocus) {
             final JLabel renderer = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             renderer.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
             renderer.setIcon(ImageCache.loadIcon("images/iconFileHtml_16x16.png"));

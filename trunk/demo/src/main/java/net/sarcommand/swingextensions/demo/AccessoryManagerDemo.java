@@ -5,12 +5,13 @@ import net.sarcommand.swingextensions.filechooser.SimpleAccessoryManager;
 import net.sarcommand.swingextensions.utilities.SwingExtUtil;
 
 import javax.swing.*;
-import static javax.swing.SwingConstants.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collection;
+
+import static javax.swing.SwingConstants.*;
 
 /**
  * Demo for the different AccessoryManager implementations.
