@@ -20,4 +20,13 @@ public abstract class AbstractTreeTableModel extends DefaultTreeModel implements
     protected AbstractTreeTableModel(final TreeNode treeNode) {
         super(treeNode);
     }
+
+    @Override
+    public boolean isCellEditable(final int row, final int column) {
+        return false;
+    }
+
+    @Override
+    public void setValueAt(final Object treeNode, final Object value, final int column) {
+    }
 }
