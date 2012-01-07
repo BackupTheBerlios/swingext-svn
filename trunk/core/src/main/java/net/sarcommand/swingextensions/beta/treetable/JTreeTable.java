@@ -1,4 +1,4 @@
-package net.sarcommand.swingextensions.treetable;
+package net.sarcommand.swingextensions.beta.treetable;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;

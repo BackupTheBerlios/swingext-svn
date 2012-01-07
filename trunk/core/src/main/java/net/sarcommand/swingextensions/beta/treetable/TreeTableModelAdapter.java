@@ -1,4 +1,4 @@
-package net.sarcommand.swingextensions.treetable;
+package net.sarcommand.swingextensions.beta.treetable;
 
 import net.sarcommand.swingextensions.event.TreeModelAdapter;
 
