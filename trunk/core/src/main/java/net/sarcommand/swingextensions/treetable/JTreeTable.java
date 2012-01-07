@@ -22,9 +22,10 @@ import java.awt.event.MouseEvent;
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-public class JTreeTable extends JTable {
+public class JTreeTable extends JComponent {
     protected TreeTableTreeView _tree;
-    private final TreeTableModel _model;
+    protected TreeTableModel _model;
+    protected JTable _table;
 
 
     public JTreeTable(final TreeTableModel model) {
@@ -39,10 +40,11 @@ public class JTreeTable extends JTable {
     }
 
     protected void initComponents() {
-        _tree = new TreeTableTreeView(this, _model);
-        setModel(new TreeTableModelAdapter(this, _model));
+        _table = new JTable();
 
-        setDefaultRenderer(TreeTableModel.class, new TableCellRenderer() {
+        setModel(_model);
+
+        _table.setDefaultRenderer(TreeTableModel.class, new TableCellRenderer() {
             public Component getTableCellRendererComponent(final JTable jTable, final Object o, final boolean b,
                                                            final boolean b1, final int row, final int column) {
                 _tree.select(row, b);
@@ -50,16 +52,18 @@ public class JTreeTable extends JTable {
             }
         });
 
-        _tree.setRowHeight(getRowHeight());
+        _tree.setRowHeight(_table.getRowHeight());
     }
 
     protected void initLayout() {
-
+        setLayout(new GridLayout());
+        add(new JScrollPane(_table));
     }
 
     protected void setupEventHandlers() {
         addMouseListener(new MouseAdapter() {
-            @Override public void mouseClicked(final MouseEvent mouseEvent) {
+            @Override
+            public void mouseClicked(final MouseEvent mouseEvent) {
                 final MouseEvent event = convertMouseEventForTree(mouseEvent);
                 if (event != null) {
                     _tree.dispatchEvent(event);
@@ -68,7 +72,8 @@ public class JTreeTable extends JTable {
                 }
             }
 
-            @Override public void mousePressed(final MouseEvent mouseEvent) {
+            @Override
+            public void mousePressed(final MouseEvent mouseEvent) {
                 final MouseEvent event = convertMouseEventForTree(mouseEvent);
                 if (event != null) {
                     _tree.dispatchEvent(event);
@@ -78,7 +83,8 @@ public class JTreeTable extends JTable {
 
             }
 
-            @Override public void mouseReleased(final MouseEvent mouseEvent) {
+            @Override
+            public void mouseReleased(final MouseEvent mouseEvent) {
                 final MouseEvent event = convertMouseEventForTree(mouseEvent);
                 if (event != null) {
                     _tree.dispatchEvent(event);
@@ -88,30 +94,30 @@ public class JTreeTable extends JTable {
             }
         });
 
-        getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        _table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(final ListSelectionEvent listSelectionEvent) {
-                _tree.setSelectionRows(getSelectedRows());
+                _tree.setSelectionRows(_table.getSelectedRows());
                 repaint();
             }
         });
     }
 
     private MouseEvent convertMouseEventForTree(final MouseEvent event) {
-        final int columnIndexAtX = getColumnModel().getColumnIndexAtX(event.getX());
+        final int columnIndexAtX = _table.getColumnModel().getColumnIndexAtX(event.getX());
         if (columnIndexAtX < 0)
             return null;
 
-        final int modelIndex = convertColumnIndexToModel(columnIndexAtX);
+        final int modelIndex = _table.convertColumnIndexToModel(columnIndexAtX);
         if (modelIndex != 0)
             return null;
 
-        final Rectangle rect = getCellRect(0, columnIndexAtX, true);
+        final Rectangle rect = _table.getCellRect(0, columnIndexAtX, true);
         return new MouseEvent(event.getComponent(), event.getID(), event.getWhen(), event.getModifiers(),
                 (int) (event.getX() - rect.getX()), event.getY(), event.getClickCount(), event.isPopupTrigger());
     }
 
     public void setRowHeight(final int rowHeight) {
-        super.setRowHeight(rowHeight);
+        _table.setRowHeight(rowHeight);
         if (_tree != null)
             _tree.setRowHeight(rowHeight);
     }
@@ -123,5 +129,34 @@ public class JTreeTable extends JTable {
     protected Object getTreeComponentForViewRow(final int viewRow) {
         final TreePath pathForRow = _tree.getPathForRow(viewRow);
         return pathForRow.getLastPathComponent();
+    }
+
+    public void setModel(final TreeTableModel model) {
+        _tree = new TreeTableTreeView(this, _model);
+        _table.setModel(new TreeTableModelAdapter(this, _model));
+    }
+
+    public Color getSelectionBackground() {
+        return _table.getSelectionBackground();
+    }
+
+    public Color getSelectionForeground() {
+        return _table.getSelectionForeground();
+    }
+
+    public int convertColumnIndexToModel(final int viewColumnIndex) {
+        return _table.convertColumnIndexToModel(viewColumnIndex);
+    }
+
+    public int convertColumnIndexToView(final int modelColumnIndex) {
+        return _table.convertColumnIndexToView(modelColumnIndex);
+    }
+
+    public int convertRowIndexToView(final int modelRowIndex) {
+        return _table.convertRowIndexToView(modelRowIndex);
+    }
+
+    public int convertRowIndexToModel(final int viewRowIndex) {
+        return _table.convertRowIndexToModel(viewRowIndex);
     }
 }
