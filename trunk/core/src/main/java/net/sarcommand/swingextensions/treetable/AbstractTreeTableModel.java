@@ -4,6 +4,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 
 /**
+ * BETA
+ * <p/>
  * 8/4/11
  *
  * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>

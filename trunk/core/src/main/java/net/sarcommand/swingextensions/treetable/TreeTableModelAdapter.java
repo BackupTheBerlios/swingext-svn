@@ -7,6 +7,8 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.table.AbstractTableModel;
 
 /**
+ * BETA
+ * <p/>
  * 8/4/11
  *
  * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
@@ -27,7 +29,8 @@ public class TreeTableModelAdapter extends AbstractTableModel {
         _treeTable = treeTable;
         _model = model;
         _model.addTreeModelListener(new TreeModelAdapter() {
-            @Override protected void treeChanged(final TreeModelEvent e) {
+            @Override
+            protected void treeChanged(final TreeModelEvent e) {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         fireTableDataChanged();
@@ -45,11 +48,13 @@ public class TreeTableModelAdapter extends AbstractTableModel {
         return _treeTable.getTreeRowCount();
     }
 
-    @Override public Class<?> getColumnClass(final int i) {
+    @Override
+    public Class<?> getColumnClass(final int i) {
         return i == 0 ? TreeTableModel.class : _model.getColumnClass(i - 1);
     }
 
-    @Override public String getColumnName(final int i) {
+    @Override
+    public String getColumnName(final int i) {
         return i == 0 ? "" : _model.getColumnName(i - 1);
     }
 
@@ -66,11 +71,13 @@ public class TreeTableModelAdapter extends AbstractTableModel {
         return _treeTable.getTreeComponentForViewRow(viewRow);
     }
 
-    @Override public boolean isCellEditable(final int row, final int column) {
+    @Override
+    public boolean isCellEditable(final int row, final int column) {
         return column == 0 ? false : _model.isCellEditable(row, column - 1);
     }
 
-    @Override public void setValueAt(final Object o, final int row, final int column) {
+    @Override
+    public void setValueAt(final Object o, final int row, final int column) {
         if (column == 0)
             return;
         final Object treeNode = getObjectForRow(row);

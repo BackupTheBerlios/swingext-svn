@@ -3,6 +3,8 @@ package net.sarcommand.swingextensions.treetable;
 import javax.swing.tree.TreeModel;
 
 /**
+ * BETA
+ * <p/>
  * 8/4/11
  *
  * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>

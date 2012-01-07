@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
+ * BETA
+ * <p/>
  * 8/4/11
  *
  * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
@@ -26,14 +28,16 @@ public class TreeTableTreeView extends JTree {
         setModel(model);
     }
 
-    @Override public void paint(final Graphics graphics) {
+    @Override
+    public void paint(final Graphics graphics) {
         graphics.setColor(getBackground());
         graphics.fillRect(0, 0, getWidth(), getHeight());
         graphics.translate(0, -_visibleRow * getRowHeight());
         super.paint(graphics);
     }
 
-    @Override protected void paintComponent(final Graphics graphics) {
+    @Override
+    protected void paintComponent(final Graphics graphics) {
         super.paintComponent(graphics);
     }
 

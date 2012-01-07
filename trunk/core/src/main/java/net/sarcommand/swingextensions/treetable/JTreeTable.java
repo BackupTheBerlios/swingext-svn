@@ -10,6 +10,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
+ * BETA
+ * <p/>
  * 8/4/11
  *
  * @author Torsten Heup <torsten.heup@fit.fraunhofer.de>
