@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * This class implements a Document which restricts its data to match one or more regular expressions. This class is
  * used internally by the text based TypedInputField implementations.
  * <p/>
- * <hr/> Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

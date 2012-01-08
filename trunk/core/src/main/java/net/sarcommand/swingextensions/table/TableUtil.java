@@ -9,27 +9,23 @@ import java.awt.*;
 /**
  * This class holds utility methods which may be useful when dealing with JTables.
  * <p/>
- * <hr/>
- * Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class TableUtil {
 
     /**
-     * This method will iterate over the given table's columns and attempt to find the optimal width for each. You
-     * might want to do so after displaying a table for the first time or after updating the underlying model to
-     * ensure that as much information as possible is shown.
+     * This method will iterate over the given table's columns and attempt to find the optimal width for each. You might
+     * want to do so after displaying a table for the first time or after updating the underlying model to ensure that
+     * as much information as possible is shown.
      *
      * @param table The JTable to adapt, non-null.
      */
@@ -38,9 +34,9 @@ public class TableUtil {
     }
 
     /**
-     * This method will iterate over the given table's columns and attempt to find the optimal width for each. You
-     * might want to do so after displaying a table for the first time or after updating the underlying model to
-     * ensure that as much information as possible is shown.
+     * This method will iterate over the given table's columns and attempt to find the optimal width for each. You might
+     * want to do so after displaying a table for the first time or after updating the underlying model to ensure that
+     * as much information as possible is shown.
      *
      * @param table         The JTable to adapt, non-null.
      * @param includeHeader whether or not the header should be included.
@@ -94,9 +90,9 @@ public class TableUtil {
     }
 
     /**
-     * This method will iterate over the given table's columns and attempt to find the optimal width for each. You
-     * might want to do so after displaying a table for the first time or after updating the underlying model to
-     * ensure that as much information as possible is shown.
+     * This method will iterate over the given table's columns and attempt to find the optimal width for each. You might
+     * want to do so after displaying a table for the first time or after updating the underlying model to ensure that
+     * as much information as possible is shown.
      *
      * @param table         The JTable to adapt, non-null.
      * @param includeHeader whether or not the header should be included.
@@ -134,9 +130,9 @@ public class TableUtil {
     }
 
     /**
-     * This method will iterate over the given table's rows and attempt to find the optimal height for each. You
-     * might want to invoke this method whenever the table's model has been updated or the column margin's change.
-     * You can obtain a utility class which does just that for you using the RowHeightAdapter class.
+     * This method will iterate over the given table's rows and attempt to find the optimal height for each. You might
+     * want to invoke this method whenever the table's model has been updated or the column margin's change. You can
+     * obtain a utility class which does just that for you using the RowHeightAdapter class.
      *
      * @param table Table to adapt, non-null.
      */

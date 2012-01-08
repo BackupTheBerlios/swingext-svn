@@ -16,7 +16,7 @@ import java.util.LinkedList;
  * bring a window to front when it is clicked. The menu will update itself when items are added to or removed from the
  * group automatically. You can add additional items to the menu, which will be preserved during updates.
  * <p/>
- * <hr/> Copyright 2006-2009 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -93,7 +93,7 @@ public class ManagedWindowMenu extends JMenu {
             add(c);
         _items.clear();
         ButtonGroup buttonGroup = new ButtonGroup();
-        for (Iterator<WindowGroup> it = _windowGroups.iterator(); it.hasNext();) {
+        for (Iterator<WindowGroup> it = _windowGroups.iterator(); it.hasNext(); ) {
             final WindowGroup group = it.next();
             for (String w : group.getWindowIDs()) {
                 final Item item = new Item(w, group);

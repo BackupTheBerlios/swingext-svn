@@ -14,7 +14,7 @@ import java.util.prefs.Preferences;
  * <p/>
  * You can automatically create a suitable JMenu for the recent list using the RecentItemsMenu class.
  * <p/>
- * <hr/> Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -50,7 +50,7 @@ public class RecentFilesList extends RecentItemsList<File> {
         synchronized (this) {
             copy = new LinkedList<File>(_recentItems);
 
-            for (Iterator<File> iter = _recentItems.iterator(); iter.hasNext();)
+            for (Iterator<File> iter = _recentItems.iterator(); iter.hasNext(); )
                 if (!iter.next().exists())
                     iter.remove();
         }

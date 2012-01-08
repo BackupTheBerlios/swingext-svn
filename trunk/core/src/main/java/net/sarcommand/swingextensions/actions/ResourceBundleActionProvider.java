@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
  * while you use command+c on the mac. To circumvent this issue, you can use the token 'menu' in your property files to
  * define the correct accelerator. The action provider will replace it with the correct platform-specific key for you.
  * <p/>
- * <hr/> Copyright 2006-2009 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

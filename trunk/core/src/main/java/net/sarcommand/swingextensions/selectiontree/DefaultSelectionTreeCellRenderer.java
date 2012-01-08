@@ -2,11 +2,12 @@ package net.sarcommand.swingextensions.selectiontree;
 
 
 import net.sarcommand.swingextensions.internal.SwingExtResources;
-import static net.sarcommand.swingextensions.internal.SwingExtResources.getIconResource;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
+
+import static net.sarcommand.swingextensions.internal.SwingExtResources.getIconResource;
 
 /**
  * Default implementation for a JSelectionTree's renderer. This implementation will simply add suitable checkbox icons
@@ -15,7 +16,7 @@ import java.awt.*;
  * If you want to change the icons being used, you can either use the getter/setter methods or globally define your own
  * icons by providing a custom ResourceBundle for the swingextensions package.
  * <p/>
- * <hr/> Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

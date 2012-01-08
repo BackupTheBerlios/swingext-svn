@@ -6,7 +6,7 @@ import java.awt.*;
 /**
  * Instances of this class can be used to display a notification for the user on top of a glass pane. You can use this
  * base class as a JPanal and add custom content to it, or you might refer to one of the existing subclasses. <hr/>
- * Copyright 2006-2008 Torsten Heup
+ * Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

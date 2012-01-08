@@ -29,7 +29,7 @@ import java.beans.PropertyChangeListener;
  * This ui class will delegate all the usual painting class to the normal ui, therefore it should work equally on all
  * LookAndFeels.
  * <p/>
- * <hr/> Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

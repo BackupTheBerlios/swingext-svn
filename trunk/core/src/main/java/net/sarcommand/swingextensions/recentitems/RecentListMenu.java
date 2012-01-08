@@ -15,31 +15,27 @@ import java.text.Format;
 import java.util.List;
 
 /**
- * This class creates a JMenu instance which will be synchronized with a given RecentItemsList or one
- * of its subclasses. The menu will automatically update whenever the list changes, and will propagate user
- * selections made using swing's action mechanism. You may choose to install ActionListener instances, or use the
- * Action interface in order to be notified. The selected value can either be obtained using the getLastSelection()
- * method or by examining the ActionEvent's actionCommand property: The string representation of the selected value will
- * be stored here, formatted by the Formatter instance used by the enclosed RecentItemsList.
+ * This class creates a JMenu instance which will be synchronized with a given RecentItemsList or one of its subclasses.
+ * The menu will automatically update whenever the list changes, and will propagate user selections made using swing's
+ * action mechanism. You may choose to install ActionListener instances, or use the Action interface in order to be
+ * notified. The selected value can either be obtained using the getLastSelection() method or by examining the
+ * ActionEvent's actionCommand property: The string representation of the selected value will be stored here, formatted
+ * by the Formatter instance used by the enclosed RecentItemsList.
  * <p/>
  * By default, the generated JMenuItems will simply contain the string representation of the given values. If you want
  * to customize the way the JMenuItems are created (for instance by adding an Icon), you can set a MenuItemFactory
  * instance.
  * <p/>
- * <hr/>
- * Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class RecentListMenu extends JMenu {
     private static final SwingExtLogger __log = SwingExtLogging.getLogger(RecentListMenu.class);
@@ -80,8 +76,8 @@ public class RecentListMenu extends JMenu {
     protected ActionListener _actionListener;
 
     /**
-     * Creates a new RecentListMenu. This constructor is intended to be used by configuration frameworks like spring.
-     * Be sure to invoke setRecentItems(RecentItemsList) before using this instance.
+     * Creates a new RecentListMenu. This constructor is intended to be used by configuration frameworks like spring. Be
+     * sure to invoke setRecentItems(RecentItemsList) before using this instance.
      */
     public RecentListMenu() {
         initialize(null, null);

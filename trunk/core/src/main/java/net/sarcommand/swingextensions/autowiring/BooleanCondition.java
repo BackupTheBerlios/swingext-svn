@@ -3,7 +3,7 @@ package net.sarcommand.swingextensions.autowiring;
 import net.sarcommand.swingextensions.event.EventSupport;
 
 /**
- * An autowiring Condition resolving to a boolean state. <hr/> Copyright 2006-2010 Torsten Heup
+ * An autowiring Condition resolving to a boolean state. <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

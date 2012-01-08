@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
  * which case the action's identifier and the generated event will be passed as parameters, or</li> <li>() with no
  * parameters, in which case the method will merely used as a notifier.</li>
  * <p/>
- * <hr/> Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

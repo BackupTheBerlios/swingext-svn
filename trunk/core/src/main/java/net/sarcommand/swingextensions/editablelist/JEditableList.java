@@ -19,7 +19,7 @@ import java.util.EventObject;
  * A JList implementation which can be made editable. This implementation subclasses JList (since quite a bit work has
  * to be done to add editing support) and can thus be used as any normal list, with one exception. Even though the API
  * allows setting any kind of ListModel, this implementation expects an instance of EditableListModel. If you set any
- * other model implementation, the JEditableList will behave like any other JList. <hr/> Copyright 2006-2008 Torsten
+ * other model implementation, the JEditableList will behave like any other JList. <hr/> Copyright 2006-2012 Torsten
  * Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with

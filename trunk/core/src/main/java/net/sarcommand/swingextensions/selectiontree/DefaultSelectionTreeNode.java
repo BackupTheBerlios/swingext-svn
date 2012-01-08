@@ -12,7 +12,7 @@ import java.util.Enumeration;
  * adds two new features: <li>You can easily create new child nodes using the addChild(Object) method</li> <li>You can
  * add ActionListeners to the node in order to be notified when it has been (de-)selected.
  * <p/>
- * <hr/> Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

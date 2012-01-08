@@ -17,7 +17,7 @@ import java.util.*;
  *
  * @see EventSupport
  *      <p/>
- *      <hr/> Copyright 2006-2008 Torsten Heup
+ *      <hr/> Copyright 2006-2012 Torsten Heup
  *      <p/>
  *      Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance
  *      with the License. You may obtain a copy of the License at
@@ -113,7 +113,7 @@ public class WeakEventSupport<T> {
     public void removeListener(final T listener) {
         if (listener == null)
             throw new IllegalArgumentException("Parameter 'listener' must not be null!");
-        for (Iterator<WeakReference<T>> it = _elements.iterator(); it.hasNext();) {
+        for (Iterator<WeakReference<T>> it = _elements.iterator(); it.hasNext(); ) {
             final WeakReference<T> weakReference = it.next();
             final T element = weakReference.get();
 
@@ -151,7 +151,7 @@ public class WeakEventSupport<T> {
      */
     public Collection<T> getListeners() {
         final ArrayList arrayList = new ArrayList(_elements.size());
-        for (Iterator<WeakReference<T>> it = _elements.iterator(); it.hasNext();) {
+        for (Iterator<WeakReference<T>> it = _elements.iterator(); it.hasNext(); ) {
             final T listener = it.next().get();
             if (listener == null)
                 it.remove();

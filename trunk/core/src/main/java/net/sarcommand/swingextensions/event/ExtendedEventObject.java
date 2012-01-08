@@ -15,7 +15,7 @@ import java.util.Properties;
  * (actually, none of the event related classes in swing are). If required, it is advised that using threads synchronize
  * on the event object rather than on its properties instance as a general convention.
  * <p/>
- * <hr/> Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

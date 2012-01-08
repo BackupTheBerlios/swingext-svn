@@ -5,10 +5,11 @@ import net.sarcommand.swingextensions.internal.SwingExtLogging;
 import net.sarcommand.swingextensions.utilities.SwingExtUtil;
 
 import java.beans.PropertyChangeListener;
-import static java.lang.String.format;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+
+import static java.lang.String.format;
 
 /**
  * This class represents one element within a key path. It provides a suitable accessor for a property, either using a
@@ -18,7 +19,7 @@ import java.lang.reflect.Modifier;
  * <p/>
  * <i>This class is unit-tested in net.sarcommand.swingextensions.test.binding.KeypathTest#testKeypathElement</i>
  * <p/>
- * <hr/> Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

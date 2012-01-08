@@ -4,28 +4,24 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * This class implements an icon which is a composite of a number of other icons. The swing components all allow just
- * a single icon to be set (so do the default renderers). However, on some occasions, for instance when using icons to
+ * This class implements an icon which is a composite of a number of other icons. The swing components all allow just a
+ * single icon to be set (so do the default renderers). However, on some occasions, for instance when using icons to
  * visualize flags associated with a node in a JTree, you might want to have multiple icons. This class offers a simple
  * matrix which can be filled with your icons, which will then be painted as one.
  * <p/>
- * Note: This class does not use an image buffer but rather paints the icons directly. Any changes you make to one
- * of your icons after instanciating the CompositeIcon will therefore be taken into account.
+ * Note: This class does not use an image buffer but rather paints the icons directly. Any changes you make to one of
+ * your icons after instanciating the CompositeIcon will therefore be taken into account.
  * <p/>
- * <hr/>
- * Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class CompositeIcon implements Icon {
     /**
@@ -101,9 +97,8 @@ public class CompositeIcon implements Icon {
     }
 
     /**
-     * Draw the icon at the specified location.  Icon implementations
-     * may use the Component argument to get properties useful for
-     * painting, e.g. the foreground or background color.
+     * Draw the icon at the specified location.  Icon implementations may use the Component argument to get properties
+     * useful for painting, e.g. the foreground or background color.
      */
     public void paintIcon(Component c, Graphics g, int x, int y) {
         final int colWidth = _width / _icons[0].length;

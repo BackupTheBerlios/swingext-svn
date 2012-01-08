@@ -16,7 +16,7 @@ import java.awt.event.ActionEvent;
  * <code>null</code> as well.
  * <p/>
  * Note that the source of the action event will be ignored, the action will always target the JTable specified in the
- * constructor. This allows you to install the action on other components like a JToolBar. <hr/> Copyright 2006-2008
+ * constructor. This allows you to install the action on other components like a JToolBar. <hr/> Copyright 2006-2012
  * Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with

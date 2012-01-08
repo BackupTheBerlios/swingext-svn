@@ -10,7 +10,7 @@ import java.awt.*;
  * A TextUI implementation which will delegate all calls to a given instance. Used as abstract super class for various
  * implementations.
  * <p/>
- * <hr/> Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -32,7 +32,8 @@ public abstract class DelegatingTextUI extends TextUI {
         _delegate.damageRange(t, p0, p1);
     }
 
-    public void damageRange(final JTextComponent t, final int p0, final int p1, final Position.Bias firstBias, final Position.Bias secondBias) {
+    public void damageRange(final JTextComponent t, final int p0, final int p1, final Position.Bias firstBias,
+                            final Position.Bias secondBias) {
         _delegate.damageRange(t, p0, p1, firstBias, secondBias);
     }
 
@@ -40,7 +41,9 @@ public abstract class DelegatingTextUI extends TextUI {
         return _delegate.getEditorKit(t);
     }
 
-    public int getNextVisualPositionFrom(final JTextComponent t, final int pos, final Position.Bias b, final int direction, final Position.Bias[] biasRet) throws BadLocationException {
+    public int getNextVisualPositionFrom(final JTextComponent t, final int pos, final Position.Bias b,
+                                         final int direction, final Position.Bias[] biasRet) throws
+            BadLocationException {
         return _delegate.getNextVisualPositionFrom(t, pos, b, direction, biasRet);
     }
 
@@ -56,7 +59,8 @@ public abstract class DelegatingTextUI extends TextUI {
         return _delegate.modelToView(t, pos);
     }
 
-    public Rectangle modelToView(final JTextComponent t, final int pos, final Position.Bias bias) throws BadLocationException {
+    public Rectangle modelToView(final JTextComponent t, final int pos, final Position.Bias bias) throws
+            BadLocationException {
         return _delegate.modelToView(t, pos, bias);
     }
 

@@ -5,7 +5,7 @@ import javax.swing.*;
 /**
  * Various smaller utility-/conveniance methods around the JProgressBar class.
  * <p/>
- * <hr/> Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

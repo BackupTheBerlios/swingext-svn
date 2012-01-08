@@ -1,12 +1,17 @@
 package net.sarcommand.swingextensions.completion;
 
-import net.sarcommand.swingextensions.actions.*;
+import net.sarcommand.swingextensions.actions.ReflectedAction;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
-import java.awt.event.*;
-import java.util.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.JTextComponent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.Collection;
+import java.util.HashMap;
 
 /**
  * This class offers completion support for all subclasses of JTextComponent. It is designed to be non-invasive, you
@@ -19,50 +24,40 @@ import java.util.*;
  * By pressing escape, the suggestion will be removed. Finally, the shared can just continue typing and the suggestion
  * will be adapted accordingly. This behavious is similar to the one implemented in OpenOffice.
  * <p/>
- * If multiple possible suggestions exists, the shared can prompt a popup by pressing CTRL+SPACE. He can select an
- * item from the popup or continue typing, incrementally narrowing the search scope. By default, the popup will only
- * show if it is requested manually. You can make it pop up by default by setting the 'automaticallyShowPopup'
- * property.
+ * If multiple possible suggestions exists, the shared can prompt a popup by pressing CTRL+SPACE. He can select an item
+ * from the popup or continue typing, incrementally narrowing the search scope. By default, the popup will only show if
+ * it is requested manually. You can make it pop up by default by setting the 'automaticallyShowPopup' property.
  * <p/>
  * You can configure what portion of the text should be considered to be a token - a word, a sentence, a line etc by
- * specifying a suitable TokenProvider implementation. All keystrokes can be configured as well by using the
- * according setter methods.
+ * specifying a suitable TokenProvider implementation. All keystrokes can be configured as well by using the according
+ * setter methods.
  * <p/>
- * Example:<br>
- * <code>
- * // You can use pretty much every text component<br>
- * final JTextField testTF = new JTextField(20);
+ * Example:<br> <code> // You can use pretty much every text component<br> final JTextField testTF = new
+ * JTextField(20);
  * <p/>
- * // Create a new CompletionSupport instance<br>
- * final CompletionSupport support = new CompletionSupport();
+ * // Create a new CompletionSupport instance<br> final CompletionSupport support = new CompletionSupport();
  * <p/>
- * // Create a completion model, which will be queried for possible completions<br>
- * final SimpleCompletionModel model = new SimpleCompletionModel(false);
+ * // Create a completion model, which will be queried for possible completions<br> final SimpleCompletionModel model =
+ * new SimpleCompletionModel(false);
  * <p/>
- * //Add some exemplary tokens<br>
- * model.addTokens(Arrays.asList("Abe", "Abel", "Abraham", "Abakus", "Baker", "Charlie", "Chipmunk", "Chukie"));
+ * //Add some exemplary tokens<br> model.addTokens(Arrays.asList("Abe", "Abel", "Abraham", "Abakus", "Baker", "Charlie",
+ * "Chipmunk", "Chukie"));
  * <p/>
- * // Set the model<br>
- * support.setModel(model);
+ * // Set the model<br> support.setModel(model);
  * <p/>
  * // And install the completion support. After this invocation, everything should be set up and running.
- * support.install(testTF);
- * </code>
+ * support.install(testTF); </code>
  * <p/>
- * <hr/>
- * Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class CompletionSupport {
     private static final String INPUT_MAP_PREFIX = "swingExt.completionSupport";
@@ -162,8 +157,8 @@ public class CompletionSupport {
 
     /**
      * Creates a listener which will be installed into the target component's document. The listener will invoke
-     * updateCompletions(false) whenever content is added and whenever content is removed while the completion
-     * popup is visible (in order to update the list).
+     * updateCompletions(false) whenever content is added and whenever content is removed while the completion popup is
+     * visible (in order to update the list).
      *
      * @return a listener which will be installed into the target component's document.
      */
@@ -214,8 +209,8 @@ public class CompletionSupport {
     }
 
     /**
-     * Installs this CompletionSupport instance on the given target component. This method will install all
-     * listeners required to provide completions.
+     * Installs this CompletionSupport instance on the given target component. This method will install all listeners
+     * required to provide completions.
      *
      * @param target the text component to support with auto completion.
      */
@@ -280,11 +275,9 @@ public class CompletionSupport {
     }
 
     /**
-     * Signals that the current suggestion should be accepted:
-     * <li>If no suggestion has been made, nothing will happen</li>
-     * <li>If a single suggestion has been made, that suggestion will be accepted</li>
-     * <li>If multiple suggestions have been made, the currently selected item from the completion popup
-     * will be chosen</li>
+     * Signals that the current suggestion should be accepted: <li>If no suggestion has been made, nothing will
+     * happen</li> <li>If a single suggestion has been made, that suggestion will be accepted</li> <li>If multiple
+     * suggestions have been made, the currently selected item from the completion popup will be chosen</li>
      */
     public void accept() {
         switch (_state) {
@@ -512,8 +505,8 @@ public class CompletionSupport {
     }
 
     /**
-     * Returns the word at the target component's current caret position. This method will return "" if the cursor
-     * is positioned between two blanks or the text component is empty.
+     * Returns the word at the target component's current caret position. This method will return "" if the cursor is
+     * positioned between two blanks or the text component is empty.
      *
      * @return the word at the target component's current caret position.
      */
@@ -524,10 +517,10 @@ public class CompletionSupport {
     }
 
     /**
-     * This method will examine the current token at the caret position, look for completions and react accordingly.
-     * If a single completion can be found, it will be suggested to the shared by adding a selected region containing
-     * the missing letters. In case of multiple selections, a popup from which the shared can select the proper
-     * completion will be shown.
+     * This method will examine the current token at the caret position, look for completions and react accordingly. If
+     * a single completion can be found, it will be suggested to the shared by adding a selected region containing the
+     * missing letters. In case of multiple selections, a popup from which the shared can select the proper completion
+     * will be shown.
      *
      * @param showPopup Indicates whether the popup should be shown regardless of the 'automaticallyShowPopup'
      *                  property.

@@ -21,7 +21,7 @@ import java.beans.PropertyChangeListener;
  * Aqua LookAndFeel, a better-looking, more native-like implementation is available by setting a client property. This
  * method will revert to this implementation when the aqua Lookandfeel is detected.
  * <p/>
- * <hr/> Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

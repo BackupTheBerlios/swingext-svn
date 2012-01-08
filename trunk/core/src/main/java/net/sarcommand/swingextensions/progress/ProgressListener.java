@@ -6,7 +6,7 @@ import java.util.EventListener;
  * Event listener used to monitor an arbitrary long-running task in order to be notified when progress has been made.
  * This class works analogously to all other standard java event classes.
  * <p/>
- * <hr/> Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

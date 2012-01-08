@@ -8,7 +8,7 @@ import javax.swing.text.JTextComponent;
 
 /**
  * A BooleanCondition implementation indicating whether a given JTextComponent has actual text content. <hr/> Copyright
- * 2006-2010 Torsten Heup
+ * 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

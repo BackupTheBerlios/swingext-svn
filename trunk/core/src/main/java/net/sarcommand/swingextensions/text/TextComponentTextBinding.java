@@ -5,6 +5,7 @@ import net.sarcommand.swingextensions.internal.SwingExtLogger;
 import net.sarcommand.swingextensions.internal.SwingExtLogging;
 
 import javax.swing.text.JTextComponent;
+
 import static java.lang.String.format;
 
 /**
@@ -14,7 +15,7 @@ import static java.lang.String.format;
  * cause an update</li> <li>Alternatively, you can choose 'continuousUpdates'. In this case, a DocumentListener will be
  * installed and the java bean will be updated on every keystroke.</li>
  * <p/>
- * See the JavaDoc for the SwingBinding class for details on how the binding is applied. <hr/> Copyright 2006-2008
+ * See the JavaDoc for the SwingBinding class for details on how the binding is applied. <hr/> Copyright 2006-2012
  * Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with

@@ -14,7 +14,7 @@ import java.awt.image.BufferedImage;
  * small 'thumbnail' of the viewports contents, highlighting the current view rectangle. One can use the satellite view
  * to navigate the JViewPort's current view rect using the mouse.
  * <p/>
- * <hr/> Copyright 2006-2009 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

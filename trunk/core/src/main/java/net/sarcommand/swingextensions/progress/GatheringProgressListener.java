@@ -31,7 +31,7 @@ import java.util.Properties;
  * Note: This class uses weak references to keep track of the listeners used by the createListener(float) method in
  * order to prevent memory leaks. Make sure that you keep a hard reference to the task objects as long as required.
  * <p/>
- * <hr/> Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -109,7 +109,7 @@ public class GatheringProgressListener {
         float totalProgress = 0;
         boolean allIndeterminate = true;
         for (Iterator<WeakReference<GatheringProgressListenerImpl>> it = _installedListeners.iterator();
-             it.hasNext();) {
+             it.hasNext(); ) {
             final WeakReference<GatheringProgressListenerImpl> ref = it.next();
             final GatheringProgressListenerImpl l = ref.get();
             if (l == null)

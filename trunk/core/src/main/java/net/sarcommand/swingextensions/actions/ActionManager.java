@@ -57,7 +57,7 @@ import java.util.LinkedList;
  * been set, the ActionManager will assume that the action is a focus action since this should apply in the majority of
  * cases.
  * <p/>
- * <hr/> Copyright 2006-2009 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -133,7 +133,7 @@ public class ActionManager {
                         WeakReference<Window> wref;
                         Window w;
                         synchronized (ActionManager.class) {
-                            for (Iterator<WeakReference<Window>> it = _focusedWindows.iterator(); it.hasNext();) {
+                            for (Iterator<WeakReference<Window>> it = _focusedWindows.iterator(); it.hasNext(); ) {
                                 wref = it.next();
                                 w = wref.get();
                                 if (w == null || w.equals(newValue))

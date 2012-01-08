@@ -11,7 +11,7 @@ import java.awt.*;
  * A reflection based cell renderer implementation which will automatically pass the value to be rendered to a given
  * component. All you have to specify is the renderer component and the name of the property which should be set.
  * <p/>
- * <hr/> Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

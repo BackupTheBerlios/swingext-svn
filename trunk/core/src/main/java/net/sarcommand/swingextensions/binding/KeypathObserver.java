@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
  * Observer class listening for changes along a set Keypath instance. It will delegate any change notification to a
  * PropertyChangeListener, building the property name from the KeypathElements.
  * <p/>
- * <b>Note: This is an internal class. You should not have to deal with it directly</b> <hr/> Copyright 2006-2008
+ * <b>Note: This is an internal class. You should not have to deal with it directly</b> <hr/> Copyright 2006-2012
  * Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with

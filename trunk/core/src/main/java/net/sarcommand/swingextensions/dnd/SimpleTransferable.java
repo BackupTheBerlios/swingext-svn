@@ -13,7 +13,7 @@ import java.util.HashMap;
  * as an abstract path string, it is often less effort to just add those representations to a SimpleTransferable rather
  * than writing a custom Transferable implementation for doing a value conversion.
  * <p/>
- * <hr/> Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

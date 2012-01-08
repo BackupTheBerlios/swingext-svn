@@ -8,28 +8,24 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * A container which will frame its subcomponents with a border including a JCheckBox. This class is meant to be
- * used for grouping components which are connected with a boolean state, for instance, a set of parameters which
- * should only be set if an option is selected
+ * A container which will frame its subcomponents with a border including a JCheckBox. This class is meant to be used
+ * for grouping components which are connected with a boolean state, for instance, a set of parameters which should only
+ * be set if an option is selected
  * <p/>
- * Basically, this container works like an empty border with an embedded checkbox. Since borders can't actively
- * react to events (thus the check box could not be selected), it was necessary to subclass JPanel rather than
- * creating a Border implementation.
+ * Basically, this container works like an empty border with an embedded checkbox. Since borders can't actively react to
+ * events (thus the check box could not be selected), it was necessary to subclass JPanel rather than creating a Border
+ * implementation.
  * <p/>
- * <hr/>
- * Copyright 2006-2008 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class CheckBoxContainer extends JPanel implements ItemSelectable {
     /**
@@ -222,8 +218,8 @@ public class CheckBoxContainer extends JPanel implements ItemSelectable {
     }
 
     /**
-     * Invoked when the embedded JCheckBox is clicked. Will fire according ActionEvents and ItemEvents to all
-     * registered listeners.
+     * Invoked when the embedded JCheckBox is clicked. Will fire according ActionEvents and ItemEvents to all registered
+     * listeners.
      *
      * @param e The original ActionEvent fired by the JCheckBox.
      */
