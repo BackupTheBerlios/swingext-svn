@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
  * action and by supplying an implementation for actionPerformed(ActionEvent). This class' default implementation will
  * simply notify the ActionManager that the action has been triggered and leave the actual execution to it.
  * <p/>
- * <hr> Copyright 2006 Torsten Heup
+ * <hr> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

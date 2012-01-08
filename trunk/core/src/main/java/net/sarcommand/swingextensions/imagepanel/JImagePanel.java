@@ -21,7 +21,7 @@ import java.awt.image.VolatileImage;
  * The JImagePanel class offers several static conveniance methods to create preconfigured instances and frames or
  * dialogs wrapping a JImagePanel.
  * <p/>
- * <hr/> Copyright 2006 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -267,7 +267,7 @@ public class JImagePanel extends JPanel implements Scrollable {
      */
     protected void initialize() {
         _scaleMode = ScaleMode.SCALE_BEST_FIT;
-        
+
         setupEventHandlers();
 
         _lastMousePos = new Point();
@@ -455,8 +455,8 @@ public class JImagePanel extends JPanel implements Scrollable {
 
     /**
      * If the set scale mode indicates that the image size should adapt automatically following a given rule, this
-     * method adapts the scale factor to the current canvas size. If the current scale mode is set to
-     * {@link net.sarcommand.swingextensions.imagepanel.JImagePanel.ScaleMode#SCALE_MANUALLY}, this method has no effect.
+     * method adapts the scale factor to the current canvas size. If the current scale mode is set to {@link
+     * net.sarcommand.swingextensions.imagepanel.JImagePanel.ScaleMode#SCALE_MANUALLY}, this method has no effect.
      * <p/>
      * This method will be invoked whenever the scale mode is modified or the component size changes.
      */
@@ -477,8 +477,8 @@ public class JImagePanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Returns the rate at which the scale factor changes when the user moves the mouse wheel. A rate of 1 is
-     * considered a change of 3% per wheel event.
+     * Returns the rate at which the scale factor changes when the user moves the mouse wheel. A rate of 1 is considered
+     * a change of 3% per wheel event.
      *
      * @return Rate at which scale factor changes.
      */
@@ -487,8 +487,8 @@ public class JImagePanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Sets the rate at which the scale factor changes when the user moved the mouse wheel. A rate of 1 is considered
-     * a change of 3% per wheel event.
+     * Sets the rate at which the scale factor changes when the user moved the mouse wheel. A rate of 1 is considered a
+     * change of 3% per wheel event.
      *
      * @param scaleRate the rate at which the scale factor changes when the user moves the mouse wheel
      */
@@ -508,8 +508,8 @@ public class JImagePanel extends JPanel implements Scrollable {
 
     /**
      * Sets the event mask used to determine whether the image should be tanslated when receiving a mouseDragged event.
-     * The default mask is {@link MouseEvent#BUTTON1_MASK}, which means the image will be translated when the user
-     * drags the mouse with the first mouse button pressed. You could for example change this behaviour to {@link
+     * The default mask is {@link MouseEvent#BUTTON1_MASK}, which means the image will be translated when the user drags
+     * the mouse with the first mouse button pressed. You could for example change this behaviour to {@link
      * KeyEvent#CTRL_MASK} & {@link MouseEvent#BUTTON1_MASK} if you wanted the image to translate only if the control
      * key was pressed.
      *
@@ -582,14 +582,11 @@ public class JImagePanel extends JPanel implements Scrollable {
 
     /**
      * Sets the scale mode property. The scale mode determines in which way the JImagePanel will try to fit the image to
-     * the panels size:
-     * <li>{@link JImagePanel.ScaleMode#SCALE_MANUALLY} scales the image according to the user's mouse wheel
-     * interaction</li>
-     * <li>{@link JImagePanel.ScaleMode#SCALE_HORIZONTAL_FIT} attempts to fit the image horizontally, regardless of it's
-     * height</li>
-     * <li>{@link JImagePanel.ScaleMode#SCALE_VERTICAL_FIT} attempts to fit the image vertically, regardless of it's
-     * width.</li>
-     * <li>{@link JImagePanel.ScaleMode#SCALE_BEST_FIT} tries to find the best fit for the image in both dimensions</li>
+     * the panels size: <li>{@link JImagePanel.ScaleMode#SCALE_MANUALLY} scales the image according to the user's mouse
+     * wheel interaction</li> <li>{@link JImagePanel.ScaleMode#SCALE_HORIZONTAL_FIT} attempts to fit the image
+     * horizontally, regardless of it's height</li> <li>{@link JImagePanel.ScaleMode#SCALE_VERTICAL_FIT} attempts to fit
+     * the image vertically, regardless of it's width.</li> <li>{@link JImagePanel.ScaleMode#SCALE_BEST_FIT} tries to
+     * find the best fit for the image in both dimensions</li>
      * <p/>
      * Note that as long as scaling is allowed, the user will still be able to change the scale factor using the mouse
      * wheel. The scale mode will then be reset to SCALE_MANUALLY. If you want to 'lock' one of the three automatic

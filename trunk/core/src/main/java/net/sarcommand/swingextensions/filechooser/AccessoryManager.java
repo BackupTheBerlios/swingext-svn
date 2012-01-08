@@ -30,7 +30,7 @@ import java.util.HashMap;
  * manager.setAccessory(new JLabel("Foo"), SwingConstants.SOUTH);
  * </pre>
  * <p/>
- * <hr/> Copyright 2006 Torsten Heup
+ * <hr/> Copyright 2006-2012 Torsten Heup
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at

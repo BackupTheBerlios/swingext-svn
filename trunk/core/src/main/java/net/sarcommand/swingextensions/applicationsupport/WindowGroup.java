@@ -16,42 +16,36 @@ import java.util.*;
 import java.util.List;
 
 /**
- * This class is meant to help you handle a set of associated windows or frames. When writing a
- * multi-windowed application, you will want those windows to behave coherently. For instance,
- * when reactivating one of your frames after your application was obscured by some other window,
- * you might want all of your application's frames back on top instead of just the one
- * the user clicked in. Think of a document with a couple of toolbars placed in independent frames.
- * When you start editing the documents, you want your toolbars right back on top instead of having
- * to bring every single one to front manually.
+ * This class is meant to help you handle a set of associated windows or frames. When writing a multi-windowed
+ * application, you will want those windows to behave coherently. For instance, when reactivating one of your frames
+ * after your application was obscured by some other window, you might want all of your application's frames back on top
+ * instead of just the one the user clicked in. Think of a document with a couple of toolbars placed in independent
+ * frames. When you start editing the documents, you want your toolbars right back on top instead of having to bring
+ * every single one to front manually.
  * <p/>
- * Winows added to a WindowGroup will behave that way. Furthermore, they will keep track of the
- * windows' visibility hierarchy, so if one windows was placed in front of another one it will reappear
- * on top when the set is brought back into focus (unless of course the obscured frame was the one
- * selected).
+ * Winows added to a WindowGroup will behave that way. Furthermore, they will keep track of the windows' visibility
+ * hierarchy, so if one windows was placed in front of another one it will reappear on top when the set is brought back
+ * into focus (unless of course the obscured frame was the one selected).
  * <p/>
- * If you are using a multi-windowed application, you will also want the windows to remember their
- * location and size between sessions so you won't have to relocate all toolbars manually every
- * single time. Therefore, a WindowGroup offers a set of methods that allows you to easily save the
- * current bounds for each frame in the set. When using an ApplicationSupport, you won't have to
- * worry about this at all, if not, you can easily serialize a WindowGroup to xml using the methods
- * defined in {@link XMLExternalizable}.
+ * If you are using a multi-windowed application, you will also want the windows to remember their location and size
+ * between sessions so you won't have to relocate all toolbars manually every single time. Therefore, a WindowGroup
+ * offers a set of methods that allows you to easily save the current bounds for each frame in the set. When using an
+ * ApplicationSupport, you won't have to worry about this at all, if not, you can easily serialize a WindowGroup to xml
+ * using the methods defined in {@link XMLExternalizable}.
  * <p/>
  * <p/>
  * todo add demo code
  * <p/>
- * Copyright 2006 Torsten Heup
+ * Copyright 2006-2012 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class WindowGroup implements XMLExternalizable {
     public static final String BRING_TO_FRONT_PROPERTY = "shouldBringToFront";
@@ -96,8 +90,8 @@ public class WindowGroup implements XMLExternalizable {
     }
 
     /**
-     * Returns whether all windows in this group will be brought to front when one of them gains focus. See the
-     * class doc for details.
+     * Returns whether all windows in this group will be brought to front when one of them gains focus. See the class
+     * doc for details.
      *
      * @return whether all windows in this group will be brought to front when one of them gains focus.
      */
@@ -106,11 +100,11 @@ public class WindowGroup implements XMLExternalizable {
     }
 
     /**
-     * Defines whether all of the windows in this group should be brought to front when one gains focus. See the
-     * class doc for details. Defaults to false.
+     * Defines whether all of the windows in this group should be brought to front when one gains focus. See the class
+     * doc for details. Defaults to false.
      *
-     * @param shouldBringAllToFront whether all of the windows in this group should be brought to front when one
-     *                              gains focus.
+     * @param shouldBringAllToFront whether all of the windows in this group should be brought to front when one gains
+     *                              focus.
      */
     public void setShouldBringAllToFront(boolean shouldBringAllToFront) {
         final boolean old = _shouldBringAllToFront;

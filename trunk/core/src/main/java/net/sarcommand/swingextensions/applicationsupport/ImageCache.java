@@ -16,29 +16,25 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
- * Creates a static cache for images and icons which should help to reduce an application's loading time.
- * Images as well as icons should be referenced using their file names. By default, the cache will attempt to load
- * the respective image from the class path. Additionally, further search paths can be specified, pointing to
- * local folders in the file system or web resources alike.
+ * Creates a static cache for images and icons which should help to reduce an application's loading time. Images as well
+ * as icons should be referenced using their file names. By default, the cache will attempt to load the respective image
+ * from the class path. Additionally, further search paths can be specified, pointing to local folders in the file
+ * system or web resources alike.
  * <p/>
  * You can specify which action the cache should take if an image could not be located in any of the search locations
  * using the <code>ErrorPolicy</code> property. For now, you can choose whether an exception should be thrown or an
  * empty dummy image should be returned.
  * <p/>
- * <hr>
- * Copyright 2006 Torsten Heup
+ * <hr> Copyright 2006-2012 Torsten Heup
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 public class ImageCache {
     /**
@@ -60,8 +56,7 @@ public class ImageCache {
     }
 
     /**
-     * Caches images which have been loaded before.
-     * HashMap<String:filename, BufferedImage:actualImage>
+     * Caches images which have been loaded before. HashMap<String:filename, BufferedImage:actualImage>
      */
     private static HashMap<String, SoftReference<BufferedImage>> __cache;
 
