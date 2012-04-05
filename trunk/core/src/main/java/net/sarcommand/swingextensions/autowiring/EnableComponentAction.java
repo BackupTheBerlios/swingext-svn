@@ -1,7 +1,6 @@
 package net.sarcommand.swingextensions.autowiring;
 
 import javax.swing.*;
-import java.util.Collection;
 
 /**
  * An autowiring action that will enable or disable a component depending on the state of a set of BooleanConditions.
@@ -17,11 +16,20 @@ import java.util.Collection;
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-public class EnableComponentAction implements AutowiringAction {
+public class EnableComponentAction implements BooleanConditionedAction {
     private AggregateBooleanCondition _condition;
     private JComponent _component;
 
-    protected EnableComponentAction() {
+    /**
+     * Instanciates an action that enables or disables the target component based on the attached boolean conditions.
+     *
+     * @param component The component to enable / disable.
+     */
+    public EnableComponentAction(final JComponent component) {
+        if (component == null)
+            throw new IllegalArgumentException("Parameter 'component' must not be null!");
+
+        _component = component;
         _condition = new AggregateBooleanCondition();
         _condition.addConditionListener(new ConditionListener() {
             public void conditionUpdated(final Condition booleanCondition) {
@@ -31,28 +39,27 @@ public class EnableComponentAction implements AutowiringAction {
         });
     }
 
-    public EnableComponentAction(final JComponent component, final BooleanCondition... conditions) {
-        this();
-        if (component == null)
-            throw new IllegalArgumentException("Parameter 'component' must not be null!");
-
-        _component = component;
+    /**
+     * Triggers this action whenever all of the given conditions are fulfilled. Multiple invocations of this method will
+     * cause the conditions to be joined.
+     *
+     * @param conditions The conditions to be fulfilled for this action to trigger.
+     * @return An instance of AggregateBooleanCondition to use for method chaining.
+     */
+    public AggregateBooleanCondition whenever(final BooleanCondition... conditions) {
         _condition.addConditions(conditions);
+        return _condition;
     }
 
-    public EnableComponentAction(final JComponent component, final Collection<BooleanCondition> conditions,
-                                 final Collection<BooleanCondition> negatedConditions) {
-        this();
-        if (component == null)
-            throw new IllegalArgumentException("Parameter 'component' must not be null!");
-
-        _component = component;
-        _condition.addConditions(conditions);
-        _condition.addNegatedConditions(negatedConditions);
-    }
-
-    public EnableComponentAction whenever(final BooleanCondition... conditions) {
-        _condition.addConditions(conditions);
-        return this;
+    /**
+     * Triggers this action whenever none of the given conditions are fulfilled. Multiple invocations of this method
+     * will cause the conditions to be joined.
+     *
+     * @param conditions The conditions not to be fulfilled for this action to trigger.
+     * @return An instance of AggregateBooleanCondition to use for method chaining.
+     */
+    public AggregateBooleanCondition unless(final BooleanCondition... conditions) {
+        _condition.addConditions(new AggregateBooleanCondition(AggregateBooleanCondition.Operator.and, true, conditions));
+        return _condition;
     }
 }
