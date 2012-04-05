@@ -19,16 +19,73 @@ import java.util.Collection;
  * specific language governing permissions and limitations under the License.
  */
 public class AggregateBooleanCondition extends BooleanCondition {
-    private ArrayList<BooleanCondition> _conditions;
-    private ArrayList<BooleanCondition> _negatedConditions;
+    /**
+     * Represents the boolean operator connecting the nested conditions.
+     */
+    public static enum Operator {
+        and, or, xor
+    }
 
-    private ConditionListener _nestedConditionListener;
+    /**
+     * The operator for this condition.
+     */
+    protected Operator _operator;
 
-    private Boolean _state;
+    /**
+     * Indicates whether this condition is negated.
+     */
+    protected boolean _negated;
 
+    /**
+     * The nested conditions.
+     */
+    protected ArrayList<BooleanCondition> _conditions;
+
+    /**
+     * The listener installed on all nested conditions.
+     */
+    protected ConditionListener _nestedConditionListener;
+
+    /**
+     * The cached state of this condition, as returned by getNestedCondition.
+     */
+    protected Boolean _state;
+
+    /**
+     * Creates a new AggregateBooleanCondition that connects all nested conditions with an 'and' operator.
+     */
     public AggregateBooleanCondition() {
+        this(Operator.and, false);
+    }
+
+    /**
+     * Creates a new AggregateBooleanCondition that connects all nested conditions with an 'and' operator.
+     *
+     * @param negated Whether this condition should be negated.
+     */
+    public AggregateBooleanCondition(final boolean negated) {
+        this(Operator.and, negated);
+    }
+
+    /**
+     * Creates a new AggregateBooleanCondition that connects all nested conditions with an the given operator.
+     *
+     * @param operator operator for this condition.
+     */
+    public AggregateBooleanCondition(final Operator operator) {
+        this(operator, false);
+    }
+
+    /**
+     * Creates a new AggregateBooleanCondition that connects all nested conditions with an the given operator.
+     *
+     * @param operator operator for this condition.
+     * @param negated  Whether this condition should be negated.
+     */
+    public AggregateBooleanCondition(final Operator operator, final boolean negated) {
+        _operator = operator;
+        _negated = negated;
         _conditions = new ArrayList<BooleanCondition>(4);
-        _negatedConditions = new ArrayList<BooleanCondition>(4);
         _nestedConditionListener = new ConditionListener() {
             public void conditionUpdated(final Condition booleanCondition) {
                 update();
@@ -36,43 +93,96 @@ public class AggregateBooleanCondition extends BooleanCondition {
         };
     }
 
-    public void addConditions(final BooleanCondition... condition) {
-        addConditions(Arrays.asList(condition));
+    /**
+     * Creates a new condition with the given operator and nested conditions.
+     *
+     * @param operator   The operator for this condition.
+     * @param conditions The list of nested conditions (may be empty).
+     */
+    public AggregateBooleanCondition(final Operator operator, final BooleanCondition... conditions) {
+        this(operator);
+        addConditions(conditions);
     }
 
-    public void addConditions(final Collection<BooleanCondition> condition) {
-        _conditions.addAll(condition);
-        for (BooleanCondition c : condition)
+    /**
+     * Creates a new condition with the given operator and nested conditions.
+     *
+     * @param operator   The operator for this condition.
+     * @param negated    Whether this condition should be negated.
+     * @param conditions The list of nested conditions (may be empty).
+     */
+    public AggregateBooleanCondition(final Operator operator, final boolean negated,
+                                     final BooleanCondition... conditions) {
+        this(operator, negated);
+        addConditions(conditions);
+    }
+
+    /**
+     * Adds the given nested conditions.
+     *
+     * @param conditions conditions to add.
+     */
+    public void addConditions(final BooleanCondition... conditions) {
+        addConditions(Arrays.asList(conditions));
+    }
+
+    /**
+     * Adds the given nested conditions.
+     *
+     * @param conditions conditions to add.
+     */
+    public void addConditions(final Collection<BooleanCondition> conditions) {
+        if (conditions == null)
+            throw new IllegalArgumentException("Parameter 'conditions' must not be null!");
+
+        _conditions.addAll(conditions);
+        for (BooleanCondition c : conditions)
             c.addConditionListener(_nestedConditionListener);
         update();
     }
 
-    public void addNegatedConditions(final BooleanCondition... condition) {
-        addNegatedConditions(Arrays.asList(condition));
-    }
-
-    public void addNegatedConditions(final Collection<BooleanCondition> condition) {
-        _negatedConditions.addAll(condition);
-        for (BooleanCondition c : condition)
-            c.addConditionListener(_nestedConditionListener);
-        update();
-    }
-
+    /**
+     * Invoked when one of the nest conditions is updated.
+     */
     protected void update() {
         final Boolean oldState = _state;
-        _state = getNestedState();
+        _state = _negated ? !getNestedState() : getNestedState();
         if (oldState != _state)
             fireConditionUpdated();
     }
 
+    /**
+     * Computes the new state for this condition based on the list of nested conditions.
+     *
+     * @return this condition's new state.
+     */
     protected boolean getNestedState() {
-        for (BooleanCondition c : _conditions)
-            if (c.getState() == null || !c.getState())
+        switch (_operator) {
+            case and:
+                for (BooleanCondition c : _conditions)
+                    if (c.getState() == null || !c.getState())
+                        return false;
+                return true;
+
+            case or:
+                for (BooleanCondition c : _conditions)
+                    if (c.getState() != null && c.getState())
+                        return true;
                 return false;
-        for (BooleanCondition c : _negatedConditions)
-            if (c.getState() == null || c.getState())
+            case xor:
+                boolean hit = false;
+                for (BooleanCondition c : _conditions) {
+                    if (c.getState() != null && c.getState()) {
+                        if (hit)
+                            return false;
+                        else
+                            hit = true;
+                    }
+                }
+                return hit;
+            default:
                 return false;
-        return true;
+        }
     }
 
     @Override
