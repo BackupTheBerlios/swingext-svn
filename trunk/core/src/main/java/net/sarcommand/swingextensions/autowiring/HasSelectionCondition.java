@@ -22,8 +22,16 @@ import javax.swing.event.TreeSelectionListener;
  * specific language governing permissions and limitations under the License.
  */
 public class HasSelectionCondition extends BooleanCondition {
-    private JComponent _component;
+    /**
+     * The monitored component.
+     */
+    protected JComponent _component;
 
+    /**
+     * Creates a new condition that reflects whether the given tree has a seletion.
+     *
+     * @param tree The tree to monitor.
+     */
     public HasSelectionCondition(final JTree tree) {
         if (tree == null)
             throw new IllegalArgumentException("Parameter 'tree' must not be null!");
@@ -34,20 +42,32 @@ public class HasSelectionCondition extends BooleanCondition {
                 fireConditionUpdated();
             }
         });
+        fireConditionUpdated();
     }
 
+    /**
+     * Creates a new condition that reflects whether the given table has a selection.
+     *
+     * @param table The table to monitor.
+     */
     public HasSelectionCondition(final JTable table) {
         if (table == null)
             throw new IllegalArgumentException("Parameter 'table' must not be null!");
 
         _component = table;
-        final TableSelectionListenerGlue glue = new TableSelectionListenerGlue(table, new ListSelectionListener() {
+        new TableSelectionListenerGlue(table, new ListSelectionListener() {
             public void valueChanged(final ListSelectionEvent e) {
                 fireConditionUpdated();
             }
         });
+        fireConditionUpdated();
     }
 
+    /**
+     * Creates a new condition that reflects whether the given list has a selection.
+     *
+     * @param list List to monitor.
+     */
     public HasSelectionCondition(final JList list) {
         if (list == null)
             throw new IllegalArgumentException("Parameter 'list' must not be null!");
@@ -58,6 +78,7 @@ public class HasSelectionCondition extends BooleanCondition {
                 fireConditionUpdated();
             }
         });
+        fireConditionUpdated();
     }
 
     @Override
