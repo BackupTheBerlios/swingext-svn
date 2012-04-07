@@ -15,5 +15,10 @@ import java.util.EventListener;
  * specific language governing permissions and limitations under the License.
  */
 public interface ConditionListener extends EventListener {
-    public void conditionUpdated(final Condition booleanCondition);
+    /**
+     * Invoked whenever the monitored condition changes its state.
+     *
+     * @param condition the monitored condition.
+     */
+    public void conditionUpdated(final Condition condition);
 }
