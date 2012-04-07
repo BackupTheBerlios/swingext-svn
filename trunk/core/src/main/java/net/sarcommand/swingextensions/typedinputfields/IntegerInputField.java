@@ -17,9 +17,22 @@ package net.sarcommand.swingextensions.typedinputfields;
 public class IntegerInputField extends AbstractTypedTextField<Integer> {
     public static final String PATTERN_INTEGER = "-?[0-9]+";
 
+    /**
+     * Creates a new integer input field with an initial value of null.
+     */
     public IntegerInputField() {
         super();
         setDocument(new RegexpConstrainedDocument(this, PATTERN_INTEGER));
+    }
+
+    /**
+     * Creates a new integer input field with the given initial value.
+     *
+     * @param value Initial value for the new instance.
+     */
+    public IntegerInputField(final int value) {
+        this();
+        setValue(value);
     }
 
     /**

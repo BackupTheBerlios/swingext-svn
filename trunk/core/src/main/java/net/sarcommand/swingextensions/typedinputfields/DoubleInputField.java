@@ -26,11 +26,24 @@ public class DoubleInputField extends AbstractTypedTextField<Double> implements 
     private static final SwingExtLogger __log = SwingExtLogging.getLogger(DoubleInputField.class);
 
     public static final String PATTERN_DOUBLE = "-?[0-9]+(\\.[0-9]*)?([eE]-?[0-9]+)?";
-    private Format _format;
+    protected Format _format;
 
+    /**
+     * Creates a new double input field with an initial value of null.
+     */
     public DoubleInputField() {
         super();
         setDocument(new RegexpConstrainedDocument(this, PATTERN_DOUBLE));
+    }
+
+    /**
+     * Creates a new double input field with the given initial value.
+     *
+     * @param value Initial value for the new instance.
+     */
+    public DoubleInputField(final double value) {
+        this();
+        setValue(value);
     }
 
     public Double getValue() {
